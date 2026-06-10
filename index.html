@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이정훈 — 포트폴리오 (통합)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/jetbrainsmono.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<style>
+:root{
+  --bg:#FCFCFB; --band:#F1F3F2; --panel:#FFFFFF;
+  --ink:#16201F; --body:#3F4B49; --meta:#889592;
+  --line:#E2E7E5; --line-2:#D3DAD7;
+  --accent:#0E6E64; --accent-weak:#DCEDEA; --accent-weak2:#EAF4F1;
+  --danger:#B4453A; --danger-weak:#FBF4F3;
+  --mono:"JetBrains Mono","D2Coding",ui-monospace,monospace;
+  --sans:"Pretendard",-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#C9CFCD}
+body{font-family:var(--sans);color:var(--body);line-height:1.5;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;padding:24px 0}
+
+/* ===== 16:9 슬라이드 ===== */
+.slide{width:1280px;height:720px;background:var(--bg);margin:20px auto;padding:54px 60px;
+  position:relative;overflow:hidden;box-shadow:0 6px 30px rgba(0,0,0,.16);
+  display:flex;flex-direction:column;justify-content:center}
+/* 표지·마무리·코드페이지는 자체 풀높이 레이아웃 → 중앙정렬 영향 없음 */
+.slide>.cover,.slide>.closing{flex:1}
+.slide .no{position:absolute;top:30px;right:40px;font-family:var(--mono);font-size:13px;color:var(--meta)}
+.eyebrow{font-family:var(--mono);font-size:13px;color:var(--accent);letter-spacing:.08em;
+  text-transform:uppercase;font-weight:600}
+h2.title{font-size:33px;color:var(--ink);font-weight:700;margin:7px 0 16px;letter-spacing:-.01em}
+h3{font-size:18px;color:var(--ink);font-weight:600}
+p,li{font-size:15px;color:var(--body)}
+strong{color:var(--ink);font-weight:600}
+.accent{color:var(--accent)}
+.num{font-family:var(--mono);color:var(--accent);font-weight:600}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.lead{font-size:15px;color:var(--body);max-width:100ch;margin-bottom:14px}
+.lead.meta{color:var(--meta);font-size:14px}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:17px 20px}
+.card h3{margin-bottom:5px}
+.card p{font-size:14px;line-height:1.5}
+.card.accentL{border-left:4px solid var(--accent)}
+
+.chip{display:inline-block;background:var(--accent-weak);color:var(--accent);font-family:var(--mono);
+  font-size:12.5px;padding:4px 10px;border-radius:6px;margin:2px 1px}
+
+ul.bul{list-style:none;margin-top:4px}
+ul.bul li{position:relative;padding-left:16px;margin:7px 0;font-size:14.5px}
+ul.bul li::before{content:"–";position:absolute;left:0;color:var(--accent)}
+
+ul.star{list-style:none}
+ul.star li{position:relative;padding-left:30px;margin:9px 0;font-size:15px;line-height:1.5}
+ul.star li b{position:absolute;left:0;top:0;font-family:var(--mono);color:var(--accent);font-weight:700}
+
+.stat{font-family:var(--mono);font-size:46px;color:var(--accent);font-weight:700;line-height:1}
+.stat-l{font-size:14px;color:var(--meta);margin-top:7px}
+
+table{width:100%;border-collapse:collapse;margin-top:6px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);font-size:15px}
+th{color:var(--meta);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.gname{display:flex;align-items:center;gap:12px}
+.gname img{width:38px;height:38px;border-radius:9px;border:1px solid var(--line);flex:0 0 auto}
+
+.cap{font-size:13.5px;color:var(--body);line-height:1.5}
+.cap .k{color:var(--accent);font-weight:600}
+.footnote{color:var(--meta);font-size:13px;margin-top:8px}
+
+/* before/after 바 */
+.ba{max-width:720px}
+.ba-row{display:flex;align-items:center;gap:14px;margin:9px 0}
+.ba-row .lab{font-family:var(--mono);font-size:12px;color:var(--meta);width:52px}
+.ba-track{flex:1;height:14px;background:var(--band);border-radius:7px;overflow:hidden}
+.ba-fill{height:100%;border-radius:7px}
+.ba-fill.slow{background:#D9BDB8}
+.ba-fill.fast{background:var(--accent)}
+.ba-row .val{font-family:var(--mono);font-weight:600;font-size:14px;width:84px;text-align:right}
+
+/* blob 레이아웃 스트립 */
+.blob{display:flex;gap:5px;max-width:900px;align-items:stretch}
+.bseg{flex:0 0 auto;background:var(--panel);border:1px solid var(--line-2);border-radius:6px;
+  padding:8px 11px;font-family:var(--mono);font-size:12px;color:var(--ink);text-align:center;white-space:nowrap}
+.bseg small{display:block;color:var(--meta);font-size:10px;margin-top:3px}
+.bseg.grow{flex:1}
+.bseg.hmac{border-color:var(--accent);color:var(--accent)}
+.bseg.hmac small{color:var(--accent)}
+
+/* ===== 코드 보기 버튼 ===== */
+.codebtn{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:13.5px;
+  color:var(--accent);background:var(--accent-weak2);border:1px solid var(--accent);border-radius:9px;
+  padding:9px 17px;cursor:pointer;font-weight:600;transition:all .12s}
+.codebtn::before{content:"</>";font-weight:700;letter-spacing:-.04em}
+.codebtn:hover{background:var(--accent);color:#fff}
+
+/* ▶ 플레이어블 실행 버튼 + 모달 */
+.playbtn{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:13.5px;
+  color:#fff;background:var(--accent);border:1px solid var(--accent);border-radius:9px;
+  padding:9px 17px;cursor:pointer;font-weight:600}
+.playbtn::before{content:"▶";font-size:10px}
+.playbtn:hover{background:#0b5a52}
+.pmodal{position:fixed;inset:0;z-index:60;background:rgba(10,13,18,.72);display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.pmodal[hidden]{display:none}
+.pmodal .pbar{display:flex;align-items:center;gap:16px;color:#cbd5d1;font-family:var(--mono);font-size:12.5px}
+.pmodal-x{background:#1b2330;color:#fff;border:1px solid #2c3a44;border-radius:8px;
+  padding:7px 14px;cursor:pointer;font-family:var(--mono);font-size:12.5px}
+.pmodal-box{width:430px;height:760px;max-height:84vh;background:#000;border-radius:22px;
+  overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.6);border:6px solid #0d1117}
+.pmodal-box iframe{width:100%;height:100%;border:0;display:block;background:#000}
+
+/* ===== 플레이어블 라이브러리 (칩 그리드) ===== */
+.plib{display:flex;flex-direction:column;gap:14px}
+.pgroup .pgl{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--meta);font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:9px}
+.pgroup .pgl::after{content:"";flex:1;height:1px;background:var(--line)}
+.pchips{display:flex;flex-wrap:wrap;gap:7px}
+.pchip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12.5px;
+  color:var(--accent);background:var(--accent-weak2);border:1px solid var(--accent);border-radius:8px;
+  padding:7px 12px;cursor:pointer;font-weight:600;transition:all .12s}
+.pchip::before{content:"▶";font-size:8px}
+.pchip:hover{background:var(--accent);color:#fff}
+
+/* ===== 코드 블록 (다크) ===== */
+.cardcode{background:#0D1117;border:1px solid #222A33;border-radius:11px;overflow:hidden;width:100%}
+.cc-top{display:flex;align-items:center;padding:9px 15px;background:#0A0D12;border-bottom:1px solid #222A33}
+.cc-top i{width:11px;height:11px;border-radius:50%;margin-right:7px;display:inline-block}
+.cc-top i.r{background:#FF5F56}.cc-top i.y{background:#FFBD2E}.cc-top i.g{background:#27C93F}
+.cc-top .fn{margin-left:10px;color:#6E7681;font-family:var(--mono);font-size:11.5px}
+.cc-body{display:flex}
+.cc-body>pre{margin:0;flex:1;min-width:0;overflow:auto}
+.cc-body>pre+pre{border-left:1px solid #222A33}
+.cardcode code.hljs{background:transparent!important;padding:16px 18px;display:block;
+  font-family:var(--mono);font-size:14px;line-height:1.55;white-space:pre;color:#C9D1D9;tab-size:4;
+  font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+
+/* ===== 코드 전용 페이지 (인쇄 시 펼침) ===== */
+.codepage{display:none}
+.codepage .cp-head{font-family:var(--mono);font-size:13px;color:var(--accent);
+  letter-spacing:.05em;font-weight:600;text-transform:uppercase}
+.cp-inner{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.cp-cap{font-size:14px;color:var(--body);line-height:1.5}
+.cp-cap .k{color:var(--accent);font-weight:600}
+
+/* ===== 코드 모달 (화면) ===== */
+.cmodal{position:fixed;inset:0;z-index:50;background:rgba(10,13,18,.55);
+  display:flex;align-items:center;justify-content:center;padding:40px}
+.cmodal[hidden]{display:none}
+.cmodal-box{background:#0D1117;border:1px solid #222A33;border-radius:14px;
+  width:min(1140px,94vw);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.cmodal-bar{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;
+  border-bottom:1px solid #222A33;background:#0A0D12}
+.cmodal-title{font-family:var(--mono);font-size:12.5px;color:#8b949e;letter-spacing:.04em;text-transform:uppercase}
+.cmodal-x{background:none;border:none;color:#8b949e;font-size:18px;cursor:pointer;line-height:1;padding:0 4px}
+.cmodal-x:hover{color:#fff}
+.cmodal-body{overflow:auto;padding:18px}
+.cmodal-body .cardcode{border:none}
+.cmodal-body .cp-cap{color:#8b949e;padding:0 4px}
+.cmodal-body .cp-cap .k{color:#34d399}
+
+/* ===== 표지 ===== */
+.cover{display:flex;flex-direction:column;height:100%;justify-content:center;gap:30px}
+.cover-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center}
+.cover-r{border-left:1px solid var(--line);padding-left:40px;align-self:stretch;display:flex;
+  flex-direction:column;justify-content:center}
+.cover-strip{display:flex;align-items:center;gap:13px;padding-top:24px;border-top:1px solid var(--line)}
+.cover-strip .cs-lbl{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--meta);text-transform:uppercase;margin-right:4px}
+.cover-strip img{width:50px;height:50px;border-radius:12px;border:1px solid var(--line)}
+.cover-strip .cs-more{font-family:var(--mono);font-size:13px;color:var(--meta);margin-left:4px}
+.gallery{display:flex;gap:16px;justify-content:center;margin-top:8px}
+.gallery figure{text-align:center}
+.gallery img{height:330px;width:auto;border-radius:14px;border:1px solid var(--line-2);box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.gallery figcaption{font-size:13px;color:var(--body);margin-top:10px;font-weight:600}
+.proj-shot{text-align:center;flex:0 0 auto;margin:0}
+.proj-shot img{border-radius:13px;border:1px solid var(--line-2);box-shadow:0 4px 16px rgba(0,0,0,.14);display:block}
+.proj-shot figcaption{font-size:12px;color:var(--meta);margin-top:9px}
+.cover-r .sh{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--meta);margin-bottom:16px}
+.sigrow{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;
+  border-bottom:1px dashed var(--line)}
+.sigrow:last-child{border-bottom:none}
+.sigrow .sn{font-size:14px;color:var(--ink);font-weight:600}
+.sigrow .sv{font-family:var(--mono);font-size:11.5px;color:var(--accent)}
+.contact{font-family:var(--mono);font-size:13px;color:var(--meta);line-height:1.9;margin-top:30px}
+.contact a{color:var(--body);text-decoration:none}
+.contact .lk{color:var(--accent)}
+
+.closing{display:flex;flex-direction:column;justify-content:center;height:100%}
+
+/* ===== 인쇄 → 16:9 PDF ===== */
+@page{size:1280px 720px;margin:0}
+@media print{
+  html,body{background:#fff;padding:0}
+  .slide{margin:0;box-shadow:none;page-break-after:always;break-after:page}
+  .codepage{display:flex;flex-direction:column}
+  .codebtn,.playbtn{display:none}
+  #cmodal,#pmodal{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<div id="cmodal" class="cmodal" hidden>
+  <div class="cmodal-box">
+    <div class="cmodal-bar"><span class="cmodal-title"></span><button class="cmodal-x" aria-label="닫기">✕</button></div>
+    <div class="cmodal-body"></div>
+  </div>
+</div>
+
+<div id="pmodal" class="pmodal" hidden>
+  <div class="pbar"><span class="pmodal-title"></span><button class="pmodal-x">✕ 닫기</button></div>
+  <div class="pmodal-box"><iframe title="playable" allow="autoplay; fullscreen"></iframe></div>
+</div>
+
+<!-- ===================== S1 · 표지 ===================== -->
+<section class="slide"><div class="no">01</div>
+  <div class="cover">
+    <div class="cover-grid">
+    <div class="cover-l">
+      <div class="eyebrow">Unity Client Developer</div>
+      <h2 class="title" style="font-size:52px;margin:10px 0 14px">이정훈</h2>
+      <p style="font-size:18px;max-width:34ch;color:var(--body)">캐주얼 게임 클라이언트 개발 · 설계와 최적화, 그리고 팀이 빨리 일하게 만드는 시스템.</p>
+      <div class="grid3" style="margin:40px 0 0;max-width:560px">
+        <div><div class="stat">23</div><div class="stat-l">글로벌 출시작</div></div>
+        <div><div class="stat">2M+</div><div class="stat-l">최고 타이틀 다운로드</div></div>
+        <div><div class="stat">0→10</div><div class="stat-l">개발팀 빌딩</div></div>
+      </div>
+      <div class="contact">
+        M : <a href="mailto:jhoon8903@gmail.com">jhoon8903@gmail.com</a><br>
+        G : <a class="lk" href="https://github.com/jhoon8903">GitHub.com/jhoon8903</a><br>
+        V : <a class="lk" href="https://www.youtube.com/@actionfit3626">플레이영상 (YouTube)</a> &nbsp;·&nbsp; P : 010-3342-3408
+      </div>
+    </div>
+    <div class="cover-r">
+      <div class="sh">Signature Systems — 수록 작업</div>
+      <div class="sigrow"><span class="sn">VContainer 3-Layer DI</span><span class="sv">아키텍처</span></div>
+      <div class="sigrow"><span class="sn">Burst + Job BFS</span><span class="sv">600ms → 50ms</span></div>
+      <div class="sigrow"><span class="sn">메모리 · 저사양 최적화</span><span class="sv">2GB → 1.x GB</span></div>
+      <div class="sigrow"><span class="sn">Kahn 위상정렬 모듈 합성</span><span class="sv">fail-closed</span></div>
+      <div class="sigrow"><span class="sn">AES256 세이브 암호화</span><span class="sv">HMAC · 상수시간</span></div>
+      <div class="sigrow"><span class="sn">.ralph AI 에이전트 하네스</span><span class="sv">설계=사람</span></div>
+    </div>
+    </div>
+    <div class="cover-strip">
+      <span class="cs-lbl">Shipped · Google Play</span>
+      <img src="assets/icons/convenisort.png" alt="편의점 정리왕">
+      <img src="assets/icons/blockcat.png" alt="블럭냥">
+      <img src="assets/icons/catmerge.png" alt="머지냥카페">
+      <img src="assets/icons/market3d.png" alt="편의점 정리왕 3D">
+      <img src="assets/icons/mergemarket.png" alt="머지편의점">
+      <img src="assets/icons/blockocean.png" alt="블록오션퍼즐">
+      <img src="assets/icons/num2048.png" alt="2048">
+      <span class="cs-more">+16 titles</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== S2 · 개발 철학 ===================== -->
+<section class="slide"><div class="no">02</div>
+  <div class="eyebrow">About</div><h2 class="title">개발 철학</h2>
+  <p class="lead">퍼즐 · 머지 · 디펜스 등 캐주얼 게임 <strong>23종을 출시까지</strong> 만들며, 출시 후 최적화 · 유지보수 · 운영 핸드오프까지 경험했습니다.
+  매번 반복되는 부분은 공통 시스템으로 정리해 팀 생산성을 높여왔습니다.</p>
+  <div class="card accentL" style="margin:6px 0 18px">
+    <h3 style="color:var(--accent)">“설계는 사람, 구현 가속은 AI.”</h3>
+    <p>아키텍처와 판단은 직접 정하고, 구현 속도는 AI 에이전트로 끌어올리되, AI 출력은 코드리뷰 · 검증을 반드시 거칩니다.</p>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>Context-first</h3><p>CLAUDE.md로 맥락 사전 정의</p></div>
+    <div class="card"><h3>Human-design</h3><p>설계 결정은 사람이</p></div>
+    <div class="card"><h3>Verify-always</h3><p>AI 출력은 검증 후 반영</p></div>
+    <div class="card"><h3>Iterate-fast</h3><p>빠른 피드백 루프</p></div>
+  </div>
+</section>
+
+<!-- ===================== S3 · 핵심 역량 3축 ===================== -->
+<section class="slide"><div class="no">03</div>
+  <div class="eyebrow">Core Competencies</div><h2 class="title">핵심 역량 3축</h2>
+  <div class="grid3" style="margin-top:6px">
+    <div class="card">
+      <h3>아키텍처 + 최적화</h3>
+      <p style="margin-top:8px">DI (VContainer) 3 Layer<br>MVC · Command · Factory · Pool 조합<br>Profiler 기반 병목 진단 · 최적화</p>
+    </div>
+    <div class="card">
+      <h3>출시 + 시스템화</h3>
+      <p style="margin-top:8px">23종 글로벌 출시 (5장르)<br>0 → 10 팀빌딩<br>사내 시스템 · 온보딩 구축</p>
+    </div>
+    <div class="card">
+      <h3>AI 워크플로 운용</h3>
+      <p style="margin-top:8px">CLAUDE.md 규약<br>자율 에이전트 하네스로 구현 가속<br>출력은 검증 · 리뷰 필수</p>
+    </div>
+  </div>
+  <div class="footnote" style="margin-top:26px">설계 · 판단은 사람이 쥐고, 반복 구현 속도만 AI로 끌어올리는 것 — 세 축이 하나의 작업 방식으로 묶입니다.</div>
+</section>
+
+<!-- ===================== S4 · 아키텍처 ===================== -->
+<section class="slide"><div class="no">04</div>
+  <div class="eyebrow">Main Project — Wiggle Puzzle ①</div><h2 class="title">아키텍처</h2>
+  <p class="lead meta" style="margin-bottom:18px">전략 퍼즐 · Unity 6 · 본인 = 아키텍처 리드 · 코어 · 최적화 · SDK · 출시 후 지표 미달로 서비스 종료 → <strong style="color:var(--body)">코드 · 설계 쇼케이스</strong></p>
+  <div class="dgm">
+    <div class="eb">Boot Sequence</div>
+    <div class="flow">
+      <div class="node"><div class="nt">BootScope</div><div class="ns">부트 진입</div></div>
+      <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
+      <div class="node"><div class="nt">ModuleInstaller</div><div class="ns">전역 모듈 초기화</div></div>
+      <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
+      <div class="node"><div class="nt">GameScope</div><div class="ns">VContainer</div></div>
+      <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
+      <div class="node key"><div class="nt">GameEntryPoint</div><div class="ns">IStartable / ITickable</div></div>
+    </div>
+    <div class="hint">씬 시작 <b>전</b> 전역 모듈을 초기화 → 부트 오류 · 잘못된 의존을 <b>원천 차단</b></div>
+    <div class="rule"></div>
+    <div class="eb">VContainer · 3-Layer DI</div>
+    <div class="layers">
+      <div class="layer"><div class="lh"><span class="dot"></span>Factory Layer</div><div class="lb">Board · Gimmick · Wiggle · Shooter · Slot · Bullet …</div><div class="ls">Pool 객체 생성</div></div>
+      <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
+      <div class="layer"><div class="lh"><span class="dot"></span>Controller Layer</div><div class="lb">GameController → 13개 하위 Controller</div><div class="ls">Initialize · Tick · Dispose 대칭 위임</div></div>
+      <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
+      <div class="layer"><div class="lh"><span class="dot"></span>View Layer</div><div class="lb">SegmentView · SlotView …</div><div class="ls">월드 좌표 · 표현</div></div>
+    </div>
+    <div class="hint"><b>단방향 의존</b>(Factory → Controller → View)으로 순환참조 구조적 차단 &nbsp;·&nbsp; 패턴 조합 :
+      <b>MVC · Observable · Command · Factory · Object Pool</b> 규격화 → 저숙련 개발자도 메모리 누수 없이 기능 추가 (팀 지향 설계)</div>
+  </div>
+</section>
+
+<!-- ===================== S5 · BFS 최적화 ===================== -->
+<section class="slide"><div class="no">05</div>
+  <div class="eyebrow">Main Project — Wiggle Puzzle ②</div><h2 class="title">트러블슈팅 : BFS 경로탐색 최적화</h2>
+  <div style="display:flex;gap:38px;align-items:center">
+  <div style="flex:1">
+  <ul class="star" style="margin-bottom:18px">
+    <li><b>S</b>보드 위 다수 블록이 각자 경로 탐색 → 상하좌우 순회 검증 시 블록 수만큼 연산 폭증, 프레임 부하</li>
+    <li><b>T</b>메인스레드를 막지 않으면서 대량 경로 연산을 빠르게</li>
+    <li><b>A</b><strong>Unity Jobs + Burst Compiler</strong>로 Task에 넘겨 <strong>SIMD float4 동시연산</strong> 처리.<br>NativeArray는 Dispose를 인터페이스 쌍으로 강제해 네이티브 누수 차단</li>
+    <li><b>R</b>경로 연산 지연 <span class="num">600ms+ → 50ms 이하</span> (Unity Profiler 측정)</li>
+  </ul>
+  <p class="cap"><span class="k">왜</span> — Burst+Job으로 BFS를 메인스레드 밖에서 돌리고, Allocator.Temp NativeContainer를 Execute 끝에서 직접 Dispose해 GC/누수 0.<br>WalkableMap은 [ReadOnly]로 안전 보장.</p>
+  <div class="ba" style="margin-top:24px">
+    <div class="ba-row"><span class="lab">before</span><div class="ba-track"><div class="ba-fill slow" style="width:100%"></div></div><span class="val" style="color:var(--danger)">600ms+</span></div>
+    <div class="ba-row"><span class="lab">after</span><div class="ba-track"><div class="ba-fill fast" style="width:9%"></div></div><span class="val" style="color:var(--accent)">50ms↓</span></div>
+  </div>
+  <div style="margin-top:22px;display:flex;align-items:center;gap:16px">
+    <button class="codebtn" data-code="cp-bfs">코드 보기 — PathFindJob.cs</button>
+    <span class="footnote" style="margin:0">방어 포인트 : 왜 Burst(SIMD 동시연산) / Dispose 쌍 강제(네이티브 누수)인지 라인 단위 설명 가능</span>
+  </div>
+  </div>
+  <figure class="proj-shot"><img src="assets/shots/WigglePuzzle.png" alt="" style="height:460px"><figcaption>BFS 경로탐색이 도는 실제 보드 — WigglePuzzle</figcaption></figure>
+  </div>
+</section>
+
+<!-- CODE PAGE · BFS -->
+<section class="slide codepage" id="cp-bfs">
+  <div class="cp-head">05 · CODE — Burst BFS PathFindJob</div>
+  <div class="cp-inner">
+    <div class="cardcode">
+      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">Assets/@Projects/99.Scripts/Systems/PathFinding/Jobs/PathFindJob.cs</span></div>
+      <div class="cc-body">
+<pre><code class="language-csharp">[BurstCompile]
+public struct PathFindJob : IJob
+{
+    public int GridWidth;
+    public int GridHeight;
+    [ReadOnly] public NativeArray&lt;bool&gt; WalkableMap;
+    public int2 Start;
+    public int2 Goal;
+    public NativeList&lt;int2&gt; PathResult;
+
+    public void Execute()
+    {
+        PathResult.Clear();
+        if (!IsValid(Start) || !IsValid(Goal)) return;
+        var startIndex = ToIndex(Start);
+        var goalIndex  = ToIndex(Goal);
+        if (!WalkableMap[startIndex] ||
+            !WalkableMap[goalIndex]) return;
+
+        var queue    = new NativeQueue&lt;int2&gt;(Allocator.Temp);
+        var visited  = new NativeHashSet&lt;int&gt;(128, Allocator.Temp);
+        var cameFrom = new NativeHashMap&lt;int,int&gt;(128, Allocator.Temp);
+        queue.Enqueue(Start);
+        visited.Add(startIndex);</code></pre>
+<pre><code class="language-csharp">        while (queue.TryDequeue(out int2 cur))
+        {
+            if (cur.x == Goal.x &amp;&amp; cur.y == Goal.y) break;
+            for (var i = 0; i &lt; 4; i++)
+            {
+                var nb = cur + GridUtility.FourDirections[i];
+                if (!IsValid(nb)) continue;
+                var ni = ToIndex(nb);
+                if (visited.Contains(ni)) continue;
+                if (!WalkableMap[ni]) continue;
+                visited.Add(ni);
+                queue.Enqueue(nb);
+                cameFrom[ni] = ToIndex(cur);
+            }
+        }
+        // cameFrom 역추적으로 PathResult 복원 (생략)
+
+        // Allocator.Temp 컨테이너는 끝에서 직접 해제 → 누수 0
+        queue.Dispose();
+        visited.Dispose();
+        cameFrom.Dispose();
+    }
+}</code></pre>
+      </div>
+    </div>
+    <div class="cp-cap"><span class="k">💡</span> Burst+Job으로 BFS를 메인스레드 밖에서 돌리고, Allocator.Temp NativeContainer를 Execute 끝에서 직접 Dispose해 GC/누수 0. WalkableMap은 [ReadOnly]로 안전 보장.</div>
+  </div>
+</section>
+
+<!-- ===================== S6 · 메모리 최적화 ===================== -->
+<section class="slide"><div class="no">06</div>
+  <div class="eyebrow">Main Project — Wiggle Puzzle ③</div><h2 class="title">트러블슈팅 : 메모리 · 저사양 최적화</h2>
+  <ul class="star" style="margin-bottom:18px">
+    <li><b>S</b>저사양 기기 프레임 드랍 / 메모리 과점유</li>
+    <li><b>A</b>Object Pool 재사용, 색상 인덱스 캐시, dirty-flag 캐싱, GC 회피 리스트 재사용 (GC 할당 최소화 지향)</li>
+    <li><b>R</b>Memory Snapshot <span class="num">2GB → 1.x GB</span> · 갤럭시 A Series · Poco · 저전력모드 <span class="num">60fps 유지</span></li>
+  </ul>
+  <p class="cap"><span class="k">왜</span> — 매 프레임 읽는 카운트를 dirty-flag로 캐시해 List 순회를 변동 시점에만 수행, 색상 인덱스도 재사용 List에 담아 할당 0. 뷰는 Pool&lt;T&gt;로 Get/Release 재사용해 Instantiate/Destroy GC를 제거.</p>
+  <div class="ba" style="margin-top:24px">
+    <div class="ba-row"><span class="lab">before</span><div class="ba-track"><div class="ba-fill slow" style="width:100%"></div></div><span class="val" style="color:var(--danger)">2 GB</span></div>
+    <div class="ba-row"><span class="lab">after</span><div class="ba-track"><div class="ba-fill fast" style="width:60%"></div></div><span class="val" style="color:var(--accent)">1.x GB</span></div>
+  </div>
+  <p style="margin-top:16px"><span class="chip">갤럭시 A Series</span><span class="chip">Poco</span><span class="chip">저전력모드 · 60fps 유지</span></p>
+  <div style="margin-top:20px"><button class="codebtn" data-code="cp-pool">코드 보기 — WiggleModel · Pool&lt;T&gt;</button></div>
+</section>
+
+<!-- CODE PAGE · POOL -->
+<section class="slide codepage" id="cp-pool">
+  <div class="cp-head">06 · CODE — dirty-flag 캐시 · Object Pool</div>
+  <div class="cp-inner">
+    <div class="cardcode">
+      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">…/Models/Wiggle/WiggleModel.cs &nbsp;·&nbsp; …/Systems/Pool/Pool.cs</span></div>
+      <div class="cc-body">
+<pre><code class="language-csharp">// 매 프레임 호출되는 카운트를 dirty-flag로 캐싱
+private readonly List&lt;int&gt; _colorCache = new();  // GC 0
+private int  _cachedCount;
+private bool _isDirty = true;
+
+public int ActiveSegmentCount
+{
+    get
+    {
+        if (_isDirty)              // 변경됐을 때만 재계산
+        {
+            _cachedCount = 0;
+            foreach (var seg in _segments)
+                if (!seg.IsDestroyed) _cachedCount++;
+            _isDirty = false;
+        }
+        return _cachedCount;       // 평소엔 캐시 반환
+    }
+}
+// 세그먼트 변동 시점에만 호출
+private void Invalidate() =&gt; _isDirty = true;</code></pre>
+<pre><code class="language-csharp">// Pool&lt;T&gt; : 활성 인스턴스 추적 + 재사용
+// (new 대신 Get / Release)
+[MethodImpl(MethodImplOptions.AggressiveInlining)]
+public T Get()
+{
+    var i = _pool.Get();
+    _activeInstances.Add(i);
+    return i;
+}
+
+[MethodImpl(MethodImplOptions.AggressiveInlining)]
+public void Release(T instance)
+{
+    if (!instance) return;
+    _activeInstances.Remove(instance);
+    _pool.Release(instance);   // 파괴 대신 풀로 반환
+}</code></pre>
+      </div>
+    </div>
+    <div class="cp-cap"><span class="k">💡</span> 매 프레임 읽는 카운트를 dirty-flag로 캐시해 List 순회를 변동 시점에만 수행하고, 색상 인덱스도 재사용 List에 담아 할당 0. 뷰는 Pool&lt;T&gt;로 Get/Release 재사용해 Instantiate/Destroy GC를 제거.</div>
+  </div>
+</section>
+
+<!-- ===================== S7 · 코드 샘플 (인덱스) ===================== -->
+<section class="slide"><div class="no">07</div>
+  <div class="eyebrow">Main Project — Wiggle Puzzle ④</div><h2 class="title">코드 샘플</h2>
+  <p class="lead meta" style="margin-bottom:18px">실제 WigglePuzzle 클라이언트 코드 — 각 카드의 <strong style="color:var(--body)">코드 보기</strong>를 누르면 전체 코드가 열립니다 (GitHub 비공개 → 코드는 캡처/텍스트로 증빙, 라인 단위 설명 가능).</p>
+  <div class="grid2" style="margin-top:6px;gap:16px">
+    <div class="card"><h3 style="font-size:16px">① 13개 하위 Controller 주입</h3>
+      <p style="margin:6px 0 14px">Initialize / Tick / Dispose <strong>대칭 라이프사이클</strong>로 구독을 정확히 해제 → 누수 차단.</p>
+      <button class="codebtn" data-code="cp-gamecontroller">코드 보기</button></div>
+    <div class="card"><h3 style="font-size:16px">② VContainer LifetimeScope</h3>
+      <p style="margin:6px 0 14px">Factory(인터페이스) / Controller(구현) / EntryPoint 등록 → <strong>생성 · 실행 책임 일원화</strong>.</p>
+      <button class="codebtn" data-code="cp-vcontainer">코드 보기</button></div>
+    <div class="card"><h3 style="font-size:16px">③ SlotFactory — Pool 대여/반납</h3>
+      <p style="margin:6px 0 14px">Model은 new, View는 <strong>Pool에서 Get + DI 주입</strong>, Release로 반납 → Instantiate 비용 제거.</p>
+      <button class="codebtn" data-code="cp-slotfactory">코드 보기</button></div>
+    <div class="card"><h3 style="font-size:16px">④ Command 큐 — 프레임 틱 실행</h3>
+      <p style="margin:6px 0 14px"><strong>_isProcessing 가드</strong> + lock 보호, finally에서 Dispose해 커맨드 수명을 닫음.</p>
+      <button class="codebtn" data-code="cp-command">코드 보기</button></div>
+  </div>
+</section>
+
+<!-- CODE PAGE · GameController -->
+<section class="slide codepage" id="cp-gamecontroller">
+  <div class="cp-head">07 · CODE ① — GameController 오케스트레이션</div>
+  <div class="cp-inner">
+    <div class="cardcode">
+      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">…/Behaviours/Controllers/GameController.cs</span></div>
+      <div class="cc-body">
+<pre><code class="language-csharp">public class GameController : BaseController
+{
+    private readonly BoardController _board;
+    private readonly ShooterController _shooter;
+    private readonly WiggleController _wiggle;
+    // … gimmick/slot/command/input/fog/exit (생략) …
+
+    public GameController(
+        BoardController board,
+        ShooterController shooter,
+        WiggleController wiggle,
+        /* … 나머지 주입 생략 … */
+        ExitController exit)
+    {
+        _board   = board;     // 의존성은 전부
+        _shooter = shooter;   // 생성자 주입(readonly)
+        _wiggle  = wiggle;
+        _exit    = exit;
+    }</code></pre>
+<pre><code class="language-csharp">    protected override void OnInitialize()
+    {
+        _board.Initialize();
+        _shooter.Initialize();
+        _wiggle.Initialize();
+        _wiggle.OnWiggleDestroyed += HandleWiggleDestroyed;
+    }
+
+    protected override void OnTick(float dt)
+    {
+        if (_state != GameState.Playing) return;
+        _shooter?.Tick(dt);
+        _wiggle?.Tick(dt);
+        _bullet?.Tick(dt);
+    }
+
+    protected override void OnDispose()
+    {                         // 구독 해제(대칭)
+        _wiggle.OnWiggleDestroyed -= HandleWiggleDestroyed;
+        _shooter.Dispose();
+        _wiggle.Dispose();
+        _exit.Dispose();
+    }
+}</code></pre>
+      </div>
+    </div>
+    <div class="cp-cap"><span class="k">💡</span> 13개 Controller를 전부 readonly 생성자 주입으로 받아 결합도를 낮추고, Initialize에서 구독한 이벤트를 Dispose에서 정확히 해제하는 대칭 라이프사이클로 누수를 차단. Tick은 Playing 상태에서만 위임.</div>
+  </div>
+</section>
+
+<!-- CODE PAGE · VContainer -->
+<section class="slide codepage" id="cp-vcontainer">
+  <div class="cp-head">07 · CODE ② — VContainer LifetimeScope</div>
+  <div class="cp-inner">
+    <div class="cardcode">
+      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">…/BootStraps/LifeTimeScopes/GameLifeTimeScope.cs</span></div>
+      <div class="cc-body">
+<pre><code class="language-csharp">protected override void Configure(IContainerBuilder builder)
+{
+    base.Configure(builder);
+    ModuleInstaller.Install(builder);
+    RegisterUISystem(builder);
+    RegisterLevelSystem(builder);
+    RegisterFactories(builder);
+    RegisterControllers(builder);
+    RegisterViews(builder);
+    builder.RegisterComponentInHierarchy&lt;AssetProvider&gt;();
+    builder.RegisterInstance(contentContainer);
+    builder.RegisterEntryPoint&lt;GameEntryPoint&gt;();
+}</code></pre>
+<pre><code class="language-csharp">private void RegisterFactories(IContainerBuilder b)
+{
+    b.Register&lt;IShooterFactory, ShooterFactory&gt;(Lifetime.Scoped);
+    b.Register&lt;IWiggleFactory,  WiggleFactory&gt;(Lifetime.Scoped);
+    b.Register&lt;IGimmickFactory, GimmickFactory&gt;(Lifetime.Scoped);
+    b.Register&lt;ISlotFactory,    SlotFactory&gt;(Lifetime.Scoped);
+    // … 생략 …
+}
+
+private void RegisterControllers(IContainerBuilder b)
+{
+    b.Register&lt;InputController&gt;(Lifetime.Scoped);
+    b.Register&lt;CommandController&gt;(Lifetime.Scoped);
+    b.Register&lt;BoardController&gt;(Lifetime.Scoped);
+    b.Register&lt;GameController&gt;(Lifetime.Scoped);
+    // … 생략 …
+}</code></pre>
+      </div>
+    </div>
+    <div class="cp-cap"><span class="k">💡</span> 씬 단위 Scoped 컨테이너로 Factory는 인터페이스 바인딩, Controller는 구현 등록, 게임 진입점은 RegisterEntryPoint로 분리 — 생성/실행 책임이 컨테이너로 일원화됨.</div>
+  </div>
+</section>
+
+<!-- CODE PAGE · SlotFactory -->
+<section class="slide codepage" id="cp-slotfactory">
+  <div class="cp-head">07 · CODE ③ — SlotFactory (Pool 대여/반납 + DI)</div>
+  <div class="cp-inner">
+    <div class="cardcode">
+      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">…/Systems/Factory/SlotFactory.cs</span></div>
+      <div class="cc-body">
+<pre><code class="language-csharp">public class SlotFactory : ISlotFactory
+{
+    private readonly IObjectResolver _resolver;
+    private readonly IPool _pool;
+
+    public SlotFactory(
+        IObjectResolver resolver, IPool pool)
+    {
+        _resolver = resolver;
+        _pool = pool;
+    }
+
+    public (SlotModel model, SlotView view) Create(
+        string id, int index, Vector3 pos,
+        SlotState state, Transform parent = null)
+    {
+        var model = new SlotModel();
+        model.Initialize(id, index, state);
+        var view = _pool.Get&lt;SlotView&gt;();   // 풀에서 대여</code></pre>
+<pre><code class="language-csharp">        if (view == null) return (model, view);
+        _resolver.Inject(view);             // 대여 View에 DI 주입
+        if (parent != null)
+            view.transform.SetParent(parent);
+        view.transform.position = pos;
+        view.Model = model;
+        return (model, view);
+    }
+
+    public void Release(SlotModel model, SlotView view)
+    {
+        if (view != null)
+        {
+            view.Model = null;
+            _pool.Return(view);             // 풀로 반납
+        }
+        model?.Reset();
+    }
+}</code></pre>
+      </div>
+    </div>
+    <div class="cp-cap"><span class="k">💡</span> Model은 new로, View는 IPool에서 대여(Get)하고 IObjectResolver로 즉시 DI 주입 — Instantiate 비용 제거. Release에서 Model 참조를 끊고 Return해 더블 릴리즈/누수를 방지.</div>
+  </div>
+</section>
+
+<!-- CODE PAGE · Command -->
+<section class="slide codepage" id="cp-command">
+  <div class="cp-head">07 · CODE ④ — Command 큐 (프레임 틱 순차 실행)</div>
+  <div class="cp-inner">
+    <div class="cardcode">
+      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">…/Systems/Command/CommandController.cs</span></div>
+      <div class="cc-body">
+<pre><code class="language-csharp">public class CommandController : IDisposable
+{
+    private readonly Queue&lt;ICommand&gt; _queue = new();
+    private readonly object _lock = new();
+    private bool _isProcessing;
+    private MUpdateLoop _loop;
+
+    public CommandController()
+    {
+        _loop = ModuleContainer.Get&lt;MUpdateLoop&gt;();
+        if (_loop != null) _loop.OnTick += ProcessNext;
+    }
+
+    public void Enqueue(ICommand command)
+    {
+        if (command == null) return;
+        lock (_lock) { _queue.Enqueue(command); }
+    }</code></pre>
+<pre><code class="language-csharp">    // 매 프레임 MUpdateLoop.OnTick에서 호출
+    private void ProcessNext()
+    {
+        if (_isProcessing || _queue.Count == 0) return;
+        ICommand command = null;
+        lock (_lock)
+        {
+            if (_queue.Count &gt; 0)
+                command = _queue.Dequeue();
+        }
+        if (command == null) return;
+        try
+        {
+            _isProcessing = true;
+            command.Execute();
+        }
+        finally
+        {
+            command.Dispose();      // 커맨드 수명 종료
+            _isProcessing = false;
+        }
+    }
+}</code></pre>
+      </div>
+    </div>
+    <div class="cp-cap"><span class="k">💡</span> 턴/상태 변경을 ICommand로 캡슐화해 큐에 쌓고, MUpdateLoop.OnTick에서 한 프레임 한 개씩 순차 실행 — _isProcessing 가드로 재진입을 막고 lock으로 enqueue/dequeue를 보호, finally에서 Dispose해 커맨드 수명을 닫음.</div>
+  </div>
+</section>
+
+<!-- ===================== S8 · 모듈 시스템 ===================== -->
+<section class="slide"><div class="no">08</div>
+  <div class="eyebrow">Main Project — GameFramework ①</div><h2 class="title">재사용 프레임워크 · 모듈 시스템</h2>
+  <p class="lead meta" style="margin-bottom:14px">게임을 빠르게 만들고 핸드오프 가능케 하는 클라이언트 프레임워크 (Boot/DI/Save/UI/Monetize) · UPM Package —
+  각 모듈이 <strong style="color:var(--body)">Provides/Requires</strong>만 선언하면 <strong style="color:var(--body)">Kahn 위상정렬</strong>로 초기화 순서를 자동 결정하고, 문제 시 빌드 전에 <strong style="color:var(--body)">fail-closed</strong>로 차단합니다.</p>
+  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:28px;align-items:center">
+    <div class="dgm">
+      <div class="eb">Capability Graph → Kahn</div>
+      <div class="flow">
+        <div class="node"><div class="nt">Save</div><div class="ns">provides : ISave</div></div>
+        <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
+        <div class="node"><div class="nt">Network</div><div class="ns">requires : ISave</div></div>
+        <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
+        <div class="node"><div class="nt">UI</div><div class="ns">requires : Network</div></div>
+      </div>
+      <div class="hint"><code>in-degree 0</code>(기다릴 게 없는)부터 꺼내며 순서 자동 결정 — 사람이 순서를 지정하지 않음</div>
+      <div class="outcomes" style="margin-top:16px">
+        <div class="out ok"><div class="oh">✔ 결정적 · 안정 정렬</div><div class="ob"><code>(Order, index)</code> 비교자 SortedSet → 플랫폼 · 실행마다 동일</div></div>
+        <div class="out bad"><div class="oh">✖ 순환 = 빌드 실패</div><div class="ob"><code>processed &lt; n</code> → fail-closed (부팅 중단)</div></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:18px">
+      <div class="cap"><span class="k">표준 Kahn</span>이되 ready를 <code style="font-family:var(--mono);font-size:12px">(Order, index)</code> 비교자 SortedSet으로 둬 매 실행 순서가 동일. 다 못 빠지면 그 자체가 순환의 증거.</div>
+      <button class="codebtn" data-code="cp-kahn">코드 보기 — ModuleComposition.cs</button>
+    </div>
+  </div>
+  <div style="margin-top:26px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <span class="footnote" style="margin:0">빌드 전 탐지</span>
+    <span class="chip">순환 의존</span><span class="chip">중복 provider</span><span class="chip">모호 provider</span><span class="chip">단계 역전</span>
+  </div>
+</section>
+
+<!-- CODE PAGE · Kahn -->
+<section class="slide codepage" id="cp-kahn">
+  <div class="cp-head">08 · CODE — ModuleComposition · Kahn 위상정렬</div>
+  <div class="cp-inner">
+    <div class="cardcode">
+      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">Core/MVC/Core/ModuleComposition.cs</span></div>
+      <div class="cc-body">
+<pre><code class="language-csharp">// 안정적 위상정렬 : 순환이면 예외
+public static IReadOnlyList&lt;int&gt; ResolveInitOrder(
+    IReadOnlyList&lt;ModuleDescriptor&gt; modules)
+{
+    int n = modules?.Count ?? 0;
+    var order = new List&lt;int&gt;(n);
+    if (n == 0) return order;
+
+    var providers = BuildProviderMap(modules);
+    int[] inDeg = BuildInDegree(
+        modules, providers, out List&lt;int&gt;[] deps);
+
+    // ready : in-degree 0을 (Order, index) 오름차순
+    var ready = new SortedSet&lt;int&gt;(Comparer&lt;int&gt;.Create(
+        (a, b) =&gt;
+        {
+            int c = modules[a].Order
+                .CompareTo(modules[b].Order);
+            return c != 0 ? c : a.CompareTo(b);
+        }));
+    for (int i = 0; i &lt; n; i++)
+        if (inDeg[i] == 0) ready.Add(i);</code></pre>
+<pre><code class="language-csharp">    while (ready.Count &gt; 0)
+    {
+        int next = ready.Min;     // 최소 (Order, index)
+        ready.Remove(next);
+        order.Add(next);
+        foreach (int d in deps[next])
+            if (--inDeg[d] == 0) ready.Add(d);
+    }
+
+    // 전부 못 빠지면 사이클 → fail-closed
+    if (order.Count &lt; n)
+        throw new ModuleCircularDependencyException(
+            $"cycle: {order.Count}/{n} ordered");
+    return order;
+}</code></pre>
+      </div>
+    </div>
+    <div class="cp-cap"><span class="k">💡</span> 표준 Kahn이지만 ready를 Queue가 아닌 (Order, index) 비교자 SortedSet으로 둬 "순서가 매 실행 동일"하게 보장 — Requires/Provides 능력(Type) 기반으로 in-degree를 쌓고, 다 못 빠지면 그 자체가 순환 증거다.</div>
+  </div>
+</section>
+
+<!-- ===================== S9 · 세이브 암호화 ===================== -->
+<section class="slide"><div class="no">09</div>
+  <div class="eyebrow">Main Project — GameFramework ②</div><h2 class="title">세이브 암호화 &amp; 테스트</h2>
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="card"><h3 style="font-size:16px">세이브 데이터 보안</h3>
+      <p style="margin-top:6px"><strong>AES256 + HMAC</strong>(헤더까지 인증 → 변조 차단) · <strong>버전드 blob</strong>(v2 매직/iteration 헤더) · v1 레거시 폴백 → 다음 저장 시 v2 자동 승격 · <strong>상수시간 비교</strong>(타이밍 공격 방어).</p></div>
+    <div class="card"><h3 style="font-size:16px">검증 — EditMode 테스트</h3>
+      <p style="margin-top:6px">실패 모드(정밀도 손실 · 타입 보존 · 다운그레이드)를 정조준한 테스트. <strong>“AI 출력 검증 습관”의 직접 증거.</strong></p></div>
+  </div>
+  <p class="cap"><span class="k">Encrypt-then-MAC</span> — 복호화 전에 magic+kdfId+salt+iv+cipher 전체를 덮는 HMAC를 상수시간 XOR-누적으로 먼저 검증. 헤더 한 바이트만 변조돼도 거부되고, 비교 시간이 일정해 타이밍 누설이 없다.</p>
+  <p class="footnote" style="margin-top:6px"><span style="color:var(--accent);font-weight:600">Why</span> — 세이브 변조 · 롤백 방어와 구버전 호환을 동시에. 릴리스에서 제거되는 zero-cost 로거([Conditional]).</p>
+  <div style="margin-top:24px">
+    <div class="footnote" style="margin-bottom:9px">버전드 blob 레이아웃 — 헤더(MAGIC·kdfId·ver)까지 HMAC가 덮어 변조 차단</div>
+    <div class="blob">
+      <span class="bseg">MAGIC<small>'GFS3' · 4</small></span>
+      <span class="bseg">kdfId<small>1</small></span>
+      <span class="bseg">verHdr<small>1</small></span>
+      <span class="bseg">fileSalt<small>16</small></span>
+      <span class="bseg">iv<small>16</small></span>
+      <span class="bseg grow">cipher<small>N</small></span>
+      <span class="bseg hmac">hmac<small>32</small></span>
+    </div>
+  </div>
+  <div style="margin-top:22px"><button class="codebtn" data-code="cp-save">코드 보기 — SaveDataEncryption.cs</button></div>
+</section>
+
+<!-- CODE PAGE · Save -->
+<section class="slide codepage" id="cp-save">
+  <div class="cp-head">09 · CODE — SaveDataEncryption v3 (GFS3)</div>
+  <div class="cp-inner">
+    <div class="cardcode">
+      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">Services/SaveSystem/Core/SaveDataEncryption.cs</span></div>
+      <div class="cc-body">
+<pre><code class="language-csharp">// [MAGIC 'GFS3'][kdfId][verHeader][salt 16][iv 16][cipher][hmac 32]
+private static byte[] AesDecryptV3(byte[] data)
+{
+    if (data.Length &lt; V3OverheadLen)
+        throw new ArgumentException("Invalid length");
+
+    int o = MagicLen;
+    byte kdfId  = data[o++];
+    byte kdfVer = data[o++];
+    byte[] salt   = Slice(data, ref o, SaltLen);
+    byte[] iv     = Slice(data, ref o, IvLen);
+    byte[] cipher = Slice(data, ref o,
+        data.Length - V3OverheadLen);
+    byte[] hmac   = Slice(data, ref o, HmacLen);
+
+    // 미지원 버전은 명시적 예외 (이 바이트도 HMAC가 덮음)
+    if (kdfId != KdfIdHkdfSha256)
+        throw new CryptographicException("bad kdfId");</code></pre>
+<pre><code class="language-csharp">    DeriveV3Keys(salt, out var aesKey, out var hmacKey);
+    byte[] header   = { kdfId, kdfVer };
+    byte[] expected = GenerateHmacV3(
+        hmacKey, header, salt, iv, cipher);
+
+    // 검증 먼저, 복호화 나중 (Encrypt-then-MAC)
+    if (!CompareBytes(hmac, expected))
+        throw new CryptographicException("HMAC mismatch");
+
+    return AesDecryptWithKey(aesKey, iv, cipher);
+}
+
+// 상수시간 비교 (타이밍 공격 방어)
+private static bool CompareBytes(byte[] a, byte[] b)
+{
+    if (a.Length != b.Length) return false;
+    int r = 0;
+    for (int i = 0; i &lt; a.Length; i++)
+        r |= a[i] ^ b[i];   // 조기 return 없이 누적
+    return r == 0;
+}</code></pre>
+      </div>
+    </div>
+    <div class="cp-cap"><span class="k">💡</span> Encrypt-then-MAC : AES-256-CBC 복호화 전에 magic+kdfId+masterKdfVer+salt+iv+cipher 전체를 덮는 HMAC를 상수시간 XOR-누적 비교로 먼저 검증 — 헤더 한 바이트만 변조돼도 거부되고, 비교 시간이 일정해 타이밍 누설이 없다.</div>
+  </div>
+</section>
+
+<!-- ===================== S10 · 출시작 ===================== -->
+<section class="slide"><div class="no">10</div>
+  <div class="eyebrow">Shipped Titles</div><h2 class="title">출시작 — 23종 / 5장르</h2>
+  <p class="lead meta">디자이너 1 + 기획 1 + 개발 1(본인) 구조. 내가 메인/리드로 개발한 게임이 도달한 규모 :</p>
+  <table>
+    <tr><th>게임</th><th>다운로드</th><th>역할</th></tr>
+    <tr><td><span class="gname"><img src="assets/icons/convenisort.png" alt="">편의점 정리왕</span></td><td><span class="num">200만+</span></td><td>메인개발 → 핸드오프 → 리팩토링 · 최적화 · 에디터</td></tr>
+    <tr><td><span class="gname"><img src="assets/icons/blockcat.png" alt="">블럭냥</span></td><td><span class="num">200만+</span></td><td>MVP 기술수정 · 최적화 · 리팩토링</td></tr>
+    <tr><td><span class="gname"><img src="assets/icons/catmerge.png" alt="">머지냥카페</span></td><td><span class="num">~100만</span></td><td>메인개발 → 핸드오프</td></tr>
+    <tr><td><span class="gname"><img src="assets/icons/market3d.png" alt="">편의점 정리왕 3D</span></td><td><span class="num">~100만</span></td><td>MVP · 에디터 → 핸드오프</td></tr>
+    <tr><td><span class="gname"><img src="assets/icons/mergemarket.png" alt="">머지편의점</span></td><td><span class="num">~20만</span></td><td>메인개발 → 핸드오프</td></tr>
+  </table>
+  <p style="margin-top:14px;font-size:14px">그 외 유지보수 · 최적화(블럭팡, 블록오션퍼즐, 스티커타운, 블록퍼즐 3종, 2048 등), 교육생 프로젝트 리드(Magic/Jump Cat, Candy Cutter, Cat Tower Sort) 등 다수.</p>
+  <p class="footnote">UA(다운로드)는 마케팅이지만, 그 규모를 견디는 클라이언트와 출시 후 최적화 · 운영을 만든 것은 개발.</p>
+</section>
+
+<!-- ===================== S10b · 게임플레이 갤러리 ===================== -->
+<section class="slide"><div class="no">11</div>
+  <div class="eyebrow">Shipped Titles · Gameplay</div><h2 class="title">실제 게임플레이</h2>
+  <div class="gallery">
+    <figure><img src="assets/shots/convenisort_ss0.png" alt=""><figcaption>편의점 정리왕</figcaption></figure>
+    <figure><img src="assets/shots/blockcat_ss0.png" alt=""><figcaption>블럭냥</figcaption></figure>
+    <figure><img src="assets/shots/catmerge_ss0.png" alt=""><figcaption>머지냥카페</figcaption></figure>
+    <figure><img src="assets/shots/market3d_ss0.png" alt=""><figcaption>편의점 정리왕 3D</figcaption></figure>
+    <figure><img src="assets/shots/mergemarket_ss0.png" alt=""><figcaption>머지편의점</figcaption></figure>
+  </div>
+  <p class="footnote" style="text-align:center;margin-top:20px">Google Play 스토어 등록 스크린샷 · 본인이 메인/리드 개발 또는 출시 후 최적화 · 운영 담당</p>
+</section>
+
+<!-- ===================== S11 · 플레이어블 ===================== -->
+<section class="slide"><div class="no">12</div>
+  <div class="eyebrow">Playable Ad Pipeline</div><h2 class="title">플레이어블 광고 파이프라인 — 다수 제작</h2>
+  <p class="lead meta" style="margin-bottom:14px">Luna 기반 <strong style="color:var(--body)">Unity → HTML5</strong> 변환 + Python 멀티네트워크 자동 빌드.
+  파이프라인으로 만든 플레이어블 <strong style="color:var(--body)">13종</strong> — 아래 버튼은 모두 <strong style="color:var(--body)">실제 브라우저에서 플레이 가능</strong>.</p>
+  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:26px;align-items:start">
+    <div class="plib">
+      <div class="pgroup">
+        <div class="pgl">로켓단게임즈 · 디펜스</div>
+        <div class="pchips">
+          <button class="pchip" data-play="assets/playable/BunkerDef.html" data-title="벙커디펜스 — 플레이어블 광고">벙커디펜스</button>
+          <button class="pchip" data-play="assets/playable/WiggleDef.html" data-title="꿈틀디펜스 — 플레이어블 광고">꿈틀디펜스</button>
+        </div>
+      </div>
+      <div class="pgroup">
+        <div class="pgl">액션핏 · 게임 플레이어블</div>
+        <div class="pchips">
+          <button class="pchip" data-play="assets/playable/ColorBlockJam.html" data-title="ColorBlockJam — 플레이어블">ColorBlockJam</button>
+          <button class="pchip" data-play="assets/playable/FatCleaner.html" data-title="FatCleaner — 플레이어블">FatCleaner</button>
+          <button class="pchip" data-play="assets/playable/MergeCat.html" data-title="MergeCat — 플레이어블">MergeCat</button>
+          <button class="pchip" data-play="assets/playable/Octodot.html" data-title="Octodot — 플레이어블">Octodot</button>
+          <button class="pchip" data-play="assets/playable/PlopCat.html" data-title="PlopCat — 플레이어블">PlopCat</button>
+          <button class="pchip" data-play="assets/playable/SandCat.html" data-title="SandCat — 플레이어블">SandCat</button>
+        </div>
+      </div>
+      <div class="pgroup">
+        <div class="pgl">프로토타입 · 신규 메커닉</div>
+        <div class="pchips">
+          <button class="pchip" data-play="assets/playable/ArrowCube.html" data-title="ArrowCube — 플레이어블">ArrowCube</button>
+          <button class="pchip" data-play="assets/playable/CandyBurst.html" data-title="CandyBurst — 플레이어블">CandyBurst</button>
+          <button class="pchip" data-play="assets/playable/ConveyorPaint.html" data-title="ConveyorPaint — 플레이어블">ConveyorPaint</button>
+          <button class="pchip" data-play="assets/playable/PrisonEscape.html" data-title="PrisonEscape — 플레이어블">PrisonEscape</button>
+          <button class="pchip" data-play="assets/playable/WaterSort.html" data-title="WaterSort — 플레이어블">WaterSort</button>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card accentL"><h3 style="font-size:16px">멀티네트워크 자동 변환</h3>
+        <p style="margin-top:6px">Python으로 Google · Meta · Mintegral 등 네트워크별 빌드를 자동 변환 — <strong>총 21개 네트워크</strong>.</p>
+        <ul class="bul" style="margin-top:8px">
+          <li><strong>유료 라이선스($15k/mo) 없이</strong> 자체 빌드 파이프라인 (Luna는 Unity Ad · IronSource 외 유료)</li>
+          <li>C# → JS 트랜스파일 제약 <span class="num">15건+</span> 문서화 · 5MB 제약 대응(압축 · 스트리핑) · 제작용 Framework</li>
+        </ul>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div class="card" style="flex:1;text-align:center;padding:13px 10px"><div class="stat" style="font-size:28px">13</div><div class="stat-l">플레이어블</div></div>
+        <div class="card" style="flex:1;text-align:center;padding:13px 10px"><div class="stat" style="font-size:28px">21</div><div class="stat-l">변환 네트워크</div></div>
+        <div class="card" style="flex:1;text-align:center;padding:13px 10px"><div class="stat" style="font-size:28px">$15k<span style="font-size:14px">/mo</span></div><div class="stat-l">비용 절감</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== S12 · AI 워크플로 ===================== -->
+<section class="slide"><div class="no">13</div>
+  <div class="eyebrow">AI Workflow</div><h2 class="title">설계는 사람, 구현은 AI</h2>
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="card"><h3 style="font-size:16px">에이전트 하네스 (.ralph)</h3><p style="margin-top:5px">STATUS / EXIT_SIGNAL / circuit breaker로 자율 에이전트를 <strong>통제 가능하게</strong> 운용. CLAUDE.md에 아키텍처 · 컨벤션 · 금지 패턴 명시.</p></div>
+    <div class="card"><h3 style="font-size:16px">사례 — 타이쿤 플레이어블 4일</h3><p style="margin:5px 0 12px">단계별 스펙 · 버그리포트를 직접 작성 → AI에 구현 위임 → 결과 검증 · 수정. <strong>/export-prompt</strong>로 세션 로그 보유. <span style="color:var(--meta)">· 실제 플레이 가능(별첨)</span></p><button class="playbtn" data-play="assets/playable/Result_Game.html" data-title="타이쿤 플레이어블 — AI로 4일 제작 데모">플레이어블 실행</button></div>
+  </div>
+  <div class="dgm">
+    <div class="eb">Human-in-the-loop Cycle</div>
+    <div class="flow">
+      <div class="node"><div class="nt">① CLAUDE.md</div><div class="ns">아키텍처 · 컨벤션 · 금지패턴</div></div>
+      <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
+      <div class="node"><div class="nt">② 스펙 · 버그리포트</div><div class="ns">사람이 직접 작성</div></div>
+      <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
+      <div class="node key"><div class="nt">③ AI 구현 위임</div><div class="ns">.ralph 하네스로 통제</div></div>
+      <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
+      <div class="node"><div class="nt">④ 검증 · 코드리뷰</div><div class="ns">테스트 · 엣지케이스</div></div>
+    </div>
+    <div class="lane"><span class="rc">↺</span> <b>④ 검증 결과를 ① 컨텍스트로 되먹임</b> — 통과할 때까지 반복 &nbsp;·&nbsp; 채용 트렌드 4축 매핑 →
+      <span class="axis" style="padding:3px 9px">문제 구조화</span>
+      <span class="axis" style="padding:3px 9px">AI 제어력</span>
+      <span class="axis" style="padding:3px 9px">검증 습관</span>
+      <span class="axis" style="padding:3px 9px">설명 능력</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== S13 · 팀빌딩 ===================== -->
+<section class="slide"><div class="no">14</div>
+  <div class="eyebrow">Team Building &amp; Systemization · ㈜액션핏</div><h2 class="title">0 → 10 팀빌딩 &amp; 시스템화</h2>
+  <div class="grid2" style="margin-top:4px">
+    <div class="card"><h3 style="font-size:16px">팀빌딩 (퇴사 시 개발팀장)</h3>
+      <p style="margin-top:6px">정규직 6 · 계약직 4 <strong>전원 면접 · 온보딩</strong>, 교육생 과제 출제 · 채용 관리. 개발자 신기술 적용 교육 진행.</p></div>
+    <div class="card"><h3 style="font-size:16px">프로세스 구축</h3>
+      <p style="margin-top:6px">코드리뷰 문화, Git-flow, 작업 견적 체계, 신입 온보딩 문서(파이프라인 · UI · 용어집). 비개발 부서와 언어를 맞추기 위한 용어집 · 지표 · 로그 교육.</p></div>
+  </div>
+  <h3 style="margin:24px 0 10px">사내 공통 시스템</h3>
+  <p>
+    <span class="chip">Cloud Save</span><span class="chip">UI (MVVM)</span><span class="chip">Asset Provider</span><span class="chip">Push/PostBox</span><span class="chip">IAP</span><span class="chip">SDK Installer</span><span class="chip">Level Editor</span>
+  </p>
+  <p class="footnote" style="margin-top:14px">→ 신규 셋업 단축, 기획자 독립 레벨 제작. 재사용 프레임워크(Boot/DI/Save/UI/Monetize)를 개인 자산으로 지속 고도화.</p>
+</section>
+
+<!-- ===================== S14 · 기술 스택 ===================== -->
+<section class="slide"><div class="no">15</div>
+  <div class="eyebrow">Tech Stack</div><h2 class="title">기술 스택</h2>
+  <div class="grid2" style="margin-top:6px;gap:18px">
+    <div class="card"><h3>Engine · Architecture</h3><p style="margin-top:8px">Unity 6, Cocos Creator, C# / DI(VContainer), MVVM · MVC Pattern<br>Command · Factory · Observer Architecture, Object Pool</p></div>
+    <div class="card"><h3>Async · Performance</h3><p style="margin-top:8px">UniTask, Unity Job + Burst, Addressable, Profiler 최적화</p></div>
+    <div class="card"><h3>Live · Monetize</h3><p style="margin-top:8px">AppLovin · AdMob · Facebook, MMP, Analytics, IAP</p></div>
+    <div class="card"><h3>Playable · AI Dev</h3><p style="margin-top:8px">Luna, Python 멀티네트워크 빌드 / Claude Code · Codex · Gemini · GPT 에이전트 워크플로</p></div>
+  </div>
+</section>
+
+<!-- ===================== S15 · 마무리 ===================== -->
+<section class="slide"><div class="no">16</div>
+  <div class="closing">
+    <h2 class="title" style="font-size:40px;max-width:20ch;line-height:1.35">“게임을 출시까지 만들고, 반복을 시스템으로 정리하며, AI를 도구로 통제하는 개발자입니다.”</h2>
+    <div class="contact" style="margin-top:40px;font-size:14px">
+      M : <a href="mailto:jhoon8903@gmail.com">jhoon8903@gmail.com</a> &nbsp;·&nbsp;
+      G : <a class="lk" href="https://github.com/jhoon8903">GitHub.com/jhoon8903</a><br>
+      V : <a class="lk" href="https://www.youtube.com/@actionfit3626">플레이영상 (YouTube)</a> &nbsp;·&nbsp; P : 010-3342-3408
+    </div>
+  </div>
+</section>
+
+<!-- 다이어그램 스타일 (S4·S8·S12 인라인) -->
+<style>
+.dgm .eb{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);font-weight:600;margin-bottom:11px;display:flex;align-items:center}
+.dgm .eb::before{content:"";display:inline-block;width:14px;height:1.5px;background:var(--accent);margin-right:8px}
+.dgm .flow{display:flex;align-items:stretch;justify-content:center}
+.dgm .node{flex:1;min-width:0;background:#fff;border:1px solid var(--line-2);border-radius:10px;
+  padding:11px 12px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.dgm .node .nt{font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+.dgm .node .ns{font-family:var(--mono);font-size:9.5px;color:var(--meta);margin-top:4px;line-height:1.35}
+.dgm .node.key{border-color:var(--accent);border-width:1.5px;box-shadow:0 0 0 3px var(--accent-weak2)}
+.dgm .harr{flex:0 0 42px;align-self:center;color:var(--meta)}
+.dgm .harr line,.dgm .harr path{stroke:currentColor;stroke-width:1.3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.dgm .hint{text-align:center;color:var(--meta);font-size:12px;margin-top:12px;line-height:1.5}
+.dgm .hint b{color:var(--body);font-weight:600}
+.dgm .hint code{font-family:var(--mono);font-size:11px;color:var(--accent)}
+.dgm .rule{height:1px;background:var(--line);margin:18px 0}
+.dgm .layers{display:flex;align-items:stretch}
+.dgm .layer{flex:1;border:1px solid var(--line-2);border-radius:10px;padding:13px 15px}
+.dgm .layer .lh{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.dgm .layer .lh .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:0 0 auto}
+.dgm .layer .lb{font-size:12px;color:var(--body);line-height:1.5}
+.dgm .layer .ls{font-family:var(--mono);font-size:9.5px;color:var(--meta);margin-top:8px;padding-top:7px;border-top:1px dashed var(--line)}
+.dgm .outcomes{display:flex;gap:16px}
+.dgm .out{flex:1;border-radius:10px;padding:14px 16px;border:1.5px solid}
+.dgm .out.ok{border-color:var(--accent);background:var(--accent-weak2)}
+.dgm .out.bad{border-color:var(--danger);border-style:dashed;background:var(--danger-weak)}
+.dgm .out .oh{font-size:13px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.dgm .out.ok .oh{color:var(--accent)}
+.dgm .out.bad .oh{color:var(--danger)}
+.dgm .out .ob{font-size:11.5px;color:var(--body);line-height:1.45}
+.dgm .out .ob code{font-family:var(--mono);font-size:11px;color:var(--ink)}
+.dgm .lane{margin-top:13px;border:1px solid var(--line-2);border-radius:9px;padding:10px 16px;
+  text-align:center;font-size:12.5px;color:var(--body);background:#FAFBFB}
+.dgm .lane .rc{color:var(--accent);font-weight:700;margin-right:6px;font-size:14px}
+.dgm .lane b{color:var(--ink);font-weight:600}
+.dgm .axis{font-family:var(--mono);font-size:12px;color:var(--accent);border:1px solid var(--accent);
+  background:var(--accent-weak2);border-radius:7px;padding:5px 13px}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+<script>
+  hljs.highlightAll();
+  (function(){
+    var modal = document.getElementById('cmodal');
+    var body  = modal.querySelector('.cmodal-body');
+    var title = modal.querySelector('.cmodal-title');
+    function open(id){
+      var src = document.getElementById(id); if(!src) return;
+      title.textContent = src.querySelector('.cp-head').textContent;
+      body.innerHTML = src.querySelector('.cp-inner').innerHTML;
+      body.scrollTop = 0;
+      modal.hidden = false;
+    }
+    function close(){ modal.hidden = true; body.innerHTML = ''; }
+    document.querySelectorAll('.codebtn').forEach(function(b){
+      b.addEventListener('click', function(){ open(b.dataset.code); });
+    });
+    modal.addEventListener('click', function(e){
+      if(e.target === modal || e.target.classList.contains('cmodal-x')) close();
+    });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') close(); });
+
+    // ▶ 플레이어블 iframe 모달
+    var pmodal = document.getElementById('pmodal');
+    var pframe = pmodal.querySelector('iframe');
+    function pclose(){ pframe.src = 'about:blank'; pmodal.hidden = true; }
+    var ptitle = pmodal.querySelector('.pmodal-title');
+    document.querySelectorAll('[data-play]').forEach(function(b){
+      b.addEventListener('click', function(){
+        pframe.src = b.dataset.play;
+        ptitle.textContent = b.dataset.title || '플레이어블';
+        pmodal.hidden = false;
+      });
+    });
+    pmodal.addEventListener('click', function(e){
+      if(e.target === pmodal || e.target.classList.contains('pmodal-x')) pclose();
+    });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') pclose(); });
+  })();
+</script>
+</body>
+</html>
