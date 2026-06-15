@@ -251,7 +251,7 @@ th{color:var(--meta);font-weight:600;font-size:12px;text-transform:uppercase;let
       <div class="sigrow"><span class="sn">메모리 · 저사양 최적화</span><span class="sv">2GB → 1.x GB</span></div>
       <div class="sigrow"><span class="sn">Kahn 위상정렬 모듈 합성</span><span class="sv">fail-closed</span></div>
       <div class="sigrow"><span class="sn">AES256 세이브 암호화</span><span class="sv">HMAC · 상수시간</span></div>
-      <div class="sigrow"><span class="sn">.ralph AI 에이전트 하네스</span><span class="sv">설계=사람</span></div>
+      <div class="sigrow"><span class="sn">AI 워크플로 — 규칙정의·검증</span><span class="sv">설계=사람</span></div>
     </div>
     </div>
     <div class="cover-strip">
@@ -299,7 +299,7 @@ th{color:var(--meta);font-weight:600;font-size:12px;text-transform:uppercase;let
     </div>
     <div class="card">
       <h3>AI 워크플로 운용</h3>
-      <p style="margin-top:8px">CLAUDE.md 규약<br>자율 에이전트 하네스로 구현 가속<br>출력은 검증 · 리뷰 필수</p>
+      <p style="margin-top:8px">규칙·금지패턴 직접 정의(CLAUDE.md)<br>외부 에이전트 도구로 구현 자율화<br>출력은 검증 · 리뷰 필수</p>
     </div>
   </div>
   <div class="footnote" style="margin-top:26px">설계 · 판단은 사람이 쥐고, 반복 구현 속도만 AI로 끌어올리는 것 — 세 축이 하나의 작업 방식으로 묶입니다.</div>
@@ -955,35 +955,140 @@ private static bool CompareBytes(byte[] a, byte[] b)
   </div>
 </section>
 
-<!-- ===================== S12 · AI 워크플로 ===================== -->
+<!-- ===================== S13 · AI ① 철학 ===================== -->
 <section class="slide"><div class="no">13</div>
-  <div class="eyebrow">AI Workflow</div><h2 class="title">설계는 사람, 구현은 AI</h2>
-  <div class="grid2" style="margin-bottom:16px">
-    <div class="card"><h3 style="font-size:16px">에이전트 하네스 (.ralph)</h3><p style="margin-top:5px">STATUS / EXIT_SIGNAL / circuit breaker로 자율 에이전트를 <strong>통제 가능하게</strong> 운용. CLAUDE.md에 아키텍처 · 컨벤션 · 금지 패턴 명시.</p></div>
-    <div class="card"><h3 style="font-size:16px">사례 — 타이쿤 플레이어블 4일</h3><p style="margin:5px 0 12px">단계별 스펙 · 버그리포트를 직접 작성 → AI에 구현 위임 → 결과 검증 · 수정. <strong>/export-prompt</strong>로 세션 로그 보유. <span style="color:var(--meta)">· 실제 플레이 가능(별첨)</span></p><button class="playbtn" data-play="assets/playable/Result_Game.html" data-title="타이쿤 플레이어블 — AI로 4일 제작 데모">플레이어블 실행</button></div>
-  </div>
+  <div class="eyebrow">AI Workflow ① — Thesis</div><h2 class="title">설계는 사람, 구현은 AI</h2>
+  <p class="lead meta" style="margin-bottom:16px">AI 도구는 <strong style="color:var(--body)">모두에게 같습니다</strong> — Claude Code·Codex·Gemini를 같은 날 받았죠. 변별은 거기서 안 납니다. <strong style="color:var(--body)">AI에 무엇을 먹이고(규칙·명세), 무엇을 검증·소유하느냐</strong>에서 납니다. 저는 도구를 만든 게 아니라, AI가 통제 범위를 안 벗어나게 규칙을 정의하고 출력을 검증합니다.</p>
   <div class="dgm">
     <div class="eb">Human-in-the-loop Cycle</div>
     <div class="flow">
-      <div class="node"><div class="nt">① CLAUDE.md</div><div class="ns">아키텍처 · 컨벤션 · 금지패턴</div></div>
+      <div class="node"><div class="nt">① 규칙 정의</div><div class="ns">CLAUDE.md · 금지패턴</div></div>
       <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
       <div class="node"><div class="nt">② 스펙 · 버그리포트</div><div class="ns">사람이 직접 작성</div></div>
       <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
-      <div class="node key"><div class="nt">③ AI 구현 위임</div><div class="ns">.ralph 하네스로 통제</div></div>
+      <div class="node key"><div class="nt">③ AI 구현 위임</div><div class="ns">외부 에이전트 도구로 자율화</div></div>
       <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
-      <div class="node"><div class="nt">④ 검증 · 코드리뷰</div><div class="ns">테스트 · 엣지케이스</div></div>
+      <div class="node"><div class="nt">④ 검증 · 코드리뷰</div><div class="ns">테스트 · 엣지 · 라인설명</div></div>
     </div>
-    <div class="lane"><span class="rc">↺</span> <b>④ 검증 결과를 ① 컨텍스트로 되먹임</b> — 통과할 때까지 반복 &nbsp;·&nbsp; 채용 트렌드 4축 매핑 →
-      <span class="axis" style="padding:3px 9px">문제 구조화</span>
-      <span class="axis" style="padding:3px 9px">AI 제어력</span>
-      <span class="axis" style="padding:3px 9px">검증 습관</span>
-      <span class="axis" style="padding:3px 9px">설명 능력</span>
+    <div class="lane"><span class="rc">↺</span> <b>④ 검증을 ① 컨텍스트로 되먹임</b> — 통과할 때까지 반복. &nbsp;·&nbsp; <strong style="color:var(--accent)">설명 못 하는 코드는 출시 안 함.</strong></div>
+  </div>
+  <p class="footnote" style="margin-top:14px">핵심은 도구가 아니라 <strong style="color:var(--body)">입력의 질</strong> — 다음 장: 내가 AI에 먹이는 실제 규칙(증거) → AI가 못 하는 칸.</p>
+</section>
+
+<!-- ===================== S14 · AI ② DEFINE 증거 ===================== -->
+<section class="slide"><div class="no">14</div>
+  <div class="eyebrow">AI Workflow ② — Evidence</div><h2 class="title">내가 AI에 먹이는 규칙</h2>
+  <p class="lead meta" style="margin-bottom:16px">에이전트 루프 도구는 <strong style="color:var(--body)">Ralph(오픈소스)</strong>를 도입해 운용합니다 — 시스템은 외부지만, <strong style="color:var(--body)">아키텍처·컨벤션·금지패턴·작업 명세는 제가 직접 씁니다.</strong> 그 규칙 문서가 AI 출력의 품질을 가르는 진짜 입력입니다. <span style="color:var(--meta)">(아래는 실제 문서)</span></p>
+  <div class="grid2">
+    <div class="card accentL"><h3 style="font-size:16px">CLAUDE.md — 프로젝트 규약</h3>
+      <p style="margin:5px 0 12px">아키텍처(MVC+Observable+Command)·네이밍·로깅·<strong>10대 Critical Rules</strong>·금지 패턴을 정의. AI가 우리 컨벤션 안에서만 구현하게.</p>
+      <button class="codebtn" data-code="cp-claudemd">md 보기 — CLAUDE.md</button>
     </div>
+    <div class="card accentL"><h3 style="font-size:16px">PROMPT.md — 에이전트 작업 규칙</h3>
+      <p style="margin:5px 0 12px">한 루프 한 작업·구현 전 코드검색·<strong>명세 밖 기능 금지</strong>·서킷브레이커를 규칙으로 명시. AI가 폭주·과잉엔지니어링 안 하게.</p>
+      <button class="codebtn" data-code="cp-ralphprompt">md 보기 — PROMPT.md</button>
+    </div>
+  </div>
+  <p class="footnote" style="margin-top:16px"><span style="color:var(--accent);font-weight:600">정직</span> — 루프 실행기(STATUS·EXIT_SIGNAL·서킷브레이커 메커니즘)는 Ralph 도구의 것입니다. 제 기여는 <strong style="color:var(--body)">그 도구에 먹인 규칙·명세를 설계한 것</strong>이고, 그게 위 문서들입니다.</p>
+</section>
+
+<!-- DOC PAGE · CLAUDE.md -->
+<section class="slide codepage" id="cp-claudemd">
+  <div class="cp-head">DOC — CLAUDE.md · AI에 먹인 프로젝트 규약 (발췌)</div>
+  <div class="cp-inner">
+    <div class="cardcode">
+      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">WigglePuzzle/CLAUDE.md</span></div>
+      <div class="cc-body">
+<pre><code class="language-markdown">## Architecture
+ModuleContainer (Global) → VContainer (Scene DI)
+    → MVC + Observable + Command
+
+Core Patterns
+- MVC     : Model(Observable+Raise()), View(BaseView&lt;T&gt;)
+- Factory : Entity 생성 + DI (IObjectResolver.Inject())
+- Pool    : MPool.Get&lt;T&gt;() / Return&lt;T&gt;()
+- Command : 순차 큐 (CommandController.Enqueue())
+
+## Coding Conventions
+[SerializeField] private int myValue;  // NO underscore
+private int _myValue;                  // WITH underscore
+Verbose.D/W/E(...)                     // Debug.Log 금지
+namespace Projects._99.Scripts.{Category}.{Sub}</code></pre>
+<pre><code class="language-markdown">## Critical Rules  (10)
+ 1. 불필요한 메서드 만들지 말 것 — 쓰는 것만
+ 2. 레거시 즉시 삭제 — 주석처리/_unused 금지
+ 3. Observable 변경 시 항상 Raise() 호출
+ 4. Factory 패턴 — Controller서 new Model() 금지
+ 5. OnDestroy()서 타이머 Cancel — 누수 방지
+ 6. Dispose()/OnDestroy()서 이벤트 구독 해제
+ 7. 새 기능 전 기존 구현 먼저 참조
+ 8. Gimmick View 좌표 변환 필수 (그리드→월드)
+ 9. Unity Update 대신 MUpdateLoop 사용
+10. 모든 UI 버튼은 EventBtn 상속/사용</code></pre>
+      </div>
+    </div>
+    <div class="cp-cap"><span class="k">💡</span> 도구(Ralph)는 외부지만 <strong>이 규약은 제가 작성</strong> — AI가 우리 아키텍처·금지패턴 안에서만 구현하게 강제하는 '먹이는 입력'이다. (실제 27KB 중 발췌)</div>
   </div>
 </section>
 
+<!-- DOC PAGE · PROMPT.md -->
+<section class="slide codepage" id="cp-ralphprompt">
+  <div class="cp-head">DOC — PROMPT.md · 에이전트 작업 규칙 (발췌)</div>
+  <div class="cp-inner">
+    <div class="cardcode">
+      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">WigglePuzzle/.ralph/PROMPT.md</span></div>
+      <div class="cc-body">
+<pre><code class="language-markdown">// 루프 실행기는 외부 Ralph 도구, 아래 규칙은 내가 작성
+
+## Core Responsibilities  (매 루프)
+1. @fix_plan.md 우선순위 작업 확인
+2. 구현 전 코드베이스 검색 (기존 패턴 검증)
+3. 한 루프에 한 작업만 구현
+4. 완료 시 체크박스 갱신 + STATUS 보고
+
+## Task Execution Rules
+- ONE task per loop
+- Search first (가정 말고 확인)
+- Implementation > Documentation > Tests
+- No busy-work / Minimal changes</code></pre>
+<pre><code class="language-markdown">## Forbidden Patterns
+- Debug.Log            → Verbose.D/W/E only
+- new Model() in Ctrl  → Factory
+- Unity Update         → MUpdateLoop
+- 주석처리 레거시        → 즉시 삭제
+
+## Anti-Patterns / 폭주 방지
+- EXIT_SIGNAL true여야 할 때 계속 작업
+- 동작 코드 불필요한 리팩토링
+- fix_plan 밖 기능 추가         → STOP
+
+## Circuit Breaker  (도구가 강제)
+- 3루프 연속 변화 없음          → BLOCKED
+- 같은 에러 5회                → BLOCKED</code></pre>
+      </div>
+    </div>
+    <div class="cp-cap"><span class="k">💡</span> "한 루프 한 작업·구현 전 검색·명세 밖 금지"는 <strong>내 작업 판단을 규칙으로 박은 것</strong>. STATUS/서킷브레이커 '메커니즘'은 Ralph의 기능이고, 그 안에 채운 '규칙'이 내 기여다.</div>
+  </div>
+</section>
+
+<!-- ===================== S15 · AI ③ 사람의 칸 ===================== -->
+<section class="slide"><div class="no">15</div>
+  <div class="eyebrow">AI Workflow ③ — The Human Lane</div><h2 class="title">AI가 못 하는 칸 — 눈 · 검증 · 소유</h2>
+  <div class="grid2" style="margin-bottom:14px">
+    <div class="card"><h3 style="font-size:16px">👁 연출은 눈으로 판단</h3>
+      <p style="margin-top:5px">코어 로직은 AI가 짜도 — 타격 이펙트 0.15초냐 0.25초냐, 점수 팝업이 파티클보다 먼저냐 나중이냐, 이징이 ease-out이냐 back-out이냐. <strong>명세에도 없고 테스트로도 안 잡혀</strong> 빌드 돌려 눈·손맛으로 정합니다. AI는 제 빌드를 못 봅니다.</p></div>
+    <div class="card"><h3 style="font-size:16px">✓ 검증 · 소유</h3>
+      <p style="margin-top:5px">AI 출력은 그대로 안 믿고, 세이브처럼 깨지면 데이터가 날아가는 곳은 테스트로 정조준. <strong>라인 단위로 설명 못 하는 코드는 출시 안 합니다.</strong></p></div>
+  </div>
+  <div class="card accentL"><h3 style="font-size:16px">사례 — 타이쿤 플레이어블 4일</h3>
+    <p style="margin:5px 0 12px">단계별 스펙·버그리포트를 직접 작성 → AI에 구현 위임 → 결과 검증·수정. <strong>/export-prompt</strong>로 세션 로그 보유. <span style="color:var(--meta)">· 실제 플레이 가능</span></p>
+    <button class="playbtn" data-play="assets/playable/Result_Game.html" data-title="타이쿤 플레이어블 — AI로 4일 제작 데모">플레이어블 실행</button>
+  </div>
+  <p class="footnote" style="margin-top:14px"><strong style="color:var(--accent)">AI 평준화는 오히려 유리</strong> — 시니어의 '코드 더 빨리·많이' 우위가 공짜가 됐으니 승부가 <strong>판단·손맛</strong>으로 옮겨갔고, 거긴 캐주얼 23종 출시 경험으로 붙습니다.</p>
+</section>
+
 <!-- ===================== S13 · 팀빌딩 ===================== -->
-<section class="slide"><div class="no">14</div>
+<section class="slide"><div class="no">16</div>
   <div class="eyebrow">Team Building &amp; Systemization · ㈜액션핏</div><h2 class="title">0 → 10 팀빌딩 &amp; 시스템화</h2>
   <div class="grid2" style="margin-top:4px">
     <div class="card"><h3 style="font-size:16px">팀빌딩 (퇴사 시 개발팀장)</h3>
@@ -999,7 +1104,7 @@ private static bool CompareBytes(byte[] a, byte[] b)
 </section>
 
 <!-- ===================== S14 · 기술 스택 ===================== -->
-<section class="slide"><div class="no">15</div>
+<section class="slide"><div class="no">17</div>
   <div class="eyebrow">Tech Stack</div><h2 class="title">기술 스택</h2>
   <div class="grid2" style="margin-top:6px;gap:18px">
     <div class="card"><h3>Engine · Architecture</h3><p style="margin-top:8px">Unity 6, Cocos Creator, C# / DI(VContainer), MVVM · MVC Pattern<br>Command · Factory · Observer Architecture, Object Pool</p></div>
@@ -1010,7 +1115,7 @@ private static bool CompareBytes(byte[] a, byte[] b)
 </section>
 
 <!-- ===================== S15 · 마무리 ===================== -->
-<section class="slide"><div class="no">16</div>
+<section class="slide"><div class="no">18</div>
   <div class="closing">
     <h2 class="title" style="font-size:40px;max-width:20ch;line-height:1.35">“게임을 출시까지 만들고, 반복을 시스템으로 정리하며, AI를 도구로 통제하는 개발자입니다.”</h2>
     <div class="contact" style="margin-top:40px;font-size:14px">
