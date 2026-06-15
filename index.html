@@ -958,7 +958,7 @@ private static bool CompareBytes(byte[] a, byte[] b)
 <!-- ===================== S13 · AI ① 철학 ===================== -->
 <section class="slide"><div class="no">13</div>
   <div class="eyebrow">AI Workflow ① — Thesis</div><h2 class="title">설계는 사람, 구현은 AI</h2>
-  <p class="lead meta" style="margin-bottom:16px">AI 도구는 <strong style="color:var(--body)">모두에게 같습니다</strong> — Claude Code·Codex·Gemini를 같은 날 받았죠. 변별은 거기서 안 납니다. <strong style="color:var(--body)">AI에 무엇을 먹이고(규칙·명세), 무엇을 검증·소유하느냐</strong>에서 납니다. 저는 도구를 만든 게 아니라, AI가 통제 범위를 안 벗어나게 규칙을 정의하고 출력을 검증합니다.</p>
+  <p class="lead meta" style="margin-bottom:16px">AI 도구는 <strong style="color:var(--body)">모두에게 같습니다</strong> — Claude Code·Codex·Gemini를 같은 날 받았죠. 변별은 도구가 아니라 <strong style="color:var(--body)">무엇을 먹이고(규칙·명세) 무엇을 검증·소유하느냐</strong>, 그리고 <strong style="color:var(--body)">AI에 끌려가지 않느냐</strong>에서 납니다. AI는 매끄럽게 틀리고(환각), 정보가 많을수록 사람은 판단을 AI에 넘기기 쉽기에(자동화 편향) — 저는 끌려가지 않도록 규칙을 먼저 만듭니다.</p>
   <div class="dgm">
     <div class="eb">Human-in-the-loop Cycle</div>
     <div class="flow">
@@ -972,7 +972,30 @@ private static bool CompareBytes(byte[] a, byte[] b)
     </div>
     <div class="lane"><span class="rc">↺</span> <b>④ 검증을 ① 컨텍스트로 되먹임</b> — 통과할 때까지 반복. &nbsp;·&nbsp; <strong style="color:var(--accent)">설명 못 하는 코드는 출시 안 함.</strong></div>
   </div>
-  <p class="footnote" style="margin-top:14px">핵심은 도구가 아니라 <strong style="color:var(--body)">입력의 질</strong> — 다음 장: 내가 AI에 먹이는 실제 규칙(증거) → AI가 못 하는 칸.</p>
+  <div class="eb" style="margin:17px 0 9px">Guardrails — 편향을 구조로 (의지가 아니라 규칙으로)</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+    <div style="border:1px solid var(--line-2);border-radius:9px;padding:10px 13px">
+      <div style="font-size:13px;font-weight:700;color:var(--ink)">판단은 사람이 소유</div>
+      <div style="font-size:11.5px;color:var(--body);line-height:1.45;margin-top:4px">설계·트레이드오프는 내가, AI는 구현 가속만</div>
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--accent);margin-top:7px">방어 · 자동화 편향</div>
+    </div>
+    <div style="border:1px solid var(--line-2);border-radius:9px;padding:10px 13px">
+      <div style="font-size:13px;font-weight:700;color:var(--ink)">앵커링 차단</div>
+      <div style="font-size:11.5px;color:var(--body);line-height:1.45;margin-top:4px">첫 답에 갇히지 않게 반대안을 먼저 받고 내가 고른다</div>
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--accent);margin-top:7px">방어 · 앵커링</div>
+    </div>
+    <div style="border:1px solid var(--line-2);border-radius:9px;padding:10px 13px">
+      <div style="font-size:13px;font-weight:700;color:var(--ink)">신뢰를 위험도에 보정</div>
+      <div style="font-size:11.5px;color:var(--body);line-height:1.45;margin-top:4px">가역은 빠르게 위임, 비가역(세이브·보안·공개 API)은 직접 검증</div>
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--accent);margin-top:7px">방어 · 과의존</div>
+    </div>
+    <div style="border:1px solid var(--line-2);border-radius:9px;padding:10px 13px">
+      <div style="font-size:13px;font-weight:700;color:var(--ink)">그럴듯함 ≠ 정답</div>
+      <div style="font-size:11.5px;color:var(--body);line-height:1.45;margin-top:4px">유창한 설명이 아니라 실행·테스트로 확인</div>
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--accent);margin-top:7px">방어 · 환각</div>
+    </div>
+  </div>
+  <p class="footnote" style="margin-top:13px"><strong style="color:var(--accent)">변별은 얼마나 AI를 쓰느냐가 아니라, 얼마나 AI에 휘둘리지 않느냐.</strong> &nbsp;다음 장 → 내가 AI에 먹이는 실제 규칙(증거).</p>
 </section>
 
 <!-- ===================== S14 · AI ② DEFINE 증거 ===================== -->
@@ -1080,6 +1103,7 @@ namespace Projects._99.Scripts.{Category}.{Sub}</code></pre>
     <div class="card"><h3 style="font-size:16px">✓ 검증 · 소유</h3>
       <p style="margin-top:5px">AI 출력은 그대로 안 믿고, 세이브처럼 깨지면 데이터가 날아가는 곳은 테스트로 정조준. <strong>라인 단위로 설명 못 하는 코드는 출시 안 합니다.</strong></p></div>
   </div>
+  <p class="footnote" style="margin:0 0 13px"><strong style="color:var(--accent)">끌려가지 않기도 사람의 칸</strong> — 그럴듯한 답일수록 실행·테스트로 확인하고(환각), AI의 첫 답에 갇히지 않게 반대안을 먼저 받습니다(앵커링·자동화 편향).</p>
   <div class="card accentL"><h3 style="font-size:16px">사례 — 타이쿤 플레이어블 4일</h3>
     <p style="margin:5px 0 12px">단계별 스펙·버그리포트를 직접 작성 → AI에 구현 위임 → 결과 검증·수정. <strong>/export-prompt</strong>로 세션 로그 보유. <span style="color:var(--meta)">· 실제 플레이 가능</span></p>
     <button class="playbtn" data-play="assets/playable/Result_Game.html" data-title="타이쿤 플레이어블 — AI로 4일 제작 데모">플레이어블 실행</button>
