@@ -995,7 +995,53 @@ private static bool CompareBytes(byte[] a, byte[] b)
       <div style="font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--accent);margin-top:7px">방어 · 환각</div>
     </div>
   </div>
-  <p class="footnote" style="margin-top:13px"><strong style="color:var(--accent)">변별은 얼마나 AI를 쓰느냐가 아니라, 얼마나 AI에 휘둘리지 않느냐.</strong> &nbsp;다음 장 → 내가 AI에 먹이는 실제 규칙(증거).</p>
+  <div style="margin-top:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <button class="codebtn" data-code="cp-claude-global">md 보기 — 전역 CLAUDE.md (편향 가드레일)</button>
+    <span class="footnote" style="margin:0"><strong style="color:var(--accent)">이 4원칙은 말이 아니라 실제 문서에 박혀 있습니다</strong> — 코드 규약 CLAUDE.md와 별개로, AI를 대하는 판단 규칙까지 파일로.</span>
+  </div>
+</section>
+
+<!-- DOC PAGE · 전역 CLAUDE.md (편향 가드레일) -->
+<section class="slide codepage" id="cp-claude-global">
+  <div class="cp-head">DOC — 전역 CLAUDE.md · AI를 대하는 의사결정 규칙 (발췌)</div>
+  <div class="cp-inner">
+    <div class="cardcode">
+      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">~/.claude/CLAUDE.md</span></div>
+      <div class="cc-body">
+<pre><code class="language-markdown"># 의사결정 보조 원칙 (인지편향 방지)
+# 결정 순간, 정보를 쏟지 말고 결정을
+# 사용자에게 되돌려준다.
+# 목적: 과부하로 AI에 끌려가는 것
+#       (자동화 편향·앵커링) 방지
+
+## 결정 순간에 항상 적용
+1. 번역 우선 — 전문정보 나열 말 것.
+   각 선택지에서 무엇이 깨지는지 예시로.
+   이해 못 하면 설명이 덜 된 것.
+
+2. 결정을 사용자 영역으로 — "어느 기술이
+   옳은가"(AI)가 아니라 "내 목표·제약에
+   뭐가 맞나"(사용자)로. 질문 2~3개 제시.</code></pre>
+<pre><code class="language-markdown">3. 자기반박 동봉 — 반대 선택지의 가장
+   강한 논리 + "내 추천이 틀리려면?"
+
+4. 되돌리기 비용으로 신중함 보정 — 쉬운
+   결정은 "그냥 고르고 진행", 비가역
+   (세이브·데이터포맷·아키텍처)만 깊이.
+
+5. 사실은 실행으로 검증 — 말로 설득 말고
+   최소 실행·공식문서로. 환각 가능성 땐
+   단정 말고 불확실성 표시.
+
+6. "끌려감" 감지 시 멈춤 — 이해가 아니라
+   압도되어 따라오면 속도 늦춰 다시 설명.
+
+## 톤  전문성 과시 말 것.
+#  AI=무엇이 가능한가, 사용자=무엇이 맞나</code></pre>
+      </div>
+    </div>
+    <div class="cp-cap"><span class="k">💡</span> 코드 규약(CLAUDE.md)뿐 아니라 <strong>AI를 대하는 내 판단 규칙</strong>까지 파일로 둔다 — 정보 과부하에 끌려가지 않도록 편향 대응을 '의지'가 아니라 '규칙'으로 박은 것. AI에게 내리는 지시문(실제 파일 발췌).</div>
+  </div>
 </section>
 
 <!-- ===================== S14 · AI ② DEFINE 증거 ===================== -->
