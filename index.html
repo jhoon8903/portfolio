@@ -166,7 +166,7 @@ th{color:var(--meta);font-weight:600;font-size:12px;text-transform:uppercase;let
 .cmodal-title{font-family:var(--mono);font-size:12.5px;color:#8b949e;letter-spacing:.04em;text-transform:uppercase}
 .cmodal-x{background:none;border:none;color:#8b949e;font-size:18px;cursor:pointer;line-height:1;padding:0 4px}
 .cmodal-x:hover{color:#fff}
-.cmodal-body{overflow:auto;padding:18px}
+.cmodal-body{overflow:auto;padding:18px;flex:1;min-height:0}
 .cmodal-body .cardcode{border:none}
 .cmodal-body .cp-cap{color:#8b949e;padding:0 4px}
 .cmodal-body .cp-cap .k{color:#34d399}
@@ -249,7 +249,7 @@ th{color:var(--meta);font-weight:600;font-size:12px;text-transform:uppercase;let
       <div class="sigrow"><span class="sn">VContainer 3-Layer DI</span><span class="sv">아키텍처</span></div>
       <div class="sigrow"><span class="sn">Burst + Job BFS</span><span class="sv">600ms → 50ms</span></div>
       <div class="sigrow"><span class="sn">메모리 · 저사양 최적화</span><span class="sv">2GB → 1.x GB</span></div>
-      <div class="sigrow"><span class="sn">Kahn 위상정렬 모듈 합성</span><span class="sv">fail-closed</span></div>
+      <div class="sigrow"><span class="sn">재사용 프레임워크 · 코드 생성기</span><span class="sv">생산성 · 핸드오프</span></div>
       <div class="sigrow"><span class="sn">AES256 세이브 암호화</span><span class="sv">HMAC · 상수시간</span></div>
       <div class="sigrow"><span class="sn">AI 워크플로 — 규칙정의·검증</span><span class="sv">설계=사람</span></div>
     </div>
@@ -712,169 +712,396 @@ private void RegisterControllers(IContainerBuilder b)
   </div>
 </section>
 
-<!-- ===================== S8 · 모듈 시스템 ===================== -->
+<style>
+.modchip{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:12px;color:var(--accent);background:var(--accent-weak2);border:1px solid var(--accent-weak);border-radius:7px;padding:6px 10px;margin:3px 2px;cursor:pointer;transition:all .12s}
+.modchip:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.modchip::after{content:"›";opacity:.55;font-weight:700;margin-left:1px}
+.mgrp{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--meta);font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:8px}
+.mgrp::after{content:"";flex:1;height:1px;background:var(--line)}
+.mgrp b{color:var(--accent)}
+.flowbox{border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:9px 12px;text-align:center;flex:1}
+.flowbox .ft{font-weight:600;font-size:13px;color:var(--ink)}
+.flowbox .fs{font-size:11px;color:var(--meta);margin-top:2px}
+.flowarr{color:var(--accent);font-weight:700;align-self:center}
+.modal-mod h3{font-size:18px;color:#e6edf3;margin-bottom:4px}
+.modal-mod .mtag{font-family:var(--mono);font-size:11px;color:#34d399;text-transform:uppercase;letter-spacing:.05em}
+.modal-mod p{font-size:14px;color:#c9d1d9;line-height:1.65;margin:10px 0}
+.modal-mod .mapi{font-family:var(--mono);font-size:12.5px;color:#9fe7c6;background:#0b0e13;border:1px solid #222a33;border-radius:8px;padding:11px 13px;margin-top:8px;white-space:pre-wrap;display:block;line-height:1.5}
+.modal-mod .msub{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#58a6ff;font-weight:700;margin:15px 0 6px}
+.modal-mod ul.mpts{list-style:none;margin:4px 0 0;padding:0}
+.modal-mod ul.mpts li{position:relative;padding-left:16px;margin:7px 0;font-size:13px;color:#c9d1d9;line-height:1.55}
+.modal-mod ul.mpts li::before{content:"\25AA";position:absolute;left:0;color:#34d399}
+.modal-mod ul.mdesc{list-style:none;margin:8px 0 0;padding:0}.modal-mod ul.mdesc li{position:relative;padding-left:15px;margin:8px 0;font-size:13.5px;color:#c9d1d9;line-height:1.55}.modal-mod ul.mdesc li::before{content:"\2013";position:absolute;left:0;color:#58a6ff}
+</style>
+
+<!-- ===================== S8 · 프레임워크 개요 (왜/무엇을) ===================== -->
 <section class="slide"><div class="no">08</div>
-  <div class="eyebrow">Main Project — GameFramework ①</div><h2 class="title">재사용 프레임워크 · 모듈 시스템</h2>
-  <p class="lead meta" style="margin-bottom:14px">게임을 빠르게 만들고 다른 사람에게 넘기기 쉬운 클라이언트 프레임워크 (Boot/DI/Save/UI/Monetize) · UPM Package —
-  각 모듈이 <strong style="color:var(--body)">'주는 능력 / 필요한 능력'</strong>만 선언하면 시스템이 <strong style="color:var(--body)">켜는 순서를 자동으로</strong> 정하고(위상정렬), 잘못된 의존은 <strong style="color:var(--body)">빌드 전에 막습니다</strong>(fail-closed).</p>
-  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:28px;align-items:center">
-    <div class="dgm">
-      <div class="eb">Capability Graph → Kahn</div>
-      <div class="flow">
-        <div class="node"><div class="nt">Save</div><div class="ns">provides : ISave</div></div>
-        <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
-        <div class="node"><div class="nt">Network</div><div class="ns">requires : ISave</div></div>
-        <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
-        <div class="node"><div class="nt">UI</div><div class="ns">requires : Network</div></div>
-      </div>
-      <div class="hint"><code>in-degree 0</code>(기다릴 게 없는)부터 꺼내며 순서 자동 결정 — 사람이 순서를 지정하지 않음</div>
-      <div class="outcomes" style="margin-top:16px">
-        <div class="out ok"><div class="oh">✔ 매번 같은 순서</div><div class="ob"><code>(Order, index)</code> 정렬 → 플랫폼·실행마다 동일(결정적)</div></div>
-        <div class="out bad"><div class="oh">✖ 서로 물고 돌면 빌드 실패</div><div class="ob">순환 의존 = 켤 수 없음 → 빌드 단계서 차단(fail-closed)</div></div>
-      </div>
+  <div class="eyebrow">Main Project — GameFramework ①</div><h2 class="title">재사용 클라이언트 프레임워크 — 왜, 무엇을</h2>
+  <p class="lead meta" style="margin-bottom:18px">모바일 게임마다 매번 다시 짜던 클라이언트 골격(부팅·DI·세이브·UI·수익화·자산전달)을 <strong style="color:var(--body)">한 번 만들어 재사용</strong>하고 <strong style="color:var(--body)">다른 사람에게 넘기기 쉽게</strong> 만든 장르 불문 프레임워크 · Unity 6 · UPM Package.</p>
+  <div class="grid2" style="gap:28px;align-items:start">
+    <div>
+      <h3 style="margin-bottom:9px">왜 만들었나</h3>
+      <ul class="bul" style="font-size:14.5px">
+        <li><strong>생산성</strong> — 신규 게임의 반복 골격을 0에서 다시 쓰지 않는다</li>
+        <li><strong>핸드오프</strong> — 저숙련 개발자도 선임과 같은 구조로, 인수인계를 빠르게</li>
+        <li><strong>장르 불문</strong> — 게임별 정책은 seam(인터페이스·SO)으로 빼고 프레임워크는 기계만 제공</li>
+        <li><strong>머니-세이프</strong> — 돈 관련 경로는 멱등·절대값을 컴파일·테스트로 강제</li>
+      </ul>
     </div>
-    <div style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:16px">
-      <div class="plain"><span class="lbl">쉽게</span><b>옷 입기처럼</b> '양말은 신발보다 먼저'만 정해주면 전체 순서가 나옵니다. 들어오는 화살표가 <b>0개(먼저 기다릴 게 없는)</b>인 모듈부터 켜는 게 위상정렬.</div>
-      <div class="cap"><span class="k">표준 Kahn</span>이되 ready를 <code style="font-family:var(--mono);font-size:12px">(Order, index)</code> 비교자 SortedSet으로 둬 매 실행 순서가 동일. 다 못 빠지면 그 자체가 순환의 증거.</div>
-      <button class="codebtn" data-code="cp-kahn">코드 보기 — ModuleComposition.cs</button>
+    <div>
+      <h3 style="margin-bottom:9px">무엇을 하나 — 제공 능력</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <span class="chip">부팅 · DI</span><span class="chip">MVC · MVVM</span><span class="chip">암호화 세이브</span><span class="chip">멱등 자산 전달</span><span class="chip">IAP · 광고</span><span class="chip">UI 내비게이션</span><span class="chip">출시 게이트</span><span class="chip">오브젝트 풀</span><span class="chip">알림 · 햅틱</span><span class="chip">로컬라이즈</span><span class="chip">코드 생성기</span>
+      </div>
+      <p class="footnote" style="margin-top:11px">필요한 모듈만 켜고, 키·카탈로그·정책은 게임이 채운다.</p>
     </div>
   </div>
-  <div style="margin-top:26px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-    <span class="footnote" style="margin:0">빌드 전 탐지</span>
-    <span class="chip">순환 의존</span><span class="chip">중복 provider</span><span class="chip">모호 provider</span><span class="chip">단계 역전</span>
+  <div style="display:flex;gap:34px;margin-top:24px;align-items:flex-end">
+    <div><div class="stat">10+</div><div class="stat-l">서브시스템</div></div>
+    <div><div class="stat">267</div><div class="stat-l">Edit Mode 그린</div></div>
+    <div><div class="stat">5</div><div class="stat-l">코드 생성기</div></div>
+    <div style="flex:1;text-align:right"><button class="codebtn" data-code="cp-updates">버전 내역 — 계속 업데이트 중</button></div>
   </div>
 </section>
 
-<!-- CODE PAGE · Kahn -->
-<section class="slide codepage" id="cp-kahn">
-  <div class="cp-head">08 · CODE — ModuleComposition · Kahn 위상정렬</div>
+<!-- MODAL · 버전 내역 -->
+<section class="slide codepage" id="cp-updates">
+  <div class="cp-head">GameFramework · 버전 내역 (계속 업데이트 중)</div>
   <div class="cp-inner">
-    <div class="cardcode">
-      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">Core/MVC/Core/ModuleComposition.cs</span></div>
-      <div class="cc-body">
-<pre><code class="language-csharp">// 안정적 위상정렬 : 순환이면 예외
-public static IReadOnlyList&lt;int&gt; ResolveInitOrder(
-    IReadOnlyList&lt;ModuleDescriptor&gt; modules)
-{
-    int n = modules?.Count ?? 0;
-    var order = new List&lt;int&gt;(n);
-    if (n == 0) return order;
-
-    var providers = BuildProviderMap(modules);
-    int[] inDeg = BuildInDegree(
-        modules, providers, out List&lt;int&gt;[] deps);
-
-    // ready : in-degree 0을 (Order, index) 오름차순
-    var ready = new SortedSet&lt;int&gt;(Comparer&lt;int&gt;.Create(
-        (a, b) =&gt;
-        {
-            int c = modules[a].Order
-                .CompareTo(modules[b].Order);
-            return c != 0 ? c : a.CompareTo(b);
-        }));
-    for (int i = 0; i &lt; n; i++)
-        if (inDeg[i] == 0) ready.Add(i);</code></pre>
-<pre><code class="language-csharp">    while (ready.Count &gt; 0)
-    {
-        int next = ready.Min;     // 최소 (Order, index)
-        ready.Remove(next);
-        order.Add(next);
-        foreach (int d in deps[next])
-            if (--inDeg[d] == 0) ready.Add(d);
-    }
-
-    // 전부 못 빠지면 사이클 → fail-closed
-    if (order.Count &lt; n)
-        throw new ModuleCircularDependencyException(
-            $"cycle: {order.Count}/{n} ordered");
-    return order;
-}</code></pre>
-      </div>
-    </div>
-    <div class="cp-cap"><span class="k">💡</span> 표준 Kahn이지만 ready를 Queue가 아닌 (Order, index) 비교자 SortedSet으로 둬 "순서가 매 실행 동일"하게 보장 — Requires/Provides 능력(Type) 기반으로 in-degree를 쌓고, 다 못 빠지면 그 자체가 순환 증거다.</div>
+    <p class="lead">현재 <strong>v2.17.0 · Edit Mode 267/267 그린.</strong> 코드(<span class="num">Assets/GameFramework/**</span>)·CHANGELOG 기준으로 상태를 추적하며 지속 개발 중이다.</p>
+    <table>
+      <thead><tr><th style="width:90px">버전</th><th>한 일</th></tr></thead>
+      <tbody>
+        <tr><td class="num">2.0</td><td>Asset Delivery v2 재출발 — 3계층 + 멱등 ledger + Heart/VIP 전략</td></tr>
+        <tr><td class="num">2.1</td><td>멀티통화 assetId 라우팅 · 서버권위 seam · IAP 미등록상품 머니버그 수정</td></tr>
+        <tr><td class="num">2.3–2.4</td><td>UTC 시간모델 · anti-rollback clock · 머니-세이프 멱등 IAP(confirm-after-grant)</td></tr>
+        <tr><td class="num">2.5–2.8</td><td>IAP 초기화 재시도 · 죽은 코드 삭제(Command 등) · 모듈 합성 단순화</td></tr>
+        <tr><td class="num">2.9–2.12</td><td>절대-setter 강제 · 휴면 Heart/VIP/알림 배선 · no-ads 중앙 게이트</td></tr>
+        <tr><td class="num">2.13</td><td>출시 게이트 AppGate — 강제 업데이트 · 점검 모드 (HTTP JSON)</td></tr>
+        <tr><td class="num">2.14–2.16</td><td>UI·엔티티 포장도로 생성기 · 등록 데스크 · UPM Samples 출하</td></tr>
+        <tr><td class="num">2.17</td><td>HUD 모니터 생성기 · 멀티-통화 HUD 주입 버그 수정</td></tr>
+        <tr><td class="num" style="color:var(--meta)">다음 →</td><td>완전 서버 권위 경제 전환 (백엔드 = Firebase, 딥리서치 검증)</td></tr>
+      </tbody>
+    </table>
   </div>
 </section>
 
-<!-- ===================== S9 · 세이브 암호화 ===================== -->
+<!-- ===================== S9 · 전체 구조 다이어그램 ===================== -->
 <section class="slide"><div class="no">09</div>
-  <div class="eyebrow">Main Project — GameFramework ②</div><h2 class="title">세이브 암호화 &amp; 테스트</h2>
-  <div class="grid2" style="margin-bottom:16px">
-    <div class="card"><h3 style="font-size:16px">세이브 데이터 보안</h3>
-      <p style="margin-top:6px">세이브 파일을 <strong>암호화(AES-256)</strong>하고 <strong>위조 방지 서명(HMAC)</strong>을 붙여, 한 바이트만 변조돼도 거부합니다. 구버전 세이브는 다음 저장 때 <strong>최신 포맷으로 자동 승격</strong>해 호환을 안 깹니다(버전드 blob).</p></div>
-    <div class="card"><h3 style="font-size:16px">검증 — EditMode 테스트</h3>
-      <p style="margin-top:6px">'깨지면 데이터가 날아가는' 부분(정밀도·타입 보존·다운그레이드)을 콕 집어 빠른 단위 테스트로 검증. <strong>AI 출력을 그냥 안 믿고 테스트로 확인하는 습관의 증거.</strong></p></div>
+  <div class="eyebrow">Main Project — GameFramework ②</div><h2 class="title">전체 구조 — 3계층 & 부팅 흐름</h2>
+  <p class="lead meta" style="margin-bottom:18px">전역 모듈(SO 싱글톤)이 부팅을 합성·검증하고, 씬 단위 VContainer DI가 의존성을 주입하며, 게임 로직은 MVC/MVVM으로 돈다.</p>
+  <div class="footnote" style="margin-bottom:9px">3계층 — 책임 분리</div>
+  <div style="display:flex;align-items:stretch;gap:12px;margin-bottom:22px">
+    <div class="card" style="flex:1;text-align:center;padding:14px"><div class="num" style="font-size:10.5px">LAYER 1</div><h3 style="font-size:15px;margin:4px 0">ModuleContainer</h3><p style="font-size:12px">전역 SO 싱글톤 · 모듈 합성 검증 · 2단계 부팅 · fail-closed</p></div>
+    <div class="flowarr" style="font-size:20px">→</div>
+    <div class="card" style="flex:1;text-align:center;padding:14px"><div class="num" style="font-size:10.5px">LAYER 2</div><h3 style="font-size:15px;margin:4px 0">VContainer Scene DI</h3><p style="font-size:12px">모듈 자가등록(IVContainerConfigurable) · 씬 스코프 = 등록 데스크</p></div>
+    <div class="flowarr" style="font-size:20px">→</div>
+    <div class="card" style="flex:1;text-align:center;padding:14px"><div class="num" style="font-size:10.5px">LAYER 3</div><h3 style="font-size:15px;margin:4px 0">MVC · MVVM</h3><p style="font-size:12px">Observable→View 갱신 · BaseView&lt;T&gt; / UI&lt;VM&gt; · 화면 스택</p></div>
   </div>
-  <p class="cap"><span class="k">Encrypt-then-MAC</span> — <strong>열기(복호화) 전에 서명부터 확인</strong>합니다. 위조된 파일은 풀어보지도 않고 거부 → 복호화 과정을 노린 공격이 통하지 않습니다. 비교는 <strong>어디서 틀려도 시간이 일정</strong>해(상수시간), 시간차로 정답을 알아내는 타이밍 공격도 막습니다.</p>
-  <p class="footnote" style="margin-top:6px"><span style="color:var(--accent);font-weight:600">쉽게</span> — 금고를 열기 전에 '봉인 스티커'부터 확인하는 셈. 뜯겨 있으면 안 열어본다. 서명이 <strong>헤더(매직·버전)까지</strong> 덮어, 헤더만 바꿔치기하는 변조도 차단.</p>
-  <div style="margin-top:24px">
-    <div class="footnote" style="margin-bottom:9px">버전드 blob 레이아웃 — 헤더(MAGIC·kdfId·ver)까지 HMAC가 덮어 변조 차단</div>
-    <div class="blob">
-      <span class="bseg">MAGIC<small>'GFS3' · 4</small></span>
-      <span class="bseg">kdfId<small>1</small></span>
-      <span class="bseg">verHdr<small>1</small></span>
-      <span class="bseg">fileSalt<small>16</small></span>
-      <span class="bseg">iv<small>16</small></span>
-      <span class="bseg grow">cipher<small>N</small></span>
-      <span class="bseg hmac">hmac<small>32</small></span>
-    </div>
+  <div class="footnote" style="margin-bottom:9px">부팅 흐름 — 합성이 무효면 멈춘다(fail-closed)</div>
+  <div style="display:flex;align-items:stretch;gap:7px">
+    <div class="flowbox"><div class="ft">WarmUp</div><div class="fs">Engine 모듈 초기화<br>(루프·풀·설정)</div></div>
+    <div class="flowarr">›</div>
+    <div class="flowbox"><div class="ft">Global · Configure</div><div class="fs">DI 자가등록<br>fail-closed 게이트</div></div>
+    <div class="flowarr">›</div>
+    <div class="flowbox"><div class="ft">Global · Start</div><div class="fs">Project 모듈<br>순차 초기화</div></div>
+    <div class="flowarr">›</div>
+    <div class="flowbox"><div class="ft">ProjectEntryPoint</div><div class="fs">Workflow 실행<br>씬 전환</div></div>
+    <div class="flowarr">›</div>
+    <div class="flowbox"><div class="ft">Scene Scope</div><div class="fs">화면·엔티티<br>자동 주입</div></div>
   </div>
-  <div style="margin-top:22px"><button class="codebtn" data-code="cp-save">코드 보기 — SaveDataEncryption.cs</button></div>
+  <div style="margin-top:18px;text-align:center"><button class="codebtn" data-code="cp-tree">아키텍처 트리 보기 — 구성 & 의존 흐름 (가계도)</button></div>
 </section>
 
-<!-- CODE PAGE · Save -->
-<section class="slide codepage" id="cp-save">
-  <div class="cp-head">09 · CODE — SaveDataEncryption v3 (GFS3)</div>
+<style>
+.atree,.atree ul{list-style:none;margin:0;padding:0}
+.atree ul{margin-left:11px;padding-left:21px;border-left:1.5px solid #39424e}
+.atree ul>li{position:relative;margin:7px 0}
+.atree ul>li::before{content:"";position:absolute;left:-21px;top:16px;width:18px;height:1.5px;background:#39424e}
+.anode{display:inline-flex;align-items:baseline;gap:9px;background:#161b22;border:1px solid #2c3a44;border-radius:8px;padding:7px 13px;font-family:var(--mono);font-size:12.5px;color:#e6edf3}
+.anode>span{font-family:var(--sans);font-size:11.5px;color:#8b949e}
+.anode .ph{font-family:var(--mono);font-size:10px;color:#58a6ff;text-transform:uppercase;letter-spacing:.05em}
+.anode .dep{color:#34d399;font-size:11px;font-family:var(--mono)}
+.anode.root{background:var(--accent);border-color:var(--accent);color:#fff;font-size:13.5px}
+.anode.root>span{color:rgba(255,255,255,.85)}
+.anode.phase{font-weight:700;border-left:3px solid #58a6ff}
+.anode.key{border-color:#34d399}
+.anode.opt{border-style:dashed;opacity:.9}
+.atree-legend{color:#8b949e;font-size:12.5px;margin-bottom:16px;line-height:1.7}
+.atree-legend .dep{color:#34d399;font-family:var(--mono)}
+</style>
+<!-- MODAL · 아키텍처 트리 (가계도) -->
+<section class="slide codepage" id="cp-tree">
+  <div class="cp-head">GameFramework · 아키텍처 트리 — 구성 & 의존 흐름</div>
+  <div class="cp-inner" style="justify-content:flex-start;padding-top:6px">
+    <div class="atree-legend">위 → 아래 = <b style="color:#e6edf3">부팅 순서</b> (Engine → Project → 씬) · <span class="dep">▸ X</span> = 그 모듈이 <b style="color:#e6edf3">X에 의존</b> · <span style="color:#34d399">초록 테두리</span> = 다른 모듈이 기대는 토대 · 점선 = 옵트인. 컨테이너에 넣은 모듈만 초기화된다.</div>
+    <ul class="atree">
+      <li><div class="anode root">GameFramework <span>UPM 패키지 · 전역 SO 모듈 + 씬 DI</span></div>
+        <ul>
+          <li><div class="anode key">부팅 코어 <span>ModuleContainer(합성·검증) → GlobalLifetimeScope(DI 루트) · fail-closed</span></div></li>
+          <li><div class="anode phase">① Engine 모듈 <span class="ph">Phase 1 · 가장 먼저</span></div>
+            <ul>
+              <li><div class="anode">MUpdateLoop <span>중앙 갱신 루프·타이머</span></div></li>
+              <li><div class="anode">MTimeController <span>앱 라이프사이클·UI 타이머</span></div></li>
+              <li><div class="anode">MPool <span>오브젝트 풀</span></div></li>
+              <li><div class="anode">MConfigContainer <span>설정 허브</span></div></li>
+            </ul>
+          </li>
+          <li><div class="anode phase">② Project 모듈 <span class="ph">Phase 2 · 순서대로</span></div>
+            <ul>
+              <li><div class="anode key">SaveSystem <span>영속의 토대 (GFS3 암호화)</span></div></li>
+              <li><div class="anode">AssetDelivery <span class="dep">▸ SaveSystem</span></div></li>
+              <li><div class="anode">Monetize · IAP / ADS <span class="dep">▸ AssetDelivery · SaveSystem</span></div></li>
+              <li><div class="anode opt">HeartRecovery · VIP <span class="dep">▸ MTimeController · SaveSystem</span></div></li>
+              <li><div class="anode opt">Notification <span class="dep">▸ MTimeController</span></div></li>
+              <li><div class="anode">Network · Platform · AppGate <span>연결 · SDK · 출시 게이트</span></div></li>
+            </ul>
+          </li>
+          <li><div class="anode phase">③ 씬 레이어 <span class="ph">런타임 · 씬마다</span></div>
+            <ul>
+              <li><div class="anode key">SceneLifetimeScope <span>등록 데스크 · 자동 주입</span></div>
+                <ul>
+                  <li><div class="anode">MVVM 화면 (UI&lt;VM&gt;) <span class="dep">▸ 서비스 [Inject]</span></div></li>
+                  <li><div class="anode">MVC 엔티티 (BaseView) <span class="dep">▸ MPool · Factory</span></div></li>
+                  <li><div class="anode">MonitorBase (HUD) <span class="dep">▸ AssetDelivery (ledger/presenter)</span></div></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== S10 · 서브시스템 & 모듈 카탈로그 ===================== -->
+<section class="slide"><div class="no">10</div>
+  <div class="eyebrow">Main Project — GameFramework ③</div><h2 class="title">서브시스템 & 모듈 — 클릭해서 보기</h2>
+  <p class="lead meta" style="margin-bottom:16px">기능은 <strong style="color:var(--body)">자가등록 모듈</strong>로 구성된다. 게임은 필요한 모듈만 켠다. <strong style="color:var(--body)">각 모듈을 클릭하면 무슨 일을 하는지</strong> 모달로 볼 수 있다.</p>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+    <div>
+      <div class="mgrp"><b>Core</b> 코어 기반</div>
+      <span class="modchip" data-module="modulecontainer">ModuleContainer</span><span class="modchip" data-module="mpool">MPool</span><span class="modchip" data-module="mupdateloop">MUpdateLoop</span><span class="modchip" data-module="mtimecontroller">MTimeController</span><span class="modchip" data-module="mvc">MVC · Observable</span>
+    </div>
+    <div>
+      <div class="mgrp"><b>Services</b> 인프라/연동</div>
+      <span class="modchip" data-module="savesystem">SaveSystem</span><span class="modchip" data-module="assetdelivery">AssetDelivery</span><span class="modchip" data-module="iap">IAP</span><span class="modchip" data-module="ads">ADS</span><span class="modchip" data-module="arm">ARM</span><span class="modchip" data-module="network">Network</span><span class="modchip" data-module="platform">Platform</span><span class="modchip" data-module="appgate">AppGate</span>
+    </div>
+    <div>
+      <div class="mgrp"><b>UI</b> 화면/내비</div>
+      <span class="modchip" data-module="navigation">UINavigation</span><span class="modchip" data-module="scenescope">SceneScope</span><span class="modchip" data-module="monitor">MonitorBase</span><span class="modchip" data-module="mvvm">MVVM</span>
+    </div>
+    <div>
+      <div class="mgrp"><b>Features</b> 런타임 기능</div>
+      <span class="modchip" data-module="heart">HeartRecovery</span><span class="modchip" data-module="vip">VIPSystem</span><span class="modchip" data-module="notification">Notification</span><span class="modchip" data-module="haptic">Haptic</span><span class="modchip" data-module="localize">Localize</span><span class="modchip" data-module="workflow">Workflow</span>
+    </div>
+  </div>
+  <p class="footnote" style="margin-top:18px">모듈은 <code>[Modular(order, phase, isCore)]</code> 속성으로 선언하고, 앱-전역 서비스는 <code>IVContainerConfigurable</code>로 스스로 DI에 등록한다 — 컨테이너에 넣은 모듈만 초기화된다.</p>
+</section>
+
+<!-- ===================== S11 · MVC · MVVM 패턴 ===================== -->
+<section class="slide"><div class="no">11</div>
+  <div class="eyebrow">Main Project — GameFramework ④</div><h2 class="title">MVC · MVVM 패턴 — 같은 골격, 다른 살</h2>
+  <p class="lead meta" style="margin-bottom:16px">게임 로직(엔티티)은 <strong style="color:var(--body)">MVC</strong>, UI 화면은 <strong style="color:var(--body)">MVVM</strong>으로 통일한다. 두 패턴 모두 <strong style="color:var(--body)">베이스 클래스</strong>가 옵저버·바인딩·라이프사이클을 미리 처리해, 게임은 살(Refresh/Bind)만 채운다.</p>
+  <div class="grid2" style="gap:18px">
+    <div class="card accentL">
+      <h3 style="font-size:16px">MVC — 엔티티 / 게임오브젝트</h3>
+      <ul class="bul" style="font-size:13.5px;margin-top:6px">
+        <li><strong>Model</strong> : <code>Observable</code> — 값 변경 시 <code>Raise()</code>로 옵저버 통지</li>
+        <li><strong>View</strong> : <code>BaseView&lt;TModel&gt;</code> — Model 바인딩·풀 라이프사이클 자동, <code>RefreshView()</code>만 구현</li>
+        <li><strong>Factory/Controller</strong> — 생성·반납을 한 데스크가 소유(생성기가 찍음)</li>
+      </ul>
+    </div>
+    <div class="card accentL">
+      <h3 style="font-size:16px">MVVM — UI 화면</h3>
+      <ul class="bul" style="font-size:13.5px;margin-top:6px">
+        <li><strong>ViewModel</strong> : <code>ViewModelBase</code> — <code>[Inject]</code>로 서비스 주입, Initialize/CleanUp</li>
+        <li><strong>View</strong> : <code>UI&lt;TViewModel&gt;</code> — ViewModel을 DI 주입받아 <code>BindViewModel()</code>에서 구독</li>
+        <li><strong>등록</strong> — 씬 스코프가 ViewModel 자동등록 + View 주입(배선 0줄)</li>
+      </ul>
+    </div>
+  </div>
+  <div style="margin-top:20px"><button class="codebtn" data-code="cp-skeleton">스켈레톤 코드 보기 — Observable · BaseView · UI&lt;VM&gt;</button></div>
+</section>
+
+<!-- CODE PAGE · Skeleton -->
+<section class="slide codepage" id="cp-skeleton">
+  <div class="cp-head">11 · CODE — MVC / MVVM 베이스 스켈레톤</div>
   <div class="cp-inner">
     <div class="cardcode">
-      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">Services/SaveSystem/Core/SaveDataEncryption.cs</span></div>
+      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">Core/MVC/Observer/Observable.cs · View/BaseView.cs · UI/UIViews/UI.cs</span></div>
       <div class="cc-body">
-<pre><code class="language-csharp">// [MAGIC 'GFS3'][kdfId][verHeader][salt 16][iv 16][cipher][hmac 32]
-private static byte[] AesDecryptV3(byte[] data)
+<pre><code class="language-csharp">// === MVC : Model (Observable) ===
+public abstract class Observable : IObservable
 {
-    if (data.Length &lt; V3OverheadLen)
-        throw new ArgumentException("Invalid length");
-
-    int o = MagicLen;
-    byte kdfId  = data[o++];
-    byte kdfVer = data[o++];
-    byte[] salt   = Slice(data, ref o, SaltLen);
-    byte[] iv     = Slice(data, ref o, IvLen);
-    byte[] cipher = Slice(data, ref o,
-        data.Length - V3OverheadLen);
-    byte[] hmac   = Slice(data, ref o, HmacLen);
-
-    // 미지원 버전은 명시적 예외 (이 바이트도 HMAC가 덮음)
-    if (kdfId != KdfIdHkdfSha256)
-        throw new CryptographicException("bad kdfId");</code></pre>
-<pre><code class="language-csharp">    DeriveV3Keys(salt, out var aesKey, out var hmacKey);
-    byte[] header   = { kdfId, kdfVer };
-    byte[] expected = GenerateHmacV3(
-        hmacKey, header, salt, iv, cipher);
-
-    // 검증 먼저, 복호화 나중 (Encrypt-then-MAC)
-    if (!CompareBytes(hmac, expected))
-        throw new CryptographicException("HMAC mismatch");
-
-    return AesDecryptWithKey(aesKey, iv, cipher);
+    private List&lt;IObserver&gt; _observers;
+    protected void Raise()                 // 값 변경 후 호출 → 뷰 갱신
+    {
+        if (_observers == null) return;
+        for (int i = 0; i &lt; _observers.Count; i++)
+            _observers[i]?.OnChanged(this);
+    }
+    public void AddObserver(IObserver o)    => (_observers ??= new()).Add(o);
+    public void RemoveObserver(IObserver o) =&gt; /* null-슬롯 처리 */ ;
 }
 
-// 상수시간 비교 (타이밍 공격 방어)
-private static bool CompareBytes(byte[] a, byte[] b)
+// 게임 모델은 이렇게만 :
+public sealed class CoinModel : Observable
 {
-    if (a.Length != b.Length) return false;
-    int r = 0;
-    for (int i = 0; i &lt; a.Length; i++)
-        r |= a[i] ^ b[i];   // 조기 return 없이 누적
-    return r == 0;
+    private int _amount;
+    public int Amount =&gt; _amount;
+    public void SetAmount(int v) { _amount = v; Raise(); }
+}
+
+// === MVC : View (BaseView) — 바인딩·풀 라이프사이클 자동 ===
+public abstract class BaseView&lt;TModel&gt; : PoolableView, IObserver
+    where TModel : class, IObservable
+{
+    public TModel Model { get; set; }       // setter가 Bind/Unbind 구동
+    public void OnChanged(IObservable o)    // 모델 변경 콜백
+    { if (o == Model) RefreshView(); }
+    public override void OnInactive()       // 풀 반납 시 자동 언바인딩
+    { Model = null; base.OnInactive(); }
+
+    protected abstract void RefreshView();  // ← 게임은 이것만 구현
+}</code></pre>
+<pre><code class="language-csharp">// === MVVM : ViewModel (ViewModelBase) ===
+public abstract class ViewModelBase : IViewModel
+{
+    public abstract void Initialize();      // 데이터 로드·구독
+    public abstract void CleanUp();         // 해제
+
+    // [Inject] public void Construct(ISaveSystem s) { ... }
+}
+
+// === MVVM : View (UI&lt;TViewModel&gt;) ===
+public abstract class UI&lt;TViewModel&gt; : UIView
+    where TViewModel : IViewModel, new()
+{
+    [Inject] public void Construct(TViewModel vm) =&gt; ViewModel = vm;
+    protected TViewModel ViewModel { get; private set; }
+
+    public override bool Initialize()
+    {
+        ViewModel.Initialize();
+        BindViewModel();                    // ← 게임은 여기서 구독
+        return true;
+    }
+    protected abstract void BindViewModel();
+}
+
+// 화면은 이렇게만 :
+public sealed class ShopView : UI&lt;ShopViewModel&gt;
+{
+    protected override void BindViewModel()
+    {
+        ViewModel.OnGoldChanged += Refresh;
+        Refresh();
+    }
 }</code></pre>
       </div>
     </div>
-    <div class="cp-cap"><span class="k">💡</span> Encrypt-then-MAC : AES-256-CBC 복호화 전에 magic+kdfId+masterKdfVer+salt+iv+cipher 전체를 덮는 HMAC를 상수시간 XOR-누적 비교로 먼저 검증 — 헤더 한 바이트만 변조돼도 거부되고, 비교 시간이 일정해 타이밍 누설이 없다.</div>
+    <div class="cp-cap"><span class="k">💡</span> 베이스가 <strong>옵저버 등록·언바인딩·풀 반납·DI 주입</strong>을 전부 처리한다 — 모델은 <code>Raise()</code>, 엔티티 뷰는 <code>RefreshView()</code>, 화면은 <code>BindViewModel()</code>만 채우면 끝. 그래서 누가 만들어도 같은 골격이 나오고, 생성기가 이 골격을 한 명령으로 찍는다.</div>
+  </div>
+</section>
+
+<!-- ===================== S12 · 포장도로 생성기 (핸드오프) ===================== -->
+<section class="slide"><div class="no">12</div>
+  <div class="eyebrow">Main Project — GameFramework ⑤</div><h2 class="title">포장도로 코드 생성기 — 핸드오프 단축</h2>
+  <p class="lead meta" style="margin-bottom:14px">앞의 골격(MVC/MVVM)을 <strong style="color:var(--body)">한 명령으로</strong> — 전 계층 + DI 등록 + 풀·정리 배선까지 찍는다. 각 생성기는 <strong style="color:var(--body)">런타임-검증된 레퍼런스</strong>와 프레임워크가 출하하는 <strong style="color:var(--body)">등록 데스크</strong>를 가리켜, 누가 만들어도 같은 구조가 나온다.</p>
+  <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:start">
+    <div>
+      <div style="margin:0 0 12px">
+        <span class="chip">/new-entity</span><span class="chip">/new-ui</span><span class="chip">/new-monitor</span><span class="chip">/new-module</span><span class="chip">/new-sdk</span>
+      </div>
+      <ul class="bul" style="font-size:14px">
+        <li><strong>일관된 코드 스타일</strong> — 매번 같은 모양 → 리뷰·디버깅·인수인계 비용↓</li>
+        <li><strong>등록 데스크 1곳</strong> — 씬 스코프가 화면·엔티티·모니터를 자동 주입(배선 0줄)</li>
+        <li><strong>런타임 검증 레퍼런스</strong> — 생성기가 가리키는 예제를 Play 모드로 실증 후 출하</li>
+      </ul>
+      <div class="plain"><span class="lbl">쉽게</span>집 짓는 <b>골조 키트</b> — "방 추가" 한 번이면 벽·배선·문이 규격대로. 다음 사람이 봐도 같은 도면이라 바로 이어받는다.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;justify-content:center">
+      <div>
+        <div class="footnote" style="margin-bottom:9px">엔티티 1개 = 수동 5파일 + DI 등록 + 풀 배선</div>
+        <div class="ba">
+          <div class="ba-row"><span class="lab">수동</span><div class="ba-track"><div class="ba-fill slow" style="width:100%"></div></div><span class="val">5파일·N분</span></div>
+          <div class="ba-row"><span class="lab">생성기</span><div class="ba-track"><div class="ba-fill fast" style="width:16%"></div></div><span class="val">1 명령</span></div>
+        </div>
+      </div>
+      <div class="cap"><span class="k">핵심</span> 생성기는 <strong>등록 데스크</strong>(SceneLifetimeScope / HudLifetimeScope)를 가리키기만 한다 — 항목을 추가해도 등록 코드가 늘지 않는다.</div>
+      <div><button class="codebtn" data-code="cp-pavedroad">코드 보기 — Scene/Hud 등록 데스크</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- CODE PAGE · Paved Road 등록 데스크 -->
+<section class="slide codepage" id="cp-pavedroad">
+  <div class="cp-head">12 · CODE — Scene/Hud LifetimeScope · 등록 데스크 (일관 배선)</div>
+  <div class="cp-inner">
+    <div class="cardcode">
+      <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">UI/UISystem/Navigation/SceneLifetimeScope.cs · HudLifetimeScope.cs</span></div>
+      <div class="cc-body">
+<pre><code class="language-csharp">// 화면 스코프 : ViewModel 자동등록 + 모든 UIView 주입 + 풀 정리
+protected override void Configure(IContainerBuilder builder)
+{
+    // 프로젝트의 모든 ViewModel 한 번에 등록
+    ViewModelInstaller.Install(
+        builder, GetType().Assembly, typeof(ViewModelBase));
+
+    builder.RegisterBuildCallback(container =&gt;
+    {
+        _nav  = container.Resolve&lt;IUINavigationService&gt;();
+        _pool = container.Resolve&lt;IPool&gt;();
+
+        // 씬의 모든 UIView 를 루트 순회로 주입
+        // → 화면을 추가해도 배선 코드 0줄
+        foreach (var root in
+                 gameObject.scene.GetRootGameObjects())
+        foreach (var v in root
+                 .GetComponentsInChildren&lt;UIView&gt;(true))
+            container.InjectGameObject(v.gameObject);
+    });
+}
+
+// 씬 언로드 시 풀까지 자동 정리 (댕글링 방지)
+protected override void OnDestroy()
+{
+    _pool?.DeactivateAll();
+    _nav?.CleanupForSceneTransition();
+    base.OnDestroy();
+}</code></pre>
+<pre><code class="language-csharp">// HUD 스코프 : 통화당 여러 개인 모니터·홀더를 전부 주입
+// RegisterComponentInHierarchy 는 첫 1개만 → 루트 순회로 교체
+protected override void Configure(IContainerBuilder builder)
+{
+    builder.RegisterComponentInHierarchy
+        &lt;SceneUnloadReleaseHandler&gt;();
+
+    builder.RegisterBuildCallback(container =&gt;
+    {
+        foreach (var root in
+                 gameObject.scene.GetRootGameObjects())
+        {
+            // Gold/Gem/Heart 카운터를 그냥 두면 전부 배선됨
+            foreach (var h in root.GetComponentsInChildren
+                     &lt;AssetReceiveHolder&gt;(true))
+                container.InjectGameObject(h.gameObject);
+
+            foreach (var m in root.GetComponentsInChildren
+                     &lt;MonitorBase&gt;(true))
+                container.InjectGameObject(m.gameObject);
+        }
+    });
+}</code></pre>
+      </div>
+    </div>
+    <div class="cp-cap"><span class="k">💡</span> 화면·엔티티·모니터가 <strong>같은 한 패턴</strong>(루트 순회 InjectGameObject)으로 자동 배선된다 — 생성기는 이 데스크를 가리키기만 하면 되고, 항목을 추가해도 등록 코드가 늘지 않는다.</div>
   </div>
 </section>
 
 <!-- ===================== S10 · 출시작 ===================== -->
-<section class="slide"><div class="no">10</div>
+<section class="slide"><div class="no">13</div>
   <div class="eyebrow">Shipped Titles</div><h2 class="title">출시작 — 23종 / 5장르</h2>
   <p class="lead meta">디자이너 1 + 기획 1 + 개발 1(본인) 구조. 내가 메인/리드로 개발한 게임이 도달한 규모 :</p>
   <table>
@@ -890,7 +1117,7 @@ private static bool CompareBytes(byte[] a, byte[] b)
 </section>
 
 <!-- ===================== S10b · 게임플레이 갤러리 ===================== -->
-<section class="slide"><div class="no">11</div>
+<section class="slide"><div class="no">14</div>
   <div class="eyebrow">Shipped Titles · Gameplay</div><h2 class="title">실제 게임플레이</h2>
   <div class="gallery">
     <figure><img src="assets/shots/convenisort_ss0.png" alt=""><figcaption>편의점 정리왕</figcaption></figure>
@@ -903,7 +1130,7 @@ private static bool CompareBytes(byte[] a, byte[] b)
 </section>
 
 <!-- ===================== S11 · 플레이어블 ===================== -->
-<section class="slide"><div class="no">12</div>
+<section class="slide"><div class="no">15</div>
   <div class="eyebrow">Playable Ad Pipeline</div><h2 class="title">플레이어블 광고 파이프라인 — 다수 제작</h2>
   <p class="lead meta" style="margin-bottom:14px">Luna 기반 <strong style="color:var(--body)">Unity → HTML5</strong> 변환 + Python 멀티네트워크 자동 빌드.
   파이프라인으로 만든 플레이어블 <strong style="color:var(--body)">13종</strong> — 아래 버튼은 모두 <strong style="color:var(--body)">실제 브라우저에서 플레이 가능</strong>.</p>
@@ -956,7 +1183,7 @@ private static bool CompareBytes(byte[] a, byte[] b)
 </section>
 
 <!-- ===================== S13 · AI ① 철학 ===================== -->
-<section class="slide"><div class="no">13</div>
+<section class="slide"><div class="no">16</div>
   <div class="eyebrow">AI Workflow ① — Thesis</div><h2 class="title">설계는 사람, 구현은 AI</h2>
   <p class="lead meta" style="margin-bottom:16px">AI 도구는 <strong style="color:var(--body)">모두에게 같습니다</strong> — Claude Code·Codex·Gemini를 같은 날 받았죠. 변별은 도구가 아니라 <strong style="color:var(--body)">무엇을 먹이고(규칙·명세) 무엇을 검증·소유하느냐</strong>, 그리고 <strong style="color:var(--body)">AI에 끌려가지 않느냐</strong>에서 납니다. AI는 매끄럽게 틀리고(환각), 정보가 많을수록 사람은 판단을 AI에 넘기기 쉽기에(자동화 편향) — 저는 끌려가지 않도록 규칙을 먼저 만듭니다.</p>
   <div class="dgm">
@@ -1045,7 +1272,7 @@ private static bool CompareBytes(byte[] a, byte[] b)
 </section>
 
 <!-- ===================== S14 · AI ② DEFINE 증거 ===================== -->
-<section class="slide"><div class="no">14</div>
+<section class="slide"><div class="no">17</div>
   <div class="eyebrow">AI Workflow ② — Evidence</div><h2 class="title">내가 AI에 먹이는 규칙</h2>
   <p class="lead meta" style="margin-bottom:16px">에이전트 루프 도구는 <strong style="color:var(--body)">Ralph(오픈소스)</strong>를 도입해 운용합니다 — 시스템은 외부지만, <strong style="color:var(--body)">아키텍처·컨벤션·금지패턴·작업 명세는 제가 직접 씁니다.</strong> 그 규칙 문서가 AI 출력의 품질을 가르는 진짜 입력입니다. <span style="color:var(--meta)">(아래는 실제 문서)</span></p>
   <div class="grid2">
@@ -1141,7 +1368,7 @@ namespace Projects._99.Scripts.{Category}.{Sub}</code></pre>
 </section>
 
 <!-- ===================== S15 · AI ③ 사람의 칸 ===================== -->
-<section class="slide"><div class="no">15</div>
+<section class="slide"><div class="no">18</div>
   <div class="eyebrow">AI Workflow ③ — The Human Lane</div><h2 class="title">AI가 못 하는 칸 — 눈 · 검증 · 소유</h2>
   <div class="grid2" style="margin-bottom:14px">
     <div class="card"><h3 style="font-size:16px">👁 연출은 눈으로 판단</h3>
@@ -1158,7 +1385,7 @@ namespace Projects._99.Scripts.{Category}.{Sub}</code></pre>
 </section>
 
 <!-- ===================== S13 · 팀빌딩 ===================== -->
-<section class="slide"><div class="no">16</div>
+<section class="slide"><div class="no">19</div>
   <div class="eyebrow">Team Building &amp; Systemization · ㈜액션핏</div><h2 class="title">0 → 10 팀빌딩 &amp; 시스템화</h2>
   <div class="grid2" style="margin-top:4px">
     <div class="card"><h3 style="font-size:16px">팀빌딩 (퇴사 시 개발팀장)</h3>
@@ -1174,7 +1401,7 @@ namespace Projects._99.Scripts.{Category}.{Sub}</code></pre>
 </section>
 
 <!-- ===================== S14 · 기술 스택 ===================== -->
-<section class="slide"><div class="no">17</div>
+<section class="slide"><div class="no">20</div>
   <div class="eyebrow">Tech Stack</div><h2 class="title">기술 스택</h2>
   <div class="grid2" style="margin-top:6px;gap:18px">
     <div class="card"><h3>Engine · Architecture</h3><p style="margin-top:8px">Unity 6, Cocos Creator, C# / DI(VContainer), MVVM · MVC Pattern<br>Command · Factory · Observer Architecture, Object Pool</p></div>
@@ -1185,7 +1412,7 @@ namespace Projects._99.Scripts.{Category}.{Sub}</code></pre>
 </section>
 
 <!-- ===================== S15 · 마무리 ===================== -->
-<section class="slide"><div class="no">18</div>
+<section class="slide"><div class="no">21</div>
   <div class="closing">
     <h2 class="title" style="font-size:40px;max-width:20ch;line-height:1.35">“게임을 출시까지 만들고, 반복을 시스템으로 정리하며, AI를 도구로 통제하는 개발자입니다.”</h2>
     <div class="contact" style="margin-top:40px;font-size:14px">
@@ -1277,6 +1504,12 @@ namespace Projects._99.Scripts.{Category}.{Sub}</code></pre>
     });
     document.addEventListener('keydown', function(e){ if(e.key === 'Escape') pclose(); });
   })();
+</script>
+<script>
+(function(){
+var MODULES={"modulecontainer": {"name": "ModuleContainer", "tag": "Core · 모듈 합성·부팅", "descs": ["프레임워크의 모든 Modular(ScriptableObject)를 한 배열에 모아 합성하고 부팅 순서를 정하는 글로벌 SO 싱글톤입니다.", "`[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]`의 WarmUp()이 진입점으로, CacheModular()로 타입→인스턴스 사전을 만든 뒤 ValidateAndPrepare()가 ModuleComposition.Validate로 중복/누락을 검사합니다(통과 못 하면 CompositionValid=false로 초기화 자체를 막는 fail-closed).", "검증 통과 후 Engine 단계 모듈만 Order 정렬 순서대로 await Initialize()하고, Project 단계는 나중에 GlobalLifetimeScope.Start()에서 InitializeProjectModulesAsync()로 이어집니다.", "이렇게 2단계로 부팅한 뒤에는 어디서든 `ModuleContainer.Get<T>()` 한 줄로 캐시된 모듈을 꺼내 쓰고, IVContainerConfigurable 구현 모듈은 ConfigureVContainer()에서 DI 컨테이너에 자가 등록됩니다."], "code": "// 1) 부팅(자동) — BeforeSceneLoad 에서 프레임워크가 호출\n//    WarmUp(): CacheModular -&gt; ValidateAndPrepare -&gt; Engine 모듈 Initialize\n//    Engine 순서(Order): MUpdateLoop(100) -&gt; MTimeController(101) -&gt; MPool(310) -&gt; MConfigContainer(1000)\n\n// 2) 합성이 깨졌으면 절대 진행하지 않음(fail-closed)\nif (!ModuleContainer.CompositionValid) return; // 씬 LifetimeScope.Configure 도 여기서 중단\n\n// 3) 사용처 — 타입으로 캐시된 모듈 조회\nvar updateLoop = ModuleContainer.Get&lt;MUpdateLoop&gt;();\nvar pool       = ModuleContainer.Get&lt;MPool&gt;();\nvar config     = ModuleContainer.Get&lt;MConfigContainer&gt;().Get&lt;MyConfig&gt;();\n\n// 4) 부팅 완료 게이트\nif (ModuleContainer.IsComplete) { /* 모든 Engine 모듈 Init 끝 */ }\n\n// 5) DI 자가등록(모듈이 IVContainerConfigurable 일 때, 루트 스코프에서 자동 호출)\npublic void ConfigureRegister(IContainerBuilder b) =&gt; b.RegisterInstance&lt;IPool&gt;(this);", "points": ["fail-closed 설계: 합성 검증(중복 타입/Order)이 실패하면 CompositionValid=false로 초기화를 통째로 건너뛴다 — 깨진 상태로 게임이 절반만 돌아가는 사고를 막는 의도.", "2단계 부팅: Engine 단계(BeforeSceneLoad)는 코어 인프라를, Project 단계(Start)는 게임 로직 모듈을 맡아 의존성 역전 없이 순서를 보장한다. Order는 같은 Phase 안에서만 정렬한다.", "직렬화된 modules 배열은 변형하지 않고 _initOrder 사본으로 순서를 만든다 — 에디터에서 보이는 순서와 실제 부팅 순서를 분리해 안전하게 다룬다."]}, "mpool": {"name": "MPool", "tag": "Core · 오브젝트 풀", "descs": ["PoolableView를 타입별로 재사용하는 오브젝트 풀 모듈로, 매번 Instantiate/Destroy하는 비용과 GC 부담을 없앱니다.", "Initialize()에서 직렬화된 PoolConfiguration 배열을 읽어 '타입→설정' 사전만 만들어 두고 실제 풀 인스턴스는 만들지 않습니다(지연 생성).", "씬이 시작되면 Controller가 `Activate(sceneRoot, typeof(XView))`를 호출해 해당 타입의 Pool&lt;T&gt;를 씬 루트 밑에 생성하고, 이후 `Get<T>()`로 활성 인스턴스를 꺼내고 `Return(instance)`로 되돌립니다.", "풀이 없는 타입을 Return하면 그냥 Destroy로 폴백하고, 씬 언로드 시 SceneLifetimeScope.OnDestroy가 DeactivateAll()을 자동 호출해 모든 풀과 부모 GameObject를 정리하므로 LoadSceneMode.Single에서 댕글링 참조가 남지 않습니다."], "code": "// 1) 부팅(자동): Initialize()가 configs[] -&gt; '타입→PoolConfiguration' 사전만 구축\n\n// 2) 씬 시작 — Controller.Start() 에서 활성화(타입을 명시)\nvar pool = ModuleContainer.Get&lt;MPool&gt;();\npool.Activate(sceneRoot, typeof(EnemyView));   // Pool&lt;EnemyView&gt; 를 sceneRoot 밑에 생성\n\n// 3) 스폰/디스폰 — 보통 Factory 가 감쌈\nEnemyView v = pool.Get&lt;EnemyView&gt;();           // SetActive(true)+OnActive()\nif (!v) return;                                 // 설정 없으면 null + Verbose.E\n// ... 사용 ...\npool.Return(v);                                 // OnInactive()+SetActive(false), 풀 없으면 Destroy 폴백\n\n// 4) 일괄 회수/해제\npool.ReturnAll&lt;EnemyView&gt;();                     // 전부 비활성으로 복귀\n// 씬 언로드: SceneLifetimeScope.OnDestroy -&gt; pool.DeactivateAll() (자동, 직접 호출 불필요)", "points": ["지연 생성 + 타입 키: Initialize는 설정만 캐시하고 풀은 Activate 시점에 만든다 — 안 쓰는 타입의 메모리를 미리 잡지 않는다.", "teardown은 자동: 씬 스코프 OnDestroy가 DeactivateAll을 부른다. 단 SceneLifetimeScope.Configure에서 base.Configure를 먼저 호출해야 IPool이 resolve되어 정리가 동작한다(빠뜨리면 조용히 풀 정리가 꺼짐).", "Get은 PoolableView로 제약되며 풀 미활성 타입을 요청하면 null을 반환하므로 호출부의 null 가드가 사실상 계약 — Activate 누락을 런타임에 드러낸다."]}, "mupdateloop": {"name": "MUpdateLoop", "tag": "Core · 갱신 루프·타이머", "descs": ["흩어진 MonoBehaviour.Update를 단 하나의 중앙 루프로 대체하는 모듈입니다.", "Initialize()에서 DontDestroyOnLoad로 [UpdateLoopRunner] GameObject 하나만 만들고, 그 단일 Runner의 Update/FixedUpdate/LateUpdate가 각각 OnTick·OnFixedTick·OnLateTick 이벤트로 전파됩니다(구독자는 이벤트만 +=).", "useSecondTick이 켜져 있으면 누적 시간이 1초를 넘을 때 OnSecondTick을 발화합니다.", "InvokeRepeat/InvokeDelayed/InvokeNextFrame는 TimerHandle을 만들어 _activeTimers에 넣고, 매 틱 ProcessTimers가 만료된 핸들을 Tick→콜백 실행→정리하며, 콜백 예외는 try/catch로 격리해 한 타이머가 루프 전체를 죽이지 못하게 합니다.", "GameSpeed는 [0.1, maxGameSpeed]로 clamp되어 GameDeltaTime(=deltaTime*gameSpeed)에 반영되고 변경 시 OnGameSpeedChanged를 쏩니다."], "code": "// 1) 접근 — 캐시 패턴 권장\nprivate IUpdateLoop _ul;\nprivate IUpdateLoop UL =&gt; _ul ??= ModuleContainer.Get&lt;MUpdateLoop&gt;();\n\n// 2) Update 대체 — 이벤트 구독/해제\nvoid OnEnable()  =&gt; UL.OnLateTick += OnLate;\nvoid OnDisable() =&gt; _ul.OnLateTick -= OnLate;   // 반드시 해제\nvoid OnLate() { transform.position += _v * UL.GameDeltaTime; } // 속도 배율 반영\n\n// 3) 타이머 — 핸들을 받아 OnDestroy 에서 취소\nprivate ITimerHandle _h;\nvoid Start()    =&gt; _h = UL.InvokeRepeat(Spawn, 1f, repeatCount: -1); // -1 = 무한\nvoid OnDestroy() =&gt; _h?.Cancel();               // 미취소 시 누수\n\n// 4) 한 번만 지연 / 다음 프레임\nUL.InvokeDelayed(ShowResult, 2f);\nUL.InvokeNextFrame(() =&gt; RebuildLayout());\n\n// 5) 게임 속도\nUL.GameSpeed = 2f; // [0.1, maxGameSpeed] 로 clamp, 변하면 OnGameSpeedChanged 발화", "points": ["단일 Runner 1개로 모든 갱신을 중앙화 — 분산된 Update 호출 오버헤드와 실행 순서 비결정성을 제거한다. 그래서 프레임워크 규칙상 Unity Update를 직접 쓰지 않는다.", "타이머 콜백은 try/catch로 격리되어 한 콜백의 예외가 루프 전체를 멈추지 않는다. 다만 핸들은 직접 Cancel해야 하며 OnDestroy 취소를 빼먹으면 죽은 객체를 가리키는 콜백이 계속 돈다.", "OnSecondTick은 add 접근자에서 _lastSecondTime을 리셋한다 — 구독 직후 곧바로 1초가 흐른 것처럼 튀지 않도록 기준 시각을 맞추는 의도."]}, "mtimecontroller": {"name": "MTimeController", "tag": "Core · 라이프사이클 타이머", "descs": ["게임플레이용 MUpdateLoop과 별개로 UI/백그라운드·앱 라이프사이클 타이밍을 다루는 모듈입니다.", "자체 Runner의 Update에서 scaled/unscaled 두 계열로 OnUpdate·OnSecondUpdate·OnTenSecondUpdate를 발화하며, PauseAllUpdates/ResumeAllUpdates로 IsRunning 게이트를 토글해 scaled 이벤트만 멈추고 unscaled는 계속 흐르게 할 수 있습니다(일시정지 중에도 도는 UI 애니메이션 등).", "이름 붙은 커스텀 타이머는 SetCustomInterval(name, interval, onTick)으로 등록하고 lock으로 보호되는 사전에 보관되어 Pause/Resume/Remove로 개별 제어됩니다.", "핵심은 앱 전환 처리: 플랫폼에서 들어오는 OnApplicationFocus와 OnApplicationPause(또는 ADMOB AppStateNotifier)의 이중 신호를 _isBackgrounded edge 플래그로 한 번의 전이로 합쳐 OnAppBackground/OnAppForeground를 정확히 한 번씩만 쏩니다."], "code": "var tc = ModuleContainer.Get&lt;MTimeController&gt;();\n\n// 1) UI 타이머(일시정지 영향 받는 scaled vs 안 받는 unscaled)\ntc.OnSecondUpdate          += RefreshHud;     // IsRunning=false 면 멈춤\ntc.OnSecondUpdateUnScaled  += SpinLoader;     // 일시정지 중에도 계속\n\n// 2) 전체 일시정지 게이트\ntc.PauseAllUpdates();   // IsRunning=false, OnPause 발화 (unscaled 는 유지)\ntc.ResumeAllUpdates();  // IsRunning=true,  OnResume 발화\n\n// 3) 이름 붙은 커스텀 인터벌\ntc.SetCustomInterval(\"autosave\", 30f, () =&gt; SaveData.SaveAll());\ntc.PauseCustomInterval(\"autosave\");\ntc.RemoveCustomInterval(\"autosave\");\n\n// 4) 앱 라이프사이클 — focus+pause 이중신호를 edge 로 1회만\ntc.OnAppBackground += () =&gt; { _bgEnterTime = DateTime.UtcNow; SaveData.SaveAll(); };\ntc.OnAppForeground += () =&gt; ApplyOfflineProgress(DateTime.UtcNow - _bgEnterTime);", "points": ["edge-trigger dedupe: focus 손실과 pause는 안드로이드에서 같은 백그라운드를 1:1로 매핑하지 못한다(알림셰이드·권한창·분할화면 등). _isBackgrounded 플래그로 두 신호를 하나의 전이로 흡수해 OnAppBackground가 정확히 한 번만 발화 — 오프라인 보상 이중지급 같은 머니 버그를 막는 포인트.", "scaled/unscaled 이중 계열: PauseAllUpdates는 IsRunning 게이트로 scaled만 멈추고 unscaled는 계속 흘려, 게임은 멈췄지만 UI는 살아 있어야 하는 상황을 분리한다.", "커스텀 타이머 사전은 lock으로 보호되고 제거는 isMarkedForRemoval 지연 방식 — 순회 중 컬렉션 변경으로 인한 충돌을 피한다."]}, "mvc": {"name": "MVC (Observable / BaseView)", "tag": "Core · 모델-뷰 바인딩", "descs": ["데이터(Observable 모델)와 표시(BaseView)를 옵저버 패턴으로 단방향 연결하는 코어 MVC 골격입니다.", "모델은 Observable을 상속해 필드를 바꾼 뒤 Raise()를 호출하면 등록된 모든 IObserver의 OnChanged가 불려 뷰가 갱신됩니다(Raise는 순회 중 null 옵저버를 모아 사후 정리해 안전).", "뷰는 BaseView&lt;TModel&gt;을 상속하며 Model 프로퍼티에 모델을 대입하는 순간 UnbindModel→AddObserver→OnModelBound→RefreshView가 자동으로 흐르고, 모델이 바뀌면 OnChanged가 OnModelChanged 후 RefreshView를 호출합니다.", "또한 BaseView는 PoolableView를 상속해 풀 라이프사이클과 맞물리는데, 풀로 반납될 때 OnInactive가 UnbindModel하고 Model을 null로 끊어 다음 재사용 시 옛 모델의 잔상이 남지 않게 합니다(OnEnable/OnDisable에서도 옵저버를 재등록/해제)."], "code": "// === 모델: Observable 상속, 변경 후 Raise() ===\npublic class ScoreModel : Observable {\n    private int _score;\n    public int Score =&gt; _score;\n    public void SetScore(int v) { _score = v; Raise(); }       // 뷰에 통지\n    public void SetScoreSilent(int v) { _score = v; }          // 통지 없음\n}\n\n// === 뷰: BaseView&lt;TModel&gt; 상속, 4개 콜백 구현 ===\npublic class ScoreView : BaseView&lt;ScoreModel&gt; {\n    [SerializeField] private TMP_Text _label;\n    protected override void OnModelBound(ScoreModel m) { }      // 바인딩 직후\n    protected override void OnModelUnbound(ScoreModel m) { }    // 언바인딩 시\n    protected override void OnModelChanged(ScoreModel m) { }    // RefreshView 직전\n    protected override void RefreshView() =&gt; _label.text = Model.Score.ToString();\n}\n\n// === 흐름: Model 대입 한 줄이 Bind+Observer+RefreshView 를 트리거 ===\nvar view = pool.Get&lt;ScoreView&gt;();\nview.Model = new ScoreModel();   // -&gt; AddObserver -&gt; OnModelBound -&gt; RefreshView\nview.Model.SetScore(100);        // Raise() -&gt; OnChanged -&gt; OnModelChanged -&gt; RefreshView\npool.Return(view);               // OnInactive -&gt; UnbindModel, Model=null (잔상 차단)", "points": ["Raise() 누락이 가장 흔한 버그: 필드를 바꿔도 Raise를 안 부르면 뷰가 안 갱신된다. 통지 없이 바꾸고 싶을 때만 의도적으로 Silent 변형을 둔다.", "Model 세터가 바인딩 전 과정을 캡슐화한다 — 옛 모델 UnbindModel 후 새 모델 AddObserver+RefreshView까지 자동이라 Controller가 옵저버 등록을 손으로 관리할 필요가 없다.", "풀 반납과 안전하게 맞물림: OnInactive가 UnbindModel + Model=null 로 끊어 재사용 시 옛 모델 잔상을 차단하고, RemoveObserver는 슬롯을 null로 표시해 Raise 순회 중 사후 정리되므로 순회 중 제거가 안전하다."]}, "savesystem": {"name": "SaveSystem", "tag": "Services · 세이브/내구성", "descs": ["SaveData 정적 파사드 뒤에서 MSaveSystemSO(코어 Modular) 가 saveDataList 의 SaveDataSO 6종(Player/Wallet/Purchase/Event/Progress/Settings)을 로드·저장한다.", "쓰기 흐름은 SaveDataSO.Save() → JSON 직렬화 → SaveEnvelope.Wrap 으로 {schemaVersion,timestampUtc,body} 봉투 포장 → AES 암호화 → SaveFileIO.AtomicWrite(temp 에 쓰고 fsync 후 File.Replace, 이전 파일은 .bak 백업)로 이어져 쓰기 도중 강제종료돼도 본 파일이 손상되지 않는다.", "로드는 ReadValidated 가 본 슬롯을 복호화+JSON 파싱(CanDecode)으로 검증하고, 손상이면 .bak 으로 폴백한 뒤 본 파일을 재기록한다 — 조용한 데이터 증발 대신 백업 복구.", "데이터가 실제로 로드된 뒤에만(_loaded) 30초 오토세이브 타이머와 백그라운드 flush(변경분 IsDirty 만 저장)를 가동해 미로드 기본값이 실세이브를 덮어쓰는 일을 막는다.", "쓰기는 항상 서비스 레이어(SaveData.WalletService 등)를 거치고, 컬렉션은 [JsonProperty] 필드여야 Newtonsoft 가 영속한다."], "code": "// 읽기 — 읽기전용 인터페이스 반환\nlong gold = SaveData.Wallet.Gold;\nbool noAds = SaveData.Purchase.AdRemove;\n\n// 쓰기 — 반드시 서비스 레이어 경유(데이터 SO 직접 호출 금지)\nSaveData.WalletService.AddGold(100);     // wallet.Gold += 100 + 이벤트 발신\nSaveData.WalletService.UseHeart();       // 무제한이면 no-op, 아니면 -1 + 회복타이머 시작\n\n// 직접 변경(타이머/회복 로직을 소유하는 시스템만)\nSaveData.Get&lt;WalletDataSO&gt;().LastHeartUsedTime = DateTime.Now;\n\nSaveData.SaveAll();   // IsDirty || AutoSave 인 SO 만 → 봉투+AES+원자쓰기(.bak)\n// 오토세이브(30s)·백그라운드 flush 는 _loaded 이후 자동 가동(변경분만)\n\n// 스키마 진화: SchemaVersion 올리고 Migrate 구현(한 묶음)\nprotected override int SchemaVersion =&gt; 2;\nprotected override string Migrate(int from, int to, string body)\n    =&gt; from &lt; 2 ? V1ToV2(body) : body;", "points": ["원자쓰기(temp+fsync+File.Replace)+.bak 백업+로드 검증 폴백 = 쓰기 중 크래시·파일 손상에도 데이터 보존. 손상 시 조용한 리셋이 아니라 백업 복구 후 본 파일 재기록.", "_loaded 가드: 로드 성공 전에는 quit/오토세이브/백그라운드 저장을 전부 막아 기본값이 실세이브를 덮어쓰는 머니 버그를 차단.", "Newtonsoft 함정 — getter-only 컬렉션은 영속 안 됨. 컬렉션 필드는 [JsonProperty] 필수, 쓰기는 서비스 레이어로만."]}, "assetdelivery": {"name": "AssetDelivery", "tag": "Services · 멱등 보상전달", "descs": ["보상(통화/하트/VIP 등) 지급의 단일 진입점으로, AssetDelivery(Orchestration)→AssetLedger(잔액+dedup)→AssetPresenter(연출)+IAssetDeliveryFeedback(사운드/햅틱) 3계층으로 동작한다.", "Deliver(asset, amount, DeliveryId) 는 ledger.Apply 를 호출하고, Apply 는 같은 DeliveryId 가 이미 dedup store(잔액과 동거하는 SaveDataSO)에 기록돼 있으면 DedupSkipped 로 잔액 불변, 아니면 saturating add 로 적용한 뒤 같은 SO 에 id 를 기록한다 — 잔액 변경과 id 기록이 한 Save() 로 원자적이라 effectively-once.", "ledger.Apply 가 Applied 일 때만 presenter.Play(fly-to-icon 연출)와 feedback 이 발신되고, DedupSkipped/Failed/NoOp(amount<=0 또는 MaxValue 가득 참)은 전부 무음.", "통화는 assetId 로 라우팅되어(CurrencyStrategy: gold→Gold, jam→Jam) 같은 Currency 종류라도 각자의 지갑 슬롯에 적용되며, 미등록 assetId 는 fail-closed(지급 거부·원장 미기록 → 재시도 가능).", "로컬 UI 트리거는 DeliverLocal(매번 새 id), 서버/IAP/광고처럼 재시도 가능한 출처는 안정 id 가 필수다(컴파일러가 멱등 보호를 강제)."], "code": "// 로컬(비멱등) — 매번 새 DeliveryId, cross-retry dedup 없음\ndelivery.DeliverLocal(goldAsset, 100, fromScreenPos);\n\n// 서버/IAP(멱등) — 안정 키 필수, 같은 키 재시도는 1회만 적용\nDeliveryId id = DeliveryId.From(serverRewardId);\nAssetApplyResult r = delivery.Deliver(goldAsset, 100, id);\n\nswitch (r.Status)\n{\n    case AssetApplyStatus.Applied:      // 적용+id기록 → 연출/사운드 발신됨\n    case AssetApplyStatus.DedupSkipped: // 이미 적용됨 → 잔액 불변, 무음\n    case AssetApplyStatus.NoOp:         // amount&lt;=0 또는 가득 참 → 종결\n    case AssetApplyStatus.Failed:       // 일시 실패 → id 미기록, 재시도\n        break;\n}\n\n// 크로스씬 예약(스케줄 시점에 구체 id 영속) → 도착 씬에서 멱등 flush\ndelivery.ScheduleForScene(goldAsset, 50, id, SceneId.From(\"Lobby\"));\ndelivery.FlushScene(SceneId.From(\"Lobby\"));  // 종결 제거, 일시실패만 바운드 재시도", "points": ["멱등의 핵심: 잔액 변경 + DeliveryId 기록이 같은 SaveDataSO 에서 한 Save() 로 영속 → 재시도/restore/크래시 리플레이에도 정확히 1회 지급(effectively-once).", "ledger 성공(Applied) 시에만 연출·피드백 발신 — DedupSkipped/Failed/NoOp 는 무음. id 빈 Deliver 는 dedup 무력화라 거부(DeliverLocal 로 강제 분기).", "통화는 assetId 라우팅(Option B). 새 통화 = CurrencyStrategy.CreateDefault 에 accessor + WalletDataSO 필드 추가. 미등록 assetId 는 fail-closed."]}, "iap": {"name": "IAP", "tag": "Services · 인앱결제(머니세이프)", "descs": ["confirm-after-grant 흐름으로 '돈만 받고 0지급' 을 구조적으로 막는다.", "store 가 OnPurchasePending(order) 를 올리면 IAPStore 글루가 상품을 카탈로그에서 찾고, 멱등 키를 결정(소모품=store transactionId / 비소모품=SKU 기반 nc:<sku> 결정적 키 → 복원 멱등)해 IapFulfillment.Fulfill 을 호출한다.", "코디네이터(IapFulfillmentCoordinator)는 PURCHASING 타입 무참조라 Edit Mode 에서 테스트 가능하며, 이미 처리된 거래면 IPurchaseService.HasTransaction 으로 AlreadyFulfilled(재지급 없음), 아니면 AssetDelivery.Deliver(DeliveryId=key)로 통화를 멱등 지급한다.", "내구성 순서가 핵심 — 신규 지급(Applied)이면 먼저 SaveAll 로 잔액을 durable 하게 만든 뒤 구매원장(AddPurchase)+AdRemove 를 또 한 번 SaveAll 로 영속한다(역순이면 잔액 유실인데 '처리됨' 표시 = lost-grant).", "그 결과가 confirm 권위라, ShouldConfirm(Fulfilled|AlreadyFulfilled)일 때만 ConfirmPurchase 하고 Failed/RewardUnresolved 는 pending 으로 남겨 재시도/수동 해소한다."], "code": "// 게임 코드: 구매 시작\nIAP.PurchaseProduct(\"com.game.gold_pack\");\n\n// store 콜백(IAPStore+Purchasing) — 미등록/식별불가 상품은 confirm 금지(pending 유지)\nbool ownOnce = catalog.ProductType == ProductType.NonConsumable;\nstring key = IapIdempotencyKey.Resolve(ownOnce, catalog.Sku, order.Info?.TransactionID);\nIapFulfillmentResult result = IapFulfillment.Fulfill(\n    key, catalog.RewardAssetId, catalog.RewardAmount,\n    catalog.Sku, price, catalog.GrantsAdRemove);\n\n// 코디네이터 내부: 지급 → SaveAll(잔액 먼저) → 기록 → SaveAll(권위)\nif (_purchase.HasTransaction(key)) return AlreadyFulfilled; // 리플레이 흡수\nvar r = _delivery.Deliver(asset, amount, DeliveryId.From(key));\nif (r.Status == Applied) _saveSystem.SaveAll();   // (1) 지급 내구화\n_purchase.AddPurchase(productId, key, price);\n_saveSystem.SaveAll();                             // (2) 구매원장=confirm 권위\n\n// 권위 결과로만 결제 확정(confirm-after-grant)\nif (IapFulfillment.ShouldConfirm(result)) _controller.ConfirmPurchase(order);", "points": ["confirm-after-grant: 지급+기록+SaveAll 이 끝난 뒤에만 ConfirmPurchase. 미등록/식별불가 상품·Failed·RewardUnresolved 는 절대 confirm 안 하고 pending 유지 → 돈만 받고 0지급 차단.", "2계층 멱등(키=거래 키): 구매원장 HasTransaction=confirm 권위, 자산원장 DeliveryId=지급 멱등. 플러시후-크래시 리플레이도 AlreadyFulfilled 로 수렴.", "비소모품(no-ads)은 SKU 기반 nc:<sku> 결정적 키 → 재설치 복원이 같은 키로 수렴(복원 멱등). 코디네이터는 PURCHASING 타입 무참조라 Edit Mode 테스트 가능."]}, "ads": {"name": "ADS", "tag": "Services · 광고/노애드 게이트", "descs": ["정적 ADS 파사드가 전면(Interstitial)·보상형(Rewarded)·배너(Banner)·앱오픈(AppOpen) 4종을 partial 클래스로 묶어 AppLovin/AdMob Provider 로 위임한다.", "no-ads(광고제거) 권한의 단일 권위는 ADS.AdsRemoved 게이트로, SaveData.Purchase.AdRemove 를 읽되 SaveData 미준비 시 false(표시 허용)=fail-open 이라 부팅 직후 짧은 창에서만 노출되고 매출을 보호한다.", "표시형 광고(전면/배너/앱오픈)는 Show 진입부에서 AdsRemoved 를 확인해 차단하고, 전면은 미리 로드(Request)도 건너뛰며, 딜레이 표시 창에서는 실제 표시 직전 AdsRemoved 를 재확인한다(IAP 콜백 비동기로 인한 TOCTOU 방지).", "보상형은 유저가 자발적으로 보는 가치 교환이라 게이트 대상이 아니다(유지).", "구매·복원으로 AdRemove 가 켜지면 SaveSystemEvents.OnAdRemoveChanged 구독(Configure 에서 1회)이 이미 떠 있는 배너를 DisableBanner+DestroyBanner 로 즉시 철거해, 게이트가 새 표시를 막는 것과 능동 철거를 함께 보장한다."], "code": "// 게임 코드 — 호출은 그대로, 게이트는 ADS 내부가 처리\nADS.RequestInterstitial();   // AdsRemoved 면 미리 로드도 스킵\nADS.ShowInterstitial(success =&gt; { /* false=표시 안 됨, 흐름 진행 */ });\nADS.ShowAppOpen();           // AdsRemoved 면 즉시 return\nADS.EnableBanner();          // AdsRemoved 면 표시 안 함\n\n// 보상형은 게이트 제외(자발적 가치교환) — 항상 시도\nADS.ShowRewardVideo(success =&gt; { if (success) GrantReward(); });\n\n// 내부 게이트(단일 권위) — SaveData 미준비면 false(fail-open)\ninternal static bool AdsRemoved =&gt;\n    SaveData.IsInitialized &amp;&amp; SaveData.Purchase != null &amp;&amp; SaveData.Purchase.AdRemove;\n\n// 구매/복원 즉시 반영 — IAP 가 SetAdRemove(true) → 이벤트 → 떠 있는 배너 철거\nprivate static void OnAdRemoveChanged(bool removed) {\n    if (removed) { DisableBanner(); DestroyBanner(); }\n}", "points": ["AdsRemoved 단일 중앙 게이트가 전면/배너/앱오픈을 모두 차단(보상형 제외). fail-open 기본값(SaveData 미준비=표시 허용)은 매출 보호 측 안전장치.", "딜레이 표시 창에서 표시 직전 AdsRemoved 재확인(TOCTOU). 구매 즉시 OnAdRemoveChanged 로 이미 떠 있는 배너까지 Destroy → 게이트(새 표시 차단)+능동 철거 둘 다 보장.", "지급은 IAP 코디네이터의 멱등 SetAdRemove(복원=AlreadyFulfilled, 재부여 없음)로, ADS 는 읽기만 — 권한 부여와 표시 차단이 깔끔히 분리됨."]}, "arm": {"name": "ARM (Addressable Resource Manager)", "tag": "Services · 에셋/씬 로딩", "descs": ["Unity Addressables 위에 얹은 정적 파사드로, 에셋·씬의 로드/해제와 참조 카운팅을 한곳에서 관리한다.", "부팅 시 ARM.Activate()(또는 await ActivateAsync())가 Addressables.InitializeAsync()를 돌려 카탈로그의 모든 키를 내부 IAssetRegistry에 등록하고 Initialized=true + Callbacks.OnActivateCompleted를 발화한다.", "이후 ARM.Assets.Load(key)는 ARMOperationHandle<AssetEntry>를 반환하고, AssetEntry.Get<T>()가 ReferenceCount를 올리며 핸들을 넘겨주고, AssetEntry.Release()가 카운트를 내려 0이 되면 ARM.ReleaseAsset로 실제 언로드한다(라벨 단위 BatchLoad는 ReleaseBatches로만 해제).", "전체가 #if ARM_UNITASK 가드라 UniTask가 없으면 컴파일에서 빠지고, 원격 카탈로그 패칭은 미구현이라 현재는 로컬 카탈로그 로더로만 동작한다."], "code": "// 부팅: Addressable 시스템 활성화 (카탈로그 키를 레지스트리에 등록)\nawait ARM.ActivateAsync();\nif (!ARM.Initialized) return;\n\n// 개별 에셋 로드 → 핸들 await → Get&lt;T&gt;()로 참조 획득(refcount++)\nvar handle = ARM.Assets.Load(\"Prefab_Hero\");\nAssetEntry entry = await handle.ToUniTask();\nGameObject prefab = entry.Get&lt;GameObject&gt;();\nvar hero = Object.Instantiate(prefab);\n\n// 다 쓰면 Release()로 refcount-- (0이면 실제 언로드)\nentry.Release();\n\n// 씬은 ISceneController로\nvar sceneHandle = ARM.Scenes.LoadScene(\"Stage01\", LoadSceneMode.Additive);\nawait sceneHandle.ToUniTask();", "points": ["정적 파사드(ARM.Assets / ARM.Scenes)지만 내부는 AssetController/SceneController + IAssetRegistry로 분리 — 키 등록·핸들 추적이 한곳에 모인다.", "수동 참조 카운팅: Get<T>()가 ++, Release()가 -- 하고 0에서만 언로드. 배치 로드 에셋은 개별 Release 불가(ReleaseBatches/ReleaseAllBatches 전용) — 함정.", "#if ARM_UNITASK 가드 + 원격 패칭 미구현(로컬 카탈로그만). Activate 실패 시 OnActivateFailed로 표면화하고, 미초기화 상태 Load는 즉시 Fail 핸들을 줘 await 영구 행을 막는다."]}, "network": {"name": "Network (MNetworkSO)", "tag": "Services · 연결 상태 추적", "descs": ["기기의 인터넷 연결 여부를 검증하고 상태 변화를 이벤트로 흘려보내는 인프라 모듈이다.", "코어 Modular인 MNetworkSO(order 2800)가 부팅 때 Initialize에서 autoStartTracking이면 Network.StartTracking을 호출해 백그라운드 폴링 루프를 띄우고, NetworkEvent.OnConnected/OnDisconnected를 구독한다.", "실제 판정은 NetworkManager가 INetworkAccessValidator(Http/Ping/Unity)로 수행하고, 게임 코드는 정적 파사드 NConnector로 NConnector.IsConnected를 읽거나 await ValidationConnectionAsync()로 즉석 확인하거나 TryConnectAsync(duration)으로 일정 시간 재시도한다.", "추적 루프는 상태가 바뀔 때 NetworkEvent.OnConnectionStatusChanged(bool)를 발화하고, NConnector.SubscribeStatusChanged로 구독한다.", "StartTracking은 CancellationTokenSource를 반환하고 StopTracking/Release에서 정리된다(중복 시작은 기존 CTS 재사용)."], "code": "// 모듈은 부팅 시 자동 추적 시작(MNetworkSO.autoStartTracking)\n// 게임 코드는 정적 파사드 NConnector로 접근\n\n// 1) 즉석 연결 확인 (await)\nbool online = await NConnector.ValidationConnectionAsync();\nif (!online) ShowOfflinePopup();\n\n// 2) 상태 변화 구독\nNConnector.SubscribeStatusChanged(OnNet);\nvoid OnNet(bool connected) =&gt; Verbose.D($\"net = {connected}\");\n\n// 3) 일정 시간 동안 연결 재시도\nbool ok = await NConnector.TryConnectAsync(duration: 5f);\n\n// 정리\nNConnector.UnsubscribeStatusChanged(OnNet);", "points": ["설계 분리: NetworkManager(폴링/검증 엔진) + NConnector(게임용 정적 파사드) + MNetworkSO(부팅 배선용 Modular). 게임은 NConnector만 알면 된다.", "추적 루프는 lock + CancellationTokenSource로 중복 시작/정지를 안전하게 처리하고, RequestIsConnectedAsync가 내부에서 상태 갱신까지 하므로 폴링과 단발 호출이 같은 경로를 공유한다.", "검증 방식은 NetworkValidationType(Default/Http/Ping/Unity)으로 교체 가능 — 환경에 맞는 validator를 고를 수 있다."]}, "platform": {"name": "Platform (SDK 부트 + Analysis)", "tag": "Services · SDK 부팅/분석", "descs": ["Firebase·AppLovin MAX·Facebook·GameAnalytics·Singular 같은 서드파티 SDK들을 한 번에 부팅하고, 분석 이벤트를 여러 SDK로 동시에 흘려보내는 멀티플렉스 계층이다.", "Modular인 MPlatformServiceSO(order 3020)가 Inspector에 꽂힌 PlatformServiceSO[] 중 IPlatformInitializer를 구현한 것만 추려(CollectInitializers) UniTask.WhenAll로 병렬 초기화하되, SDK 1종당 10초 타임아웃(WhenAny + Delay)을 걸어 콜백을 안 부르는 SDK(이미 초기화된 early-out, Ref 미할당 등)에서 부트가 영구 행 거는 것을 막는다.", "분석은 Analysis 정적 클래스(#if PURCHASING_ENABLED 가드)가 진입점으로, Analysis.Initialize가 AnalysisServiceFactory로 설치된 SDK별 IAnalyticsService들을 모아 AnalysisPresenter에 넘기고, LogEvent/LogIAPEvent 한 번 호출이 등록된 모든 분석 SDK로 팬아웃된다.", "각 SDK 연동 코드는 #if SDK_INSTALLED_FIREBASE 등 심볼 가드로 감싸 미설치 SDK는 컴파일에서 통째로 빠진다."], "code": "// 부팅: MPlatformServiceSO가 등록된 SDK SO들을 병렬 초기화(각 10s 타임아웃)\n// → 내부적으로 PlatformFirebaseSO.Ref.Initialize(...) 등 IPlatformInitializer 호출\n\n// 분석 멀티플렉스 초기화(설치된 SDK들을 한 Presenter로 묶음)\nAnalysis.Initialize(new AnalysisSettings(\n    autoSendADSRevenue: true, autoSendIAPRevenue: true));\n\n// 한 번 호출 = 등록된 모든 분석 SDK로 팬아웃\nAnalysis.LogEvent(\"level_clear\", \"12\");\nAnalysis.LogEvent(\"tutorial_done\", null, AnalysisType.Firebase); // 특정 SDK만\n\n// SDK별 연동은 심볼 가드 — 미설치면 컴파일에서 제외\n#if SDK_INSTALLED_FIREBASE\nif (PlatformFirebase.Initialized) { /* ... */ }\n#endif", "points": ["부트 안전망: SDK별 10초 타임아웃으로 콜백 미발화 경로(early-out/Ref 미할당)의 WhenAll 데드락을 막는다 — 한 SDK가 죽어도 부팅은 진행.", "Analysis는 멀티플렉스 파사드: LogEvent 한 번이 Presenter를 거쳐 설치된 모든 IAnalyticsService로 동시 전송, AnalysisType([Flags] enum)으로 특정 SDK만 타겟 가능.", "전 구간 #if 심볼 가드(PURCHASING_ENABLED·SDK_INSTALLED_*) — 미설치 SDK는 코드에서 사라지므로 호출부도 같은 심볼로 감싸야 한다(함정)."]}, "appgate": {"name": "AppGate (출시 게이트)", "tag": "Services · 강제업데이트/점검", "descs": ["앱 부팅 초반에 '지금 이 빌드를 플레이시켜도 되는가'를 원격 설정으로 판정하는 게이트다.", "AppGateService.EvaluateAsync가 IAppGateConfigSource.FetchAsync(HttpAppGateConfigSource = UnityWebRequest GET + Newtonsoft 파싱)로 원격 JSON을 받아 AppGateConfig(minVersion/latestVersion/maintenance/...)로 역직렬화하고, 순수 함수 AppGatePolicy.Evaluate가 현재 빌드 버전(Application.version)과 비교해 Maintenance > ForceUpdate > RecommendUpdate > Allowed 우선순위로 AppGateDecision을 돌려준다.", "버전 비교는 의존성 없는 AppVersion.Compare(점 구분, 비숫자 접미사·내부 공백 방어)로 단위 테스트가 가능하다.", "fetch 실패(네트워크/타임아웃/파싱)는 절대 throw하지 않고 null을 반환하며, failOpenOnError에 따라 Allowed(기본, 플레이어 잠금 방지) 또는 ForceUpdate(서버 필수 게임의 보수적 차단)로 떨어진다.", "프레임워크는 판정과 LastConfig(storeUrl·점검 문구) 데이터만 주고, 차단 UI·스토어 이동 렌더는 게임 소관이다."], "code": "// 설정 SO(Inspector에서 URL/타임아웃/실패정책) → 서비스 구성\nvar gate = AppGateService.FromSettings(appGateSettingsSO);\n\n// 부팅 초반: 원격 JSON fetch → 버전 비교 → 판정\nAppGateDecision decision = await gate.EvaluateAsync(ct);\n\nswitch (decision)\n{\n    case AppGateDecision.Maintenance:\n        ShowMaintenance(gate.LastConfig?.maintenanceMessage); return;\n    case AppGateDecision.ForceUpdate:\n        OpenStore(gate.LastConfig?.storeUrl); return;       // 차단\n    case AppGateDecision.RecommendUpdate:\n        ShowSoftUpdateNudge(); break;                        // 진행 가능\n    case AppGateDecision.Allowed:\n        break;                                               // 그대로 진행\n}\nStartGame();", "points": ["판정/소스/UI 3계층 분리 + 장르 불문: AppGatePolicy·AppVersion은 순수 함수(의존성 0, Edit Mode 테스트), 백엔드는 IAppGateConfigSource seam(GitHub raw·S3·CDN 어디든 스키마만 맞으면 OK).", "fail-open이 기본값(네트워크 불안정으로 플레이어를 잠그지 않음). failOpenOnError=false(fail-closed)는 *어떤* fetch 실패에도 100% 강제업데이트 벽 — 이중화된 서버 필수 게임에서만 켤 것(DANGER).", "설정 URL을 비우면 게이트 비활성(항상 Allowed) → 출시 직전 URL만 채우면 활성화. config의 모든 필드는 선택적이라 누락 시 해당 규칙만 미발동."]}, "navigation": {"name": "UINavigationService", "tag": "UI · 화면 스택/네비게이션", "descs": ["앱 전역 싱글톤(MUINavigationModule이 IUINavigationService로 DI 등록)으로, UIView들을 타입별로 보관하고 화면 스택을 관리하는 네비게이터다.", "await GetView<T>()를 호출하면 _views/_activeViews 캐시에서 찾거나 ARM(Addressable)으로 동적 로드·인스턴스화한 뒤, View의 OpenMode(Single/Stack/Persistent)에 따라 HandleUIView가 분기한다 — Single은 이전 화면을 닫고(UseHistory면 _viewStack에 push) 새 화면을 Show, Stack은 위로 쌓고, Persistent(HUD 등)는 닫히지 않는다.", "화면이 Close되면 UIView가 CloseViewInternal을 콜백해 스택을 pop하고 직전 화면을 다시 Show하므로 GoBack/GoToRoot가 자연스럽게 동작한다.", "비-Persistent 화면이 모두 닫히면 TryResumeGame이 OnGameShouldResume과 MTimeController.ResumeAllUpdates를 발화해 게임 루프를 재개한다."], "code": "// 1) 주입받아 사용 (앱 전역 싱글톤)\n[Inject] private IUINavigationService _nav;\n\n// 2) 컨텍스트 없이 열기 — Addressable 키는 기본 View 타입명\nawait _nav.GetView&lt;SettingView&gt;();\n\n// 3) 컨텍스트와 함께 열기 (View/VM 이 IContextReceiver 면 SetContext 수신)\nawait _nav.GetView&lt;RewardPopup, RewardCtx&gt;(new RewardCtx(gold: 100));\n\n// 4) 스택/쿼리/닫기\nif (_nav.CanGoBack()) _nav.GoBack();      // 스택 top 을 Close → 직전 화면 복귀\nif (_nav.IsActive&lt;ShopView&gt;()) _nav.CloseView&lt;ShopView&gt;(); // Deactivate(기본)\n_nav.GoToRoot();                           // = CloseAll (Persistent 제외)\n\n// 5) 게임 일시정지 훅 (MUpdateLoop 게임 로직이 구독)\n_nav.OnGameShouldPause  += PauseGameplay;\n_nav.OnGameShouldResume += ResumeGameplay;", "points": ["OpenMode가 흐름을 가른다: Single=이전 닫고 교체, Stack=누적, Persistent=HUD처럼 절대 안 닫힘. CloseAll/CleanupForSceneTransition도 Persistent는 보존한다.", "화면 표시값/스택 정리는 UIView의 Close 콜백(CloseViewInternal)을 통해 일어난다 — 네비게이터가 일방적으로 닫지 않고 View 라이프사이클과 핸드셰이크한다.", "앱 전역 싱글톤이라 SetResolver/SetCanvasTransform을 씬 스코프가 매 씬 re-point한다. 그래서 UI 씬은 반드시 LoadSceneMode.Single — 스코프 2개가 동시에 살면 nav를 가로채 잘못된 canvas에 주입된다."]}, "scenescope": {"name": "SceneLifetimeScope", "tag": "UI · 씬 DI 스코프", "descs": ["씬 단위 VContainer 스코프로, 씬의 ViewModel 자동 등록 + UIView 일괄 주입 + 풀 청소를 한 곳에서 책임진다.", "Configure에서 ViewModelInstaller.Install(builder, GetType().Assembly, typeof(ViewModelBase))로 프로젝트 어셈블리의 모든 ViewModel을 Transient 등록한 뒤, BuildCallback에서 앱 전역 nav의 resolver를 이 씬 컨테이너로 re-point하고 canvas/blockDim을 세팅한다.", "이어서 씬 루트들을 순회하며 GetComponentsInChildren<UIView>(true)로 찾은 모든 View에 InjectGameObject를 호출한다(RegisterComponentInHierarchy는 첫 1개만 주입하는 함정 회피).", "씬 언로드 시 OnDestroy가 IPool.DeactivateAll로 이 씬에서 Activate한 풀을 정리하고 nav.CleanupForSceneTransition으로 stale 화면을 제거한 뒤 컨테이너를 Dispose한다."], "code": "// 베이스는 추상 — 반드시 @Template(Assembly-CSharp) 쪽에서 상속해야\n// GetType().Assembly 가 프로젝트 어셈블리가 되어 VM 이 등록된다.\npublic sealed class GameSceneScope : SceneLifetimeScope { }\n\n// MVC 엔티티까지 쓰는 씬이면 Configure 를 오버라이드:\npublic sealed class StageScope : SceneLifetimeScope\n{\n    [SerializeField] private Transform spawnRoot;\n    protected override void Configure(IContainerBuilder builder)\n    {\n        base.Configure(builder);                  // ⚠️ 반드시 FIRST — VM 등록 + 풀청소용 IPool 해소\n        builder.RegisterInstance(spawnRoot);\n        builder.Register&lt;IEnemyFactory, EnemyFactory&gt;(Lifetime.Scoped);\n        builder.Register&lt;EnemyController&gt;(Lifetime.Scoped);\n        builder.RegisterBuildCallback(c =&gt; c.Resolve&lt;EnemyController&gt;().Start());\n    }\n    // 풀 teardown 은 자동(OnDestroy → IPool.DeactivateAll) — 직접 청소 코드 불필요\n}\n// 씬 GameObject 에 붙이고 uiCanvas / blockDim 을 인스펙터에서 할당", "points": ["상속 위치가 핵심: GetType().Assembly가 ViewModelInstaller의 등록 기준이라, GameFramework.dll에서 상속하면 프로젝트 VM이 안 잡힌다 → 반드시 @Template 쪽에서 상속.", "오버라이드 시 base.Configure(builder)를 가장 먼저 호출해야 한다 — 빼먹으면 VM 미등록 + 풀 청소용 IPool 미해소로 OnDestroy 청소가 조용히 비활성된다.", "OnDestroy의 DeactivateAll은 전역이라 Single 단일 스코프 계약 하에서만 안전하다. async 씬 전환으로 새 씬이 옛 씬 OnDestroy보다 먼저 풀을 Activate하면 새 풀까지 파괴될 수 있다."]}, "monitor": {"name": "MonitorBase", "tag": "UI · HUD 자산 카운터", "descs": ["HUD에서 재화 잔액을 표시하고 Asset Delivery 입자 연출에 맞춰 숫자를 정착시키는 카운터의 베이스다.", "MonitorBase 자체는 슬롯 애니메이션 메커니즘만 제공한다 — ForceSetText는 즉시 표시, SlotAnimate는 TMP_Text를 clone해 위로 밀어내며 fade하는 DOTween 시퀀스를 만들고 _slotSequences/_cloneTexts로 추적해 OnDisable/OnDestroy에서 kill·파괴한다.", "잔액 읽기와 핸드셰이크는 하위 클래스(GoldMonitor)가 구현하는데, [Inject] Construct와 OnEnable이 둘 다 멱등 Activate()를 호출해 주입/활성화 순서 비결정성을 흡수한다.", "presenter의 OnDisplayHold(입자 비행 중 옛 값 고정) → OnDisplayRelease(도착 후 _ledger.GetCurrentValue로 권위값 정착) 흐름으로 동작하며, Hold/Release 이벤트는 잔액을 싣지 않으므로 표시값은 항상 ledger라는 단일 진실원에서 읽는다."], "code": "public sealed class GemMonitor : MonitorBase\n{\n    [SerializeField] private AssetDefinition assetDef;   // \"gem\"\n    [SerializeField] private TMP_Text gemText;\n    private IAssetLedger _ledger; private IAssetPresenter _presenter; private bool _active;\n\n    [Inject] public void Construct(IAssetLedger l, IAssetPresenter p) { _ledger = l; _presenter = p; Activate(); }\n    private void OnEnable() =&gt; Activate();                 // 주입보다 먼저 올 수 있음\n    protected override void OnDisable() { Deactivate(); base.OnDisable(); } // 정리 후 base\n\n    private void Activate() {\n        if (_active || _ledger == null || _presenter == null) return; // 멱등 가드\n        _active = true;\n        _presenter.OnDisplayHold += OnHold; _presenter.OnDisplayRelease += OnRelease;\n        ForceSetText(gemText, _ledger.GetCurrentValue(assetDef).ToString()); // 권위 시드\n    }\n    private void OnHold(AssetDefinition a, long oldDisplay) {\n        if (a.Id != assetDef.Id) return;                  // presenter 는 모든 자산 브로드캐스트\n        ForceSetText(gemText, oldDisplay.ToString());     // 입자 비행 중 옛 값 고정\n    }\n    private void OnRelease(AssetDefinition a) {\n        if (a.Id != assetDef.Id) return;\n        SlotAnimate(gemText, _ledger.GetCurrentValue(assetDef).ToString()); // 도착 후 정착\n    }\n    public override void UpdateMonitor() =&gt; ForceSetText(gemText, _ledger.GetCurrentValue(assetDef).ToString());\n}", "points": ["Construct와 OnEnable이 둘 다 멱등 Activate를 호출하는 게 설계 핵심이다 — VContainer 주입과 Unity 활성화 순서는 비결정적이라, _active 가드 + deps null early-return으로 어느 쪽이 먼저 와도 정확히 한 번만 구독한다.", "Hold/Release 이벤트에는 잔액이 실리지 않는다 — 표시값은 무조건 _ledger.GetCurrentValue로 읽어야 단일 진실원이 유지된다. 또 presenter는 모든 자산을 브로드캐스트하므로 asset.Id != assetDef.Id 필터가 필수.", "슬롯 애니는 GoldMonitor가 UI<T> 핸드셰이크가 아닌 자체 라이프사이클로 구동해 base.TurnOnMonitor의 SaveData-init SetActive(false) 함정을 피한다. clone TMP는 OnDisable/OnDestroy에서 반드시 파괴(영구 누수 방지)."]}, "mvvm": {"name": "MVVM (ViewModelBase / UI<T>)", "tag": "UI · MVVM 화면 패턴", "descs": ["UI 화면을 View(MonoBehaviour)와 ViewModel(POCO)로 분리하는 패턴이다.", "ViewModel은 ViewModelBase를 상속해 Initialize/CleanUp을 구현하고 자신의 의존성을 [Inject] Construct로 받으며(예: IUINavigationService), SceneLifetimeScope의 ViewModelInstaller가 Transient로 등록한다.", "View는 UI<TViewModel>을 상속하고, 스코프가 InjectGameObject할 때 [Inject] Construct(TViewModel)로 ViewModel이 채워진다.", "화면이 Show되면 UI<T>.Initialize가 돌며 — context가 있으면 IContextReceiver로 전달하고, 최초 1회 ViewModel.Initialize를 부른 뒤 추상 메서드 BindViewModel()을 호출하고, 자식의 MonitorBase들을 TurnOnMonitor한다.", "BindViewModel에서 ViewModel 이벤트를 구독해 화면을 갱신하고, OnDisable에서 ViewModel.CleanUp + 구독 해제로 정리한다."], "code": "// === ViewModel: 상태/로직, 의존성은 [Inject] ===\npublic sealed class ShopViewModel : ViewModelBase\n{\n    private IUINavigationService _nav; private IWalletData _wallet;\n    public event Action OnGoldChanged;\n    public long Gold =&gt; _wallet.Gold;\n\n    [Inject] public void Construct(IUINavigationService nav) =&gt; _nav = nav; // 자식→루트 싱글톤 해소\n    public override void Initialize() { _wallet = SaveData.Wallet; }        // 최초 1회\n    public void Close() =&gt; _nav.CloseView&lt;ShopView&gt;();\n    public override void CleanUp() { }\n}\n\n// === View: UI<VM> 상속, 바인딩만 ===\npublic sealed class ShopView : UI&lt;ShopViewModel&gt;\n{\n    [SerializeField] private TMP_Text goldLabel;\n    protected override void BindViewModel()           // Show → Initialize 후 자동 호출\n    {\n        ViewModel.OnGoldChanged += Refresh;\n        Refresh();\n    }\n    private void Refresh() =&gt; goldLabel.text = ViewModel.Gold.ToString();\n    protected override void OnDisable()\n    {\n        if (ViewModel != null) ViewModel.OnGoldChanged -= Refresh; // 누수 방지\n        base.OnDisable();                              // base 가 ViewModel.CleanUp 호출\n    }\n}\n// 등록은 직접 하지 않는다 — 씬에 SceneLifetimeScope 하위클래스 1개만 두면 VM 등록+주입 자동", "points": ["등록/주입을 직접 하지 않는 게 의도다 — 씬에 SceneLifetimeScope 하위클래스 하나만 두면 ViewModelInstaller가 VM을 Transient 등록하고 View에 주입까지 자동으로 해준다. ViewModelInstaller를 직접 부르면 안 된다(어셈블리 트랩).", "호출 순서가 고정돼 있다: Construct(주입) → Show → Initialize(최초 1회 ViewModel.Initialize + BindViewModel) → OnDisable(ViewModel.CleanUp). BindViewModel은 base.Initialize가 호출하므로 override에서 구독만 추가한다.", "OnDisable override에서 ViewModel null 체크 후 구독 해제하고 base.OnDisable()을 반드시 호출해야 한다 — base가 ViewModel.CleanUp을 부르고 _isInitialized를 리셋해 재오픈 시 Initialize가 다시 돈다."]}, "heart": {"name": "HeartRecovery", "tag": "Features · 시간기반 라이프(하트)", "descs": ["스태미나(하트)를 실시간으로 회복시키고 레벨 진행에 따라 소모/환불하는 옵트인 모듈입니다.", "WalletDataSO의 Heart·MaxHeart·LastHeartUsedTime·HeartRecoveryMinutes를 단일 출처로 삼아, 부팅 시 Initialize()에서 LastHeartUsedTime과 현재시각의 간격으로 오프라인 동안 채워질 하트를 한 번에 계산(CalculateAndAddHearts)하고, 이후 MTimeController.OnSecondUpdateUnScaled에 붙어 매초 남은 회복 시간을 OnTickHeartTimer로 방출합니다.", "시간 소스는 일반 DateTime.Now가 아니라 EconomyClock.AdvanceNowUtc(wallet)을 쓰기 때문에 기기 시계를 되감아도(롤백 공격) 시간이 역행하지 않습니다.", "레벨 라이프사이클은 OnLevelStart→OnLevelClear/OnLevelFail/OnLevelRestart 흐름으로, 시작 시 하트 1개를 임시 차감(IsTempHeart=true)하고 클리어하면 환불, 실패하면 차감을 확정합니다.", "static 클래스라 SO가 될 수 없어 MHeartRecoveryModule(Order 2300, isCore:false, Project phase)이 얇게 감싸 SaveData·TimeController 준비 후 켜집니다."], "code": "// 1) 부팅 배선 — 'Add Module' 메뉴로 켜면 모듈이 Initialize 호출\n//    (직접 호출은 안 함; MHeartRecoveryModule 이 SaveData/TimeController 준비 후 실행)\n//    HeartRecovery.Initialize() 가 오프라인 회복분을 한 번 정산 + 매초 틱 구독\n\n// 2) UI 가 회복 타이머/상태 구독\nHeartRecovery.OnTickHeartTimer += ts =&gt; timerText.text = ts.ToString(@\"mm\\:ss\");\nHeartRecovery.OnHeartCountChanged += count =&gt; heartLabel.text = count.ToString();\nHeartRecovery.OnHeartStatusChanged += () =&gt; RefreshHeartIcon(HeartRecovery.CurrentHeartStatus);\n\n// 3) 레벨 진입/결과에서 소모·환불 흐름\nif (!HeartRecovery.OnLevelStart())   // 하트 0이면 false → 입장 차단\n    return; // 부족 팝업\n\n// 클리어 시\nHeartRecovery.OnLevelClear();        // IsTempHeart 였으면 1개 환불\n// 실패 시\nHeartRecovery.OnLevelFail();         // 임시 차감을 '확정'(환불 없음)", "points": ["시간 권위는 EconomyClock.AdvanceNowUtc(wallet) — DateTime.Now가 아니라 단조(monotonic) 시계라 기기 시계 롤백으로 하트를 무한 회복하는 머니 익스플로잇을 막는다.", "OnLevelStart에서 즉시 1개를 임시 차감하고 결과(Clear/Fail)에서 환불/확정하는 2단계 설계라, 도중 앱이 죽어도 '먼저 차감' 덕에 하트가 새지 않는다(머니세이프).", "백그라운드 저장은 이 모듈이 하지 않는다 — SaveAll은 SaveSystem(MSaveSystemSO.OnAppBackground, dirty-gated)이 단독 소유. 기능 모듈이 매 백그라운드마다 저장하던 중복 배선을 의도적으로 제거했다."]}, "vip": {"name": "VIPSystem", "tag": "Features · VIP 구독 만료감시", "descs": ["VIP(프리미엄) 상태의 만료를 감시하고 남은 시간을 노출하는 옵트인 모듈입니다.", "핵심 설계는 '부여'와 '만료 감시'의 책임 분리입니다 — VIP 부여는 Asset Delivery의 VIPStrategy가 WalletService.SetVIP(minutes)라는 절대-setter로만 수행하고(가산 ActivateVIP는 레저의 절대-target 계약과 이중계산되는 머니 풋건이라 제거됨), VIPSystem은 부여에 일절 관여하지 않고 오직 만료 틱만 돌립니다.", "Initialize()에서 MTimeController.OnSecondUpdateUnScaled를 구독해, 매초 WalletDataSO.VIPEndTime - EconomyClock.AdvanceNowUtc(wallet)을 계산하여 OnTickVIPTimer로 남은 시간을 방출하고, 0 이하가 되면 VIPEndTime을 MinValue로 초기화하며 OnVIPStatusChanged를 발화합니다.", "static VIPSystem을 MVIPModule(Order 2310, isCore:false, Project phase)이 얇게 감싸 'Add Module' 메뉴로 켭니다."], "code": "// VIP '부여'는 이 모듈이 아니라 Asset Delivery(VIPStrategy)가 소유\n//   → 절대 setter 로만 들어간다 (가산 금지 = 머니세이프)\nSaveData.Get&lt;WalletDataSO&gt;();          // 단일 출처\nSaveData.WalletService.SetVIP(60 * 24 * 7);  // 7일치 절대 set (지금부터 +N분)\n\n// VIPSystem 은 만료만 감시 — UI 가 구독\nVIPSystem.OnTickVIPTimer += remain =&gt;\n    vipBadge.text = $\"VIP {remain.Days}d {remain.Hours}h\";\nVIPSystem.OnVIPStatusChanged += () =&gt;\n    vipPanel.SetActive(VIPSystem.CurrentVIPStatus == VIPSystem.Status.Active);\n\n// 매초 내부 동작(요지):\n//   remain = WalletSO.VIPEndTime - EconomyClock.AdvanceNowUtc(WalletSO);\n//   if (remain &lt; 0) { WalletSO.VIPEndTime = DateTime.MinValue; NotifyVIPChanged(); }\n//   OnTickVIPTimer?.Invoke(remain);", "points": ["부여=Asset Delivery(절대 setter), 만료감시=VIPSystem 으로 책임을 쪼갠 게 핵심. 가산형 부여(ActivateVIP/AddVIPMinutes)는 레저 멱등 계약과 이중계산되는 머니 풋건이라 의도적으로 삭제됐다.", "만료 판정도 EconomyClock(단조 UTC) 기준 — 기기 시계를 미래로 돌려 VIP를 조기 만료/연장시키는 조작을 차단한다.", "이벤트는 두 갈래로 들어온다: 데이터 변경(WalletSO.OnDataChanged)과 SaveSystem 신호(SaveSystemEvents.OnVIPChanged). Cleanup()에서 둘 다 해제해 메모리 릭/유령 구독을 막는다."]}, "notification": {"name": "Notification", "tag": "Features · 로컬 푸시 자동스케줄", "descs": ["앱이 백그라운드로 들어가는 순간 로컬 푸시 알림을 자동 예약해 복귀를 유도하는 옵트인 모듈입니다.", "Initialize 시 권한을 요청하고(이미 'DontAskAgain' PlayerPrefs가 있으면 통째로 스킵) MTimeController.OnAppBackground에 핸들러를 1회 구독합니다.", "백그라운드 진입(OnAppBackground)이 발화하면 기존 예약을 모두 취소한 뒤 세 종류를 다시 깝니다 — (1) ScheduleHeartFullNotification: 현재 Heart/MaxHeart/LastHeartUsedTime/HeartRecoveryMinutes로 하트 만충까지 남은 분을 역산(CalculateMinutesUntilHeartFull)해 '하트 충전 완료' 알림, (2) Schedule24HourReturnNotification: 24시간 미접속 복귀 유도, (3) ScheduleDailyNoonNotification: 매일 정오 리마인더.", "실제 OS 호출은 INotification 인터페이스 뒤에서 Android(AndroidNotificationCenter)/iOS(iOSNotificationCenter)로 분기되며, 전부 MOBILE_NOTIFICATIONS_INSTALLED #if 가드라 심볼/패키지가 없거나 에디터 Standalone에선 사실상 no-op입니다.", "NotificationModule은 plain IDisposable이라 MNotificationModule(Order 2320, isCore:false, Project phase)이 감싸 인스턴스를 보관·해제합니다."], "code": "// 'Add Module' 로 켜면 모듈이 아래를 수행 (직접 호출 X)\n// MNotificationModule.Initialize():\n//   _notification = new NotificationModule();\n//   _notification.InitializeNotification();   // 권한요청 + OnAppBackground 구독\n\n// 내부 흐름 — 앱이 백그라운드 갈 때 자동 발화:\n// private void OnAppBackground() {\n//     if (PlayerPrefs.HasKey(\"DontAskNotificationPermission\")) return;\n//     AndroidNotificationCenter.CancelAllNotifications();   // 중복 방지: 전부 취소 후\n//     ScheduleHeartFullNotification();    // 하트 만충까지 남은 분 역산\n//     Schedule24HourReturnNotification(); // 24h 복귀 유도\n//     ScheduleDailyNoonNotification();    // 매일 정오\n// }\n\n// 하트 만충 ETA 역산(요지):\n//   heartsNeeded = max - current;\n//   remainder = interval - (elapsedMin % interval);\n//   totalMin  = (heartsNeeded - 1) * interval + remainder; // 이 시각에 '충전완료' 푸시", "points": ["트리거가 명시적 API가 아니라 라이프사이클(OnAppBackground)이다 — 게임 코드가 알림을 깔 시점을 신경 쓸 필요 없이, 백그라운드 진입만으로 하트 ETA/리텐션 푸시가 자동 재예약된다.", "매번 CancelAllNotifications로 싹 지운 뒤 다시 까는 idempotent 패턴이라, 여러 번 백그라운드를 오가도 알림이 중복 누적되지 않는다.", "전 경로가 MOBILE_NOTIFICATIONS_INSTALLED #if 가드 + Android/iOS 분기 — 패키지/심볼이 없으면 컴파일은 되되 no-op, 권한 거부 사용자는 'DontAskAgain' 키로 전체 단락(short-circuit)된다."]}, "haptic": {"name": "Haptic", "tag": "Features · 진동 피드백", "descs": ["Soft/Weak/Medium/Hard 4단계 세기의 햅틱(진동) 피드백을 한 줄 호출로 제공하는 static 유틸입니다.", "Initialize()에서 Vibration.Init()으로 네이티브 진동을 준비하고 'UserHaptic' PlayerPrefs(기본 1=켜짐)로 사용자 on/off 설정을 읽습니다.", "각 세기 호출은 먼저 Using 게이트로 사용자가 햅틱을 껐는지 확인하고(꺼졌으면 즉시 return), 플랫폼별로 분기해 Android는 밀리초 진동(Soft 30 / Weak 20 / Medium 60 / Hard 100ms), iOS는 ImpactFeedbackStyle(Soft/Light/Medium/Heavy)을 호출합니다.", "모든 네이티브 경로는 빌드 전용 가드로 묶여 있어 — Initialize는 PROJECT_INSTALLED_HAPTIC 심볼, 세기 호출은 UNITY_ANDROID/UNITY_IOS #if — 에디터나 심볼 미설치 환경에선 안전하게 비활성화됩니다.", "Using setter는 값을 PlayerPrefs에 즉시 저장(Save)해 설정이 영속됩니다."], "code": "// 부팅 시 1회 (PROJECT_INSTALLED_HAPTIC 심볼 있을 때만 네이티브 init)\nHaptic.Initialize();\n\n// 사용자 설정 토글 — PlayerPrefs 'UserHaptic' 에 즉시 영속\nHaptic.Using = settingsToggle.isOn;   // false면 모든 호출이 no-op\n\n// 게임플레이에서 한 줄 호출 (Using 꺼져있으면 내부에서 early-return)\nbutton.onClick += () =&gt; Haptic.Soft();   // 가벼운 탭\nonMatch3 += ()         =&gt; Haptic.Medium(); // 매치 성공\nonLevelClear += ()     =&gt; Haptic.Hard();   // 강한 보상감\n\n// 내부(요지):\n// public static void Hard() {\n//     if (!Using) return;\n// #if UNITY_ANDROID   Vibration.VibrateAndroid(100);\n// #elif UNITY_IOS     Vibration.VibrateIOS(ImpactFeedbackStyle.Heavy);\n// #endif\n// }", "points": ["모든 진동 호출의 첫 줄이 'if (!Using) return' — 사용자 off 설정이 단일 게이트로 전 호출부에 강제되므로, 호출하는 쪽은 설정 여부를 신경 쓸 필요가 없다.", "네이티브 코드가 PROJECT_INSTALLED_HAPTIC + UNITY_ANDROID/IOS #if 로 이중 가드라 에디터/미설치 빌드에서 컴파일·런타임 모두 안전(SDK 규칙: '#if SYMBOL 가드' 준수).", "세기는 의미가 아니라 수치/스타일로 직매핑(Android ms, iOS ImpactFeedbackStyle) — 플랫폼별 체감 차이는 이 매핑 테이블 한 곳만 고치면 된다."]}, "localize": {"name": "Localize", "tag": "Features · 다국어(L10N)", "descs": ["Unity Localization 패키지를 감싼 다국어 텍스트 제공 모듈로, 'LocalizeTable' 단일 테이블에서 키로 번역 문자열을 뽑아 씁니다.", "부팅 흐름은 LocalizeInitializer.Initialized()가 Addressables로 'LocalizeProvider' SO를 로드 → provider.InitProvider() 호출이며, InitProvider는 기기 시스템 언어(English/Korean/Japanese)를 인덱스로 매핑하고 LocalizationSettings 초기화를 await한 뒤 InitLocale()로 SelectedLocale을 확정합니다.", "런타임에는 LocalizeProvider.GetString(key)로 현재 로케일 문자열을 얻고(키가 없으면 'Doesn't have Key : {key}' 폴백, '\\\\'를 줄바꿈으로 치환), int 1~2개를 받는 string.Format 오버로드도 제공합니다.", "언어 변경은 ChangeLocale(index)가 SelectedLocale을 바꾸고 PlayerPrefs에 인덱스를 저장한 뒤 OnLanguageChanged 이벤트를 발화해, 구독 중인 UI(LocalizeTMP 등)가 즉시 자기 텍스트를 갱신합니다.", "전 파일이 LOCALIZATION_INSTALLED #if 가드입니다."], "code": "// 1) 부팅 — Addressables 로 Provider SO 로드 후 초기화\nawait LocalizeInitializer.Initialized();\n//   내부: Addressables.LoadAssetAsync&lt;LocalizeProvider&gt;(\"LocalizeProvider\")\n//        → provider.InitProvider() (시스템 언어 감지 + Locale 확정)\n\n// 2) 키로 문자열 조회 (현재 로케일 기준)\ntitleText.text = LocalizeProvider.GetString(\"main_title\");\nscoreText.text = LocalizeProvider.GetString(\"score_fmt\", 1200);      // string.Format\nrangeText.text = LocalizeProvider.GetString(\"range_fmt\", 1, 99);\n//   키 없으면 → \"Doesn't have Key : main_title\" 폴백\n\n// 3) 언어 변경 → 구독 UI 일괄 갱신\nLocalizeProvider.OnLanguageChanged += () =&gt; RefreshAllText();\nLocalizeProvider.ChangeLocale(1);   // 0=En, 1=Ko, 2=Ja → PlayerPrefs 저장 + 이벤트 발화", "points": ["키 미스가 예외가 아니라 가시적 폴백 문자열('Doesn't have Key : ...')로 나와, 누락 키를 런타임 화면에서 바로 잡아낼 수 있다.", "ChangeLocale → OnLanguageChanged 단방향 흐름이라, UI는 이벤트만 구독하면 언어 전환 시 자기 텍스트를 스스로 다시 그린다(폴링 불필요). 다만 static 이벤트라 ClearEvents()로 정리 안 하면 릭 위험.", "전 파일 LOCALIZATION_INSTALLED 가드 + Addressables 로 Provider SO를 비동기 로드 — 패키지/에셋이 없으면 모듈 자체가 컴파일에서 빠진다."]}, "workflow": {"name": "Workflow", "tag": "Features · 부팅 시퀀스 엔진", "descs": ["게임의 부팅 시퀀스(스플래시→로딩→로비 같은 씬 전이/초기화 단계)를 선언적 스텝으로 조립해 순서대로 실행하는 코어 엔진입니다.", "각 스텝은 ProjectWorkflowSO를 상속한 ScriptableObject에 [Workflow(order)] 어트리뷰트를 달아 정의하고, override한 FlowAsync()에서 그 단계의 일(씬 로드, 데이터 준비 등)을 await로 처리한 뒤 성공이면 true를 반환합니다.", "코어 모듈 MProjectWorkflowSO(Order 2999)가 인스펙터에 꽂힌 워크플로 배열을 Initialize에서 [Workflow] order 기준으로 정렬해두고, 부팅 마지막 단계인 ProjectEntryPoint.StartAsync()가 ExecuteAsync()를 호출합니다.", "ExecuteAsync는 정렬된 스텝을 for 루프로 하나씩 await FlowAsync() 하며 매 스텝 사이에 UniTask.NextFrame()으로 한 프레임 양보하고, 어떤 스텝이 false를 반환하면 그 자리에서 시퀀스를 중단하며, 예외가 나면 워크플로 이름과 스텝 인덱스를 담은 WorkflowException으로 감싸 던져 어디서 깨졌는지 정확히 드러냅니다.", "order 중복은 OnEnable/에디터 InitializeOnLoad에서 검출해 LogError로 막습니다."], "code": "// 1) 스텝 정의 — order 로 실행 순서 선언\n[CreateAssetMenu(menuName = \"GameFramework/Workflow/LoadLobby\")]\n[Workflow(20)]   // 작을수록 먼저; order 중복은 에디터가 LogError 로 차단\npublic class LoadLobbyWorkflow : ProjectWorkflowSO\n{\n    public override async UniTask&lt;bool&gt; FlowAsync()\n    {\n        await SceneManager.LoadSceneAsync(\"Lobby\"); // 이 스텝의 일\n        return true;                                 // false 면 시퀀스 중단\n    }\n}\n\n// 2) 등록 — MProjectWorkflowSO(코어, Order 2999) 인스펙터 배열에 SO 를 꽂음\n//    (Splash=10, LoadLobby=20 ... order 로 자동 정렬)\n\n// 3) 실행 — 부팅 마지막에 ProjectEntryPoint 가 자동 구동\n//    ExecuteAsync(): for 루프로 await FlowAsync() 순차 실행,\n//      스텝 사이 UniTask.NextFrame(), 실패=중단,\n//      예외 → throw new WorkflowException(name, stepIndex, ...)", "points": ["실행 순서가 코드가 아니라 [Workflow(order)] 어트리뷰트 + 인스펙터 배열로 선언된다 — 부팅 단계 추가/재배치를 코드 수정 없이 SO 꽂기로 처리.", "실패 격리가 강력하다: 스텝이 false면 즉시 중단, 예외는 WorkflowException(워크플로 이름 + 스텝 인덱스)으로 래핑돼 ProjectEntryPoint가 잡아 로깅 — '부팅이 몇 번째 단계에서 깨졌나'가 바로 보인다.", "order 중복은 런타임 OnEnable과 에디터 InitializeOnLoadMethod 양쪽에서 미리 검출해 LogError로 막아, 두 스텝이 같은 순번을 다투는 모호한 부팅을 사전에 차단한다."]}};
+var modal=document.getElementById("cmodal");if(!modal)return;var body=modal.querySelector(".cmodal-body"),title=modal.querySelector(".cmodal-title");document.querySelectorAll(".modchip[data-module]").forEach(function(el){el.addEventListener("click",function(){var m=MODULES[el.getAttribute("data-module")];if(!m)return;title.textContent=m.name;var h='<div class="modal-mod"><div class="mtag">'+m.tag+'</div><h3>'+m.name+'</h3>';if(m.descs&&m.descs.length){h+='<ul class="mdesc">';for(var d=0;d<m.descs.length;d++)h+='<li>'+m.descs[d]+'</li>';h+='</ul>';}if(m.code)h+='<div class="msub">\uB3D9\uC791 \u00B7 \uC0AC\uC6A9 \uD750\uB984</div><code class="mapi">'+m.code+'</code>';if(m.points&&m.points.length){h+='<div class="msub">\uD575\uC2EC \uD3EC\uC778\uD2B8</div><ul class="mpts">';for(var i=0;i<m.points.length;i++)h+='<li>'+m.points[i]+'</li>';h+='</ul>';}h+='</div>';body.innerHTML=h;modal.hidden=false;});});
+})();
 </script>
 </body>
 </html>
