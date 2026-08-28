@@ -254,10 +254,10 @@ html{scroll-behavior:smooth}
   <a href="#ch1"><span class="tn">1</span><span>개발 철학 · 핵심 역량</span></a>
   <a href="#ch2"><span class="tn">2</span><span>대표 프로젝트 — Wiggle Puzzle</span></a>
   <a href="#ch3"><span class="tn">3</span><span>재사용 프레임워크</span></a>
-  <a href="#ch4"><span class="tn">4</span><span>출시작 23종</span></a>
-  <a href="#ch5"><span class="tn">5</span><span>플레이어블 광고 파이프라인</span></a>
-  <a href="#ch6"><span class="tn">6</span><span>AI 워크플로우</span></a>
-  <a href="#ch7"><span class="tn">7</span><span>팀빌딩 &amp; 시스템화</span></a>
+  <a href="#ch4"><span class="tn">4</span><span>직접 출시한 제품</span></a>
+  <a href="#ch5"><span class="tn">5</span><span>플레이어블 제작 · 변환</span></a>
+  <a href="#ch6"><span class="tn">6</span><span>AI 활용 방식</span></a>
+  <a href="#ch7"><span class="tn">7</span><span>팀 구성 · 개발 프로세스</span></a>
   <a href="#ch8"><span class="tn">8</span><span>기술 스택 · 마무리</span></a>
 </nav>
 <script>
@@ -308,15 +308,17 @@ document.addEventListener('DOMContentLoaded', function(){
     <div class="cover-l">
       <div class="eyebrow">Unity Client Developer</div>
       <h2 class="title" style="font-size:52px;margin:10px 0 14px">이정훈</h2>
-      <p style="font-size:18px;max-width:34ch;color:var(--body)">캐주얼 게임 클라이언트 개발 · 설계와 최적화, 그리고 팀이 빨리 일하게 만드는 시스템.</p>
+      <p style="font-size:18px;max-width:34ch;color:var(--body)">캐주얼 게임 클라이언트를 만들고 최적화합니다. 반복되는 작업은 팀이 함께 쓰는 도구로 정리합니다.</p>
       <div class="grid3" style="margin:40px 0 0;max-width:560px">
         <div><div class="stat">23</div><div class="stat-l">글로벌 출시작</div></div>
         <div><div class="stat">2M+</div><div class="stat-l">최고 타이틀 다운로드</div></div>
-        <div><div class="stat">0→10</div><div class="stat-l">개발팀 빌딩</div></div>
+        <div><div class="stat">0→10</div><div class="stat-l">개발팀 구성</div></div>
       </div>
       <div class="contact">
         M : <a href="mailto:jhoon8903@gmail.com">jhoon8903@gmail.com</a><br>
+        P : <a href="tel:+821033423408">010-3342-3408</a><br>
         G : <a class="lk" href="https://github.com/jhoon8903">GitHub.com/jhoon8903</a><br>
+        R : <a class="lk" href="resume/">웹 이력서</a><br>
         V : <a class="lk" href="https://www.youtube.com/@actionfit3626">플레이영상 (YouTube)</a> &nbsp;·&nbsp; P : 010-3342-3408
       </div>
     </div>
@@ -325,9 +327,9 @@ document.addEventListener('DOMContentLoaded', function(){
       <div class="sigrow"><span class="sn">VContainer 3-Layer DI</span><span class="sv">아키텍처</span></div>
       <div class="sigrow"><span class="sn">Burst + Job BFS</span><span class="sv">600ms → 50ms</span></div>
       <div class="sigrow"><span class="sn">메모리 · 저사양 최적화</span><span class="sv">2GB → 1.x GB</span></div>
-      <div class="sigrow"><span class="sn">재사용 프레임워크 · 코드 생성기</span><span class="sv">생산성 · 핸드오프</span></div>
+      <div class="sigrow"><span class="sn">재사용 프레임워크 · 코드 생성기</span><span class="sv">반복 작업 · 인수인계</span></div>
       <div class="sigrow"><span class="sn">AES256 세이브 암호화</span><span class="sv">HMAC · 상수시간</span></div>
-      <div class="sigrow"><span class="sn">AI 워크플로 — 규칙정의·검증</span><span class="sv">설계=사람</span></div>
+      <div class="sigrow"><span class="sn">AI 활용 — 작업 규칙 · 테스트</span><span class="sv">구현 보조</span></div>
     </div>
     </div>
     <div class="cover-strip">
@@ -346,45 +348,45 @@ document.addEventListener('DOMContentLoaded', function(){
 
 <!-- ===================== S2 · 개발 철학 ===================== -->
 <section class="slide" id="ch1"><div class="no">02</div>
-  <div class="eyebrow">About</div><h2 class="title">개발 철학</h2>
-  <p class="lead">퍼즐 · 머지 · 디펜스 등 캐주얼 게임 <strong>23종을 출시까지</strong> 만들며, 출시 후 최적화 · 유지보수 · 운영 핸드오프까지 경험했습니다.
-  매번 반복되는 부분은 공통 시스템으로 정리해 팀 생산성을 높여왔습니다.</p>
+  <div class="eyebrow">About</div><h2 class="title">일하는 방식</h2>
+  <p class="lead">퍼즐 · 머지 · 디펜스 등 캐주얼 게임 <strong>23종의 출시와 운영</strong>에 참여했습니다.
+  출시 후 최적화와 유지보수, 인수인계까지 맡았고 반복되는 작업은 공통 기능과 에디터 도구로 정리했습니다.</p>
   <div class="card accentL" style="margin:6px 0 18px">
-    <h3 style="color:var(--accent)">“설계는 사람, 구현 가속은 AI.”</h3>
-    <p>아키텍처와 판단은 직접 정하고, 구현 속도는 AI 에이전트로 끌어올리되, AI 출력은 코드리뷰 · 검증을 반드시 거칩니다.</p>
+    <h3 style="color:var(--accent)">설계와 최종 판단은 직접 합니다.</h3>
+    <p>AI는 구현을 빠르게 하는 보조 도구로 사용합니다. 생성된 코드는 직접 읽고, 빌드와 테스트를 통과한 뒤 반영합니다.</p>
   </div>
   <div class="grid2">
-    <div class="card"><h3>Context-first</h3><p>CLAUDE.md로 맥락 사전 정의</p></div>
-    <div class="card"><h3>Human-design</h3><p>설계 결정은 사람이</p></div>
-    <div class="card"><h3>Verify-always</h3><p>AI 출력은 검증 후 반영</p></div>
-    <div class="card"><h3>Iterate-fast</h3><p>빠른 피드백 루프</p></div>
+    <div class="card"><h3>먼저 기준을 정합니다</h3><p>구조와 작업 범위, 하지 말아야 할 일을 문서로 남깁니다.</p></div>
+    <div class="card"><h3>설계는 직접 결정합니다</h3><p>프로젝트 상황에 맞춰 구조와 우선순위를 정합니다.</p></div>
+    <div class="card"><h3>실행해서 확인합니다</h3><p>코드리뷰, 빌드, 테스트와 실제 기기 확인을 거칩니다.</p></div>
+    <div class="card"><h3>문제를 다음 작업에 반영합니다</h3><p>한 번 해결한 문제는 규칙과 공통 코드로 남깁니다.</p></div>
   </div>
 </section>
 
 <!-- ===================== S3 · 핵심 역량 3축 ===================== -->
 <section class="slide"><div class="no">03</div>
-  <div class="eyebrow">Core Competencies</div><h2 class="title">핵심 역량 3축</h2>
+  <div class="eyebrow">Core Competencies</div><h2 class="title">주요 경험</h2>
   <div class="grid3" style="margin-top:6px">
     <div class="card">
       <h3>아키텍처 + 최적화</h3>
       <p style="margin-top:8px">DI (VContainer) 3 Layer<br>MVC · Command · Factory · Pool 조합<br>Profiler 기반 병목 진단 · 최적화</p>
     </div>
     <div class="card">
-      <h3>출시 + 시스템화</h3>
-      <p style="margin-top:8px">23종 글로벌 출시 (5장르)<br>0 → 10 팀빌딩<br>사내 시스템 · 온보딩 구축</p>
+      <h3>출시와 팀 개발</h3>
+      <p style="margin-top:8px">23종 글로벌 출시 (5장르)<br>0 → 10 개발팀 구성<br>공통 기능 · 온보딩 문서 구축</p>
     </div>
     <div class="card">
-      <h3>AI 워크플로 운용</h3>
-      <p style="margin-top:8px">규칙·금지패턴 직접 정의(CLAUDE.md)<br>외부 에이전트 도구로 구현 자율화<br>출력은 검증 · 리뷰 필수</p>
+      <h3>AI를 활용한 개발</h3>
+      <p style="margin-top:8px">작업 규칙과 금지 패턴 직접 작성<br>반복 구현과 코드 탐색에 AI 활용<br>결과는 직접 리뷰하고 테스트</p>
     </div>
   </div>
-  <div class="footnote" style="margin-top:26px">설계 · 판단은 사람이 쥐고, 반복 구현 속도만 AI로 끌어올리는 것 — 세 축이 하나의 작업 방식으로 묶입니다.</div>
+  <div class="footnote" style="margin-top:26px">게임 개발, 출시 경험, 반복 작업을 줄이는 도구 제작을 함께 해왔습니다.</div>
 </section>
 
 <!-- ===================== S4 · 아키텍처 ===================== -->
 <section class="slide" id="ch2"><div class="no">04</div>
   <div class="eyebrow">Main Project — Wiggle Puzzle ①</div><h2 class="title">아키텍처</h2>
-  <p class="lead meta" style="margin-bottom:18px">전략 퍼즐 · Unity 6 · 본인 = 아키텍처 리드 · 코어 · 최적화 · SDK · 출시 후 지표 미달로 서비스 종료 → <strong style="color:var(--body)">코드 · 설계 쇼케이스</strong></p>
+  <p class="lead meta" style="margin-bottom:18px">전략 퍼즐 · Unity 6 · 아키텍처, 코어 기능, 최적화, SDK 작업 담당 · 서비스 종료 후 <strong style="color:var(--body)">코드와 설계를 중심으로 정리</strong></p>
   <div class="dgm">
     <div class="eb">Boot Sequence</div>
     <div class="flow">
@@ -816,17 +818,17 @@ private void RegisterControllers(IContainerBuilder b)
   <h2 class="title">모바일 게임을 "설치 없이 브라우저에서" — WebGL 포팅</h2>
   <p class="lead meta" style="margin-bottom:16px">앱스토어 밖(일반 H5 · 토스 앱인토스 · 카카오)에서 도는 빌드로. <strong style="color:var(--body)">게임 로직(퍼즐·BFS)은 그대로</strong> 두고, 깨지는 건 게임에 붙은 <strong style="color:var(--body)">주변 부품과 빌드 설정</strong> — "재작성"이 아니라 "교체·정리" 프로젝트.</p>
 
-  <h3 style="margin-bottom:9px">"세 개의 다른 벽" — 통과 지점도, 에러도 다르다</h3>
+  <h3 style="margin-bottom:9px">WebGL 포팅에서 확인한 세 단계</h3>
   <div class="grid3" style="margin-bottom:18px">
     <div class="card accentL"><h3>1 · 에디터 컴파일</h3><p>스크립트가 에디터에서 컴파일되는가. (콘솔 CS 에러)</p></div>
     <div class="card accentL"><h3>2 · 플레이어 빌드</h3><p>WebGL IL2CPP→wasm. <span class="num">에디터는 통과해도</span> 여기서 깨짐 — 예: ICMP <code>Ping</code>.</p></div>
     <div class="card accentL"><h3>3 · 런타임</h3><p>브라우저에서 실제로 도는가. <span class="num">빌드 성공해도</span> 깨짐 — 예: 공격적 스트리핑.</p></div>
   </div>
 
-  <h3 style="margin-bottom:6px">무엇이 깨졌나 — 빌드 로그로 단계적 규명(추측 X)</h3>
+  <h3 style="margin-bottom:6px">빌드 로그에서 확인한 문제</h3>
   <ul class="bul">
     <li><strong>WebGL 정의 심볼 미설정</strong> — 사본의 define이 비어 프레임워크 전체가 <code>#if</code> 뒤로 사라짐(첫 증상은 엉뚱한 CS0246)</li>
-    <li><strong>모바일 네이티브 SDK</strong>(광고·분석·결제·소셜) — WebGL 미지원 + 스토어 리젝 리스크</li>
+    <li><strong>모바일 네이티브 SDK</strong>(광고·분석·결제·소셜) — WebGL에서 지원되지 않고 웹 배포에도 맞지 않음</li>
     <li><strong>네이티브 API</strong> — <code>UnityEngine.Ping</code>(ICMP) 등은 WebGL 플레이어 어셈블리에 없음</li>
     <li><strong>URP 버전 정합성</strong> — GlobalSettings "not at last version"으로 빌드 전처리기가 거부</li>
     <li><strong>jslib 누락</strong> — 햅틱 <code>[DllImport]</code> 호출의 JS 구현이 없어 wasm 링크 <code>undefined symbol</code></li>
@@ -837,11 +839,11 @@ private void RegisterControllers(IContainerBuilder b)
 <!-- ===================== WEBGL ② · 의존성 정리 ===================== -->
 <section class="slide"><div class="no">09</div>
   <div class="eyebrow">Main Project — Wiggle Puzzle ⑥ · WebGL Porting</div>
-  <h2 class="title">광고·분석·결제 SDK를 "깨지 않고" 들어내기</h2>
+  <h2 class="title">광고·분석·결제 SDK 제거</h2>
   <ul class="star" style="margin-bottom:14px">
-    <li><b>S</b>AdMob·AppLovin·Firebase·Facebook·GameAnalytics·Singular 가 풀프로덕션에 깊게 박힘 — WebGL 미지원·스토어 리젝 리스크. "어디가 얼마나 깨지는지" 근거가 필요.</li>
-    <li><b>A</b><strong>멀티에이전트 감사</strong>로 참조를 전수 매핑 → <strong>적대적 검증</strong>으로 함정 사전 차단 → 제거. <strong>광고/결제 추상화 seam은 보존</strong>(나중에 Toss/Kakao provider를 꽂을 자리). "항상 온라인" 전제라 네트워크 연결 검증기도 제거.</li>
-    <li><b>R</b>코드·패키지·에셋 전 계층에서 SDK 6종 제거하고도 <span class="num">컴파일·빌드·런타임 모두 통과</span>. 광고/결제 호출부(ViewModel)는 중립 API라 무수정.</li>
+    <li><b>S</b>AdMob·AppLovin·Firebase·Facebook·GameAnalytics·Singular가 프로젝트 여러 곳에서 참조되고 있어, 삭제 전에 영향 범위를 확인해야 했습니다.</li>
+    <li><b>A</b>코드·패키지·asmdef의 참조 위치를 모두 찾고 삭제 순서를 정했습니다. 광고와 결제 인터페이스는 남겨 이후 Toss·Kakao용 구현을 연결할 수 있게 했습니다.</li>
+    <li><b>R</b>SDK 6종을 제거한 뒤 <span class="num">컴파일·빌드·브라우저 실행</span>을 확인했습니다. ViewModel의 광고·결제 호출부는 수정하지 않았습니다.</li>
   </ul>
   <p class="cap"><span class="k">함정</span> — <strong>asmdef 참조 dangling</strong>: AppLovin(MaxSdk) 어셈블리 GUID가 코어 asmdef 3곳(ProjectCore·Monetize·PlatformAnalysis)의 references에 박혀 있어 <strong>패키지를 먼저 지우면 코어 어셈블리가 통째로 붕괴</strong> → 삭제 전 참조부터 제거. IAP는 defineConstraint가 어셈블리를 게이트해 별도 단계로 보류.</p>
   <div class="plain"><span class="lbl">쉽게</span> 광고·결제는 <b>"콘센트(추상화)"는 남기고 "플러그(모바일 SDK)"만 뽑은 것</b> — 나중에 웹용 플러그(Toss/Kakao)를 같은 콘센트에 꽂으면 게임 코드는 안 바뀐다.</div>
@@ -884,7 +886,7 @@ mergeInto(LibraryManager.library, {
 <section class="slide"><div class="no">10</div>
   <div class="eyebrow">Main Project — Wiggle Puzzle ⑦ · WebGL Porting</div>
   <h2 class="title">빌드 사이즈 절반 이하 — 98.9 → 46.1 MB</h2>
-  <p class="lead meta" style="margin-bottom:8px">데이터로 진단(빌드 리포트) → 임팩트순 적용 → 실측. <strong style="color:var(--body)">"작게 만들고도 멀쩡히 돈다"</strong>를 런타임으로 검증.</p>
+  <p class="lead meta" style="margin-bottom:8px">빌드 리포트에서 용량이 큰 항목부터 줄였습니다. 변경할 때마다 다시 빌드하고 브라우저에서 실행해 기능이 깨지지 않았는지 확인했습니다.</p>
   <div class="grid3" style="margin:8px 0 16px">
     <div><div class="stat">46.1<span style="font-size:21px"> MB</span></div><div class="stat-l">빌드(압축해제) · was 98.9 MB</div></div>
     <div><div class="stat">≈16<span style="font-size:21px"> MB</span></div><div class="stat-l">실제 다운로드(Brotli) · wasm 8.4 + data 5.6</div></div>
@@ -903,7 +905,7 @@ mergeInto(LibraryManager.library, {
       <tr><td>텍스처 <strong>Compressed + Crunch</strong></td><td>에셋</td><td><span class="num">~5 MB</span></td></tr>
     </tbody>
   </table>
-  <p class="footnote">최대 레버는 <strong>코드 스트리핑</strong> — 텍스처(17MB)보다 코드(엔진+패키지, ~78MB)가 압도적. link.xml로 리플렉션/DI 보존해 안전 확보.</p>
+  <p class="footnote">가장 효과가 컸던 작업은 <strong>코드 스트리핑</strong>이었습니다. link.xml에는 리플렉션과 DI에 필요한 타입을 따로 보존했습니다.</p>
 </section>
 
 <!-- ===================== WEBGL ④ · 주의점 · 결과 · 플레이어블 ===================== -->
@@ -912,7 +914,7 @@ mergeInto(LibraryManager.library, {
   <h2 class="title">함정 노트 · 결과 — 브라우저에서 도는 실제 빌드</h2>
   <div class="grid2" style="gap:26px;align-items:start;margin-top:6px">
     <div>
-      <h3 style="margin-bottom:9px">주의점 — 다음 프로젝트 재사용 플레이북</h3>
+      <h3 style="margin-bottom:9px">다음 WebGL 포팅에서도 확인할 항목</h3>
       <ul class="bul">
         <li><strong>ManagedStrippingLevel은 API로 확인</strong> — 직렬화 값(4)과 enum(Minimal)이 안 맞음</li>
         <li><strong>에디터 컴파일 ≠ 플레이어 빌드 ≠ 런타임</strong> — 통과해도 다음 단계서 깨짐</li>
@@ -931,23 +933,23 @@ mergeInto(LibraryManager.library, {
       <div style="margin-top:20px">
         <button class="playbtn" data-play="assets/playable/WigglePuzzleWeb/index.html" data-title="WigglePuzzle — WebGL 포팅 (브라우저에서 실행되는 실제 게임 빌드 · 720×1280)">WebGL 빌드 플레이</button>
       </div>
-      <p class="footnote" style="margin-top:16px">방법론을 일반화한 <strong>재사용 가이드(WEBGL_PORTING_PLAYBOOK)</strong>로 정리 — 다음 프로젝트에 그대로 적용.</p>
+      <p class="footnote" style="margin-top:16px">확인 순서와 해결 방법은 <strong>WEBGL_PORTING_PLAYBOOK</strong> 문서로 정리해 다음 프로젝트에서도 사용하고 있습니다.</p>
     </div>
   </div>
 </section>
 
 <!-- ===================== S8 · 프레임워크 개요 (왜/무엇을) ===================== -->
 <section class="slide" id="ch3"><div class="no">12</div>
-  <div class="eyebrow">Main Project — GameFramework ①</div><h2 class="title">재사용 클라이언트 프레임워크 — 왜, 무엇을</h2>
+  <div class="eyebrow">Main Project — GameFramework ①</div><h2 class="title">재사용 클라이언트 프레임워크</h2>
   <p class="lead meta" style="margin-bottom:18px">모바일 게임마다 매번 다시 짜던 클라이언트 골격(부팅·DI·세이브·UI·수익화·자산전달)을 <strong style="color:var(--body)">한 번 만들어 재사용</strong>하고 <strong style="color:var(--body)">다른 사람에게 넘기기 쉽게</strong> 만든 장르 불문 프레임워크 · Unity 6 · UPM Package.</p>
   <div class="grid2" style="gap:28px;align-items:start">
     <div>
       <h3 style="margin-bottom:9px">왜 만들었나</h3>
       <ul class="bul" style="font-size:14.5px">
         <li><strong>생산성</strong> — 신규 게임의 반복 골격을 0에서 다시 쓰지 않는다</li>
-        <li><strong>핸드오프</strong> — 저숙련 개발자도 선임과 같은 구조로, 인수인계를 빠르게</li>
-        <li><strong>장르 불문</strong> — 게임별 정책은 seam(인터페이스·SO)으로 빼고 프레임워크는 기계만 제공</li>
-        <li><strong>머니-세이프</strong> — 돈 관련 경로는 멱등·절대값을 컴파일·테스트로 강제</li>
+        <li><strong>인수인계</strong> — 새로 참여한 개발자도 같은 구조에서 바로 작업할 수 있게</li>
+        <li><strong>장르 대응</strong> — 게임마다 달라지는 정책은 인터페이스와 ScriptableObject로 분리</li>
+        <li><strong>결제 데이터</strong> — 중복 지급과 중복 차감을 막는 규칙을 코드와 테스트로 확인</li>
       </ul>
     </div>
     <div>
@@ -970,7 +972,7 @@ mergeInto(LibraryManager.library, {
 <section class="slide codepage" id="cp-updates">
   <div class="cp-head">GameFramework · 버전 내역 (계속 업데이트 중)</div>
   <div class="cp-inner">
-    <p class="lead">현재 <strong>v2.17.0 · Edit Mode 267/267 그린.</strong> 코드(<span class="num">Assets/GameFramework/**</span>)·CHANGELOG 기준으로 상태를 추적하며 지속 개발 중이다.</p>
+    <p class="lead">현재 <strong>v2.17.0 · Edit Mode 테스트 267개 통과.</strong> 코드(<span class="num">Assets/GameFramework/**</span>)와 CHANGELOG를 함께 관리하며 계속 수정하고 있습니다.</p>
     <table>
       <thead><tr><th style="width:90px">버전</th><th>한 일</th></tr></thead>
       <tbody>
@@ -980,7 +982,7 @@ mergeInto(LibraryManager.library, {
         <tr><td class="num">2.5–2.8</td><td>IAP 초기화 재시도 · 죽은 코드 삭제(Command 등) · 모듈 합성 단순화</td></tr>
         <tr><td class="num">2.9–2.12</td><td>절대-setter 강제 · 휴면 Heart/VIP/알림 배선 · no-ads 중앙 게이트</td></tr>
         <tr><td class="num">2.13</td><td>출시 게이트 AppGate — 강제 업데이트 · 점검 모드 (HTTP JSON)</td></tr>
-        <tr><td class="num">2.14–2.16</td><td>UI·엔티티 포장도로 생성기 · 등록 데스크 · UPM Samples 출하</td></tr>
+        <tr><td class="num">2.14–2.16</td><td>UI·엔티티 코드 생성기 · 등록 지점 통합 · UPM Samples 추가</td></tr>
         <tr><td class="num">2.17</td><td>HUD 모니터 생성기 · 멀티-통화 HUD 주입 버그 수정</td></tr>
         <tr><td class="num" style="color:var(--meta)">다음 →</td><td>완전 서버 권위 경제 전환 (백엔드 = Firebase, 딥리서치 검증)</td></tr>
       </tbody>
@@ -991,12 +993,12 @@ mergeInto(LibraryManager.library, {
 <!-- ===================== S9 · 전체 구조 다이어그램 ===================== -->
 <section class="slide"><div class="no">13</div>
   <div class="eyebrow">Main Project — GameFramework ②</div><h2 class="title">전체 구조 — 3계층 & 부팅 흐름</h2>
-  <p class="lead meta" style="margin-bottom:18px">전역 모듈(SO 싱글톤)이 부팅을 합성·검증하고, 씬 단위 VContainer DI가 의존성을 주입하며, 게임 로직은 MVC/MVVM으로 돈다.</p>
+  <p class="lead meta" style="margin-bottom:18px">전역 모듈이 부팅 순서와 설정을 확인하고, 씬 단위 VContainer가 의존성을 주입합니다. 게임 로직은 MVC와 MVVM으로 나눴습니다.</p>
   <div class="footnote" style="margin-bottom:9px">3계층 — 책임 분리</div>
   <div style="display:flex;align-items:stretch;gap:12px;margin-bottom:22px">
     <div class="card" style="flex:1;text-align:center;padding:14px"><div class="num" style="font-size:10.5px">LAYER 1</div><h3 style="font-size:15px;margin:4px 0">ModuleContainer</h3><p style="font-size:12px">전역 SO 싱글톤 · 모듈 합성 검증 · 2단계 부팅 · fail-closed</p></div>
     <div class="flowarr" style="font-size:20px">→</div>
-    <div class="card" style="flex:1;text-align:center;padding:14px"><div class="num" style="font-size:10.5px">LAYER 2</div><h3 style="font-size:15px;margin:4px 0">VContainer Scene DI</h3><p style="font-size:12px">모듈 자가등록(IVContainerConfigurable) · 씬 스코프 = 등록 데스크</p></div>
+    <div class="card" style="flex:1;text-align:center;padding:14px"><div class="num" style="font-size:10.5px">LAYER 2</div><h3 style="font-size:15px;margin:4px 0">VContainer Scene DI</h3><p style="font-size:12px">모듈 자가등록(IVContainerConfigurable) · 씬 스코프에서 의존성 등록</p></div>
     <div class="flowarr" style="font-size:20px">→</div>
     <div class="card" style="flex:1;text-align:center;padding:14px"><div class="num" style="font-size:10.5px">LAYER 3</div><h3 style="font-size:15px;margin:4px 0">MVC · MVVM</h3><p style="font-size:12px">Observable→View 갱신 · BaseView&lt;T&gt; / UI&lt;VM&gt; · 화면 스택</p></div>
   </div>
@@ -1061,7 +1063,7 @@ mergeInto(LibraryManager.library, {
           </li>
           <li><div class="anode phase">③ 씬 레이어 <span class="ph">런타임 · 씬마다</span></div>
             <ul>
-              <li><div class="anode key">SceneLifetimeScope <span>등록 데스크 · 자동 주입</span></div>
+              <li><div class="anode key">SceneLifetimeScope <span>의존성 등록 · 자동 주입</span></div>
                 <ul>
                   <li><div class="anode">MVVM 화면 (UI&lt;VM&gt;) <span class="dep">▸ 서비스 [Inject]</span></div></li>
                   <li><div class="anode">MVC 엔티티 (BaseView) <span class="dep">▸ MPool · Factory</span></div></li>
@@ -1104,14 +1106,14 @@ mergeInto(LibraryManager.library, {
 <!-- ===================== S11 · MVC · MVVM 패턴 ===================== -->
 <section class="slide"><div class="no">15</div>
   <div class="eyebrow">Main Project — GameFramework ④</div><h2 class="title">MVC · MVVM 패턴 — 같은 골격, 다른 살</h2>
-  <p class="lead meta" style="margin-bottom:16px">게임 로직(엔티티)은 <strong style="color:var(--body)">MVC</strong>, UI 화면은 <strong style="color:var(--body)">MVVM</strong>으로 통일한다. 두 패턴 모두 <strong style="color:var(--body)">베이스 클래스</strong>가 옵저버·바인딩·라이프사이클을 미리 처리해, 게임은 살(Refresh/Bind)만 채운다.</p>
+  <p class="lead meta" style="margin-bottom:16px">게임 오브젝트는 <strong style="color:var(--body)">MVC</strong>, UI 화면은 <strong style="color:var(--body)">MVVM</strong>을 사용합니다. 공통 베이스 클래스에서 구독과 해제를 처리해 각 게임에서는 화면 갱신과 바인딩 코드만 작성합니다.</p>
   <div class="grid2" style="gap:18px">
     <div class="card accentL">
       <h3 style="font-size:16px">MVC — 엔티티 / 게임오브젝트</h3>
       <ul class="bul" style="font-size:13.5px;margin-top:6px">
         <li><strong>Model</strong> : <code>Observable</code> — 값 변경 시 <code>Raise()</code>로 옵저버 통지</li>
         <li><strong>View</strong> : <code>BaseView&lt;TModel&gt;</code> — Model 바인딩·풀 라이프사이클 자동, <code>RefreshView()</code>만 구현</li>
-        <li><strong>Factory/Controller</strong> — 생성·반납을 한 데스크가 소유(생성기가 찍음)</li>
+        <li><strong>Factory/Controller</strong> — 객체 생성과 반납을 한 곳에서 담당</li>
       </ul>
     </div>
     <div class="card accentL">
@@ -1209,8 +1211,8 @@ public sealed class ShopView : UI&lt;ShopViewModel&gt;
 
 <!-- ===================== S12 · 포장도로 생성기 (핸드오프) ===================== -->
 <section class="slide"><div class="no">16</div>
-  <div class="eyebrow">Main Project — GameFramework ⑤</div><h2 class="title">포장도로 코드 생성기 — 핸드오프 단축</h2>
-  <p class="lead meta" style="margin-bottom:14px">앞의 골격(MVC/MVVM)을 <strong style="color:var(--body)">한 명령으로</strong> — 전 계층 + DI 등록 + 풀·정리 배선까지 찍는다. 각 생성기는 <strong style="color:var(--body)">런타임-검증된 레퍼런스</strong>와 프레임워크가 출하하는 <strong style="color:var(--body)">등록 데스크</strong>를 가리켜, 누가 만들어도 같은 구조가 나온다.</p>
+  <div class="eyebrow">Main Project — GameFramework ⑤</div><h2 class="title">반복 코드를 줄이는 생성기</h2>
+  <p class="lead meta" style="margin-bottom:14px">MVC·MVVM 기본 코드와 DI 등록, 풀링과 정리 코드를 한 번에 생성합니다. 실제로 실행해 본 예제를 기준으로 만들기 때문에 담당자가 달라도 같은 구조로 시작할 수 있습니다.</p>
   <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:start">
     <div>
       <div style="margin:0 0 12px">
@@ -1218,10 +1220,10 @@ public sealed class ShopView : UI&lt;ShopViewModel&gt;
       </div>
       <ul class="bul" style="font-size:14px">
         <li><strong>일관된 코드 스타일</strong> — 매번 같은 모양 → 리뷰·디버깅·인수인계 비용↓</li>
-        <li><strong>등록 데스크 1곳</strong> — 씬 스코프가 화면·엔티티·모니터를 자동 주입(배선 0줄)</li>
-        <li><strong>런타임 검증 레퍼런스</strong> — 생성기가 가리키는 예제를 Play 모드로 실증 후 출하</li>
+        <li><strong>등록 지점 1곳</strong> — 씬 스코프에서 화면·엔티티·모니터의 의존성을 주입</li>
+        <li><strong>실행 확인한 예제</strong> — Play Mode에서 확인한 코드를 생성 기준으로 사용</li>
       </ul>
-      <div class="plain"><span class="lbl">쉽게</span>집 짓는 <b>골조 키트</b> — "방 추가" 한 번이면 벽·배선·문이 규격대로. 다음 사람이 봐도 같은 도면이라 바로 이어받는다.</div>
+      <div class="plain"><span class="lbl">요약</span>파일을 만들고 등록하는 반복 작업은 생성기가 맡고, 개발자는 게임 기능 구현에 집중합니다.</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:14px;justify-content:center">
       <div>
@@ -1231,15 +1233,15 @@ public sealed class ShopView : UI&lt;ShopViewModel&gt;
           <div class="ba-row"><span class="lab">생성기</span><div class="ba-track"><div class="ba-fill fast" style="width:16%"></div></div><span class="val">1 명령</span></div>
         </div>
       </div>
-      <div class="cap"><span class="k">핵심</span> 생성기는 <strong>등록 데스크</strong>(SceneLifetimeScope / HudLifetimeScope)를 가리키기만 한다 — 항목을 추가해도 등록 코드가 늘지 않는다.</div>
-      <div><button class="codebtn" data-code="cp-pavedroad">코드 보기 — Scene/Hud 등록 데스크</button></div>
+      <div class="cap"><span class="k">핵심</span> 생성기는 SceneLifetimeScope와 HudLifetimeScope에 필요한 항목을 연결합니다. 화면이 늘어나도 등록 코드를 따로 추가하지 않습니다.</div>
+      <div><button class="codebtn" data-code="cp-pavedroad">코드 보기 — Scene/Hud 등록 방식</button></div>
     </div>
   </div>
 </section>
 
 <!-- CODE PAGE · Paved Road 등록 데스크 -->
 <section class="slide codepage" id="cp-pavedroad">
-  <div class="cp-head">16 · CODE — Scene/Hud LifetimeScope · 등록 데스크 (일관 배선)</div>
+  <div class="cp-head">16 · CODE — Scene/Hud LifetimeScope · 의존성 등록</div>
   <div class="cp-inner">
     <div class="cardcode">
       <div class="cc-top"><i class="r"></i><i class="y"></i><i class="g"></i><span class="fn">UI/UISystem/Navigation/SceneLifetimeScope.cs · HudLifetimeScope.cs</span></div>
@@ -1302,10 +1304,47 @@ protected override void Configure(IContainerBuilder builder)
   </div>
 </section>
 
-<!-- ===================== S10 · 출시작 ===================== -->
+<!-- ===================== S10 · 현재 제품 운영 ===================== -->
 <section class="slide" id="ch4"><div class="no">17</div>
+  <div class="eyebrow">Current Products · 2026</div><h2 class="title">직접 출시하고 운영하는 제품</h2>
+  <p class="lead meta" style="margin-bottom:18px">회사 프로젝트와 별도로 직접 만들고 운영하는 제품입니다. 기획과 개발뿐 아니라 스토어 등록, 심사 대응, 출시 후 운영까지 맡고 있습니다.</p>
+  <div class="grid2">
+    <div class="card accentL">
+      <div class="eyebrow" style="font-size:11px">Unity 6 · Google Play</div>
+      <h3 style="font-size:21px;margin-top:5px">해달스도쿠</h3>
+      <ul class="bul" style="margin-top:10px">
+        <li><strong>1인 개발·출시</strong> — 기획, 클라이언트 개발, 빌드, 스토어 심사 담당</li>
+        <li>5×5~12×12 논리 퍼즐 <span class="num">1,000개</span>를 만들고 정답이 하나인지 자동 검사</li>
+        <li>오프라인 퍼즐 팩, AdMob, Android AAB와 스토어 운영</li>
+        <li><strong>2026.08.13 첫 출시</strong> · Google Play 공개 운영</li>
+      </ul>
+      <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:15px">
+        <a class="playbtn" style="text-decoration:none" href="https://play.google.com/store/apps/details?id=com.activeadstudio.otterdoku" target="_blank" rel="noopener">Google Play</a>
+        <button class="playbtn" data-play="assets/playable/OtterDoku.html" data-title="해달스도쿠 — 본편 기반 논리 퍼즐 플레이어블">플레이어블 실행</button>
+      </div>
+    </div>
+    <div class="card accentL">
+      <div class="eyebrow" style="font-size:11px">React 18 · TypeScript · Vite</div>
+      <h3 style="font-size:21px;margin-top:5px">Toss 생활형 앱</h3>
+      <ul class="bul" style="margin-top:10px">
+        <li>현재 Apps-in-Toss에서 <span class="num">5종 공개 운영</span></li>
+        <li>생활형 앱을 기획하고 개발해 심사와 출시까지 직접 진행</li>
+        <li>광고를 연동하고 출시 후 지표를 확인하며 운영</li>
+        <li>심사에서 문제가 된 원인을 다시 확인하고, 테스트값이나 불필요한 코드가 배포 파일에 남지 않도록 검사 추가</li>
+      </ul>
+      <div style="display:flex;gap:10px;margin-top:18px">
+        <div style="flex:1"><div class="stat" style="font-size:34px">5</div><div class="stat-l">공개 운영 앱</div></div>
+        <div style="flex:1"><div class="stat" style="font-size:34px">출시→운영</div><div class="stat-l">개발 · 심사 · 업데이트</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="plain" style="margin-top:18px"><span class="lbl">출시·배포 경험</span><b>Google Play</b> · <b>Apps-in-Toss</b> · <b>Unity WebGL</b> · <b>HTML5 Playable</b></div>
+</section>
+
+<!-- ===================== S10b · 출시작 ===================== -->
+<section class="slide"><div class="no">18</div>
   <div class="eyebrow">Shipped Titles</div><h2 class="title">출시작 — 23종 / 5장르</h2>
-  <p class="lead meta">디자이너 1 + 기획 1 + 개발 1(본인) 구조. 내가 메인/리드로 개발한 게임이 도달한 규모 :</p>
+  <p class="lead meta">주로 디자이너 1명, 기획자 1명, 개발자 1명으로 작업했습니다. 아래는 메인 개발 또는 출시 후 운영을 맡은 대표 게임입니다.</p>
   <table>
     <tr><th>게임</th><th>다운로드</th><th>역할</th></tr>
     <tr><td><span class="gname"><img src="assets/icons/convenisort.png" alt="">편의점 정리왕</span></td><td><span class="num">200만+</span></td><td>메인개발 → 핸드오프 → 리팩토링 · 최적화 · 에디터</td></tr>
@@ -1315,11 +1354,11 @@ protected override void Configure(IContainerBuilder builder)
     <tr><td><span class="gname"><img src="assets/icons/mergemarket.png" alt="">머지편의점</span></td><td><span class="num">~20만</span></td><td>메인개발 → 핸드오프</td></tr>
   </table>
   <p style="margin-top:14px;font-size:14px">그 외 유지보수 · 최적화(블럭팡, 블록오션퍼즐, 스티커타운, 블록퍼즐 3종, 2048 등), 교육생 프로젝트 리드(Magic/Jump Cat, Candy Cutter, Cat Tower Sort) 등 다수.</p>
-  <p class="footnote">UA(다운로드)는 마케팅이지만, 그 규모를 견디는 클라이언트와 출시 후 최적화 · 운영을 만든 것은 개발.</p>
+  <p class="footnote">다운로드 규모가 커진 뒤에도 클라이언트 최적화와 업데이트, 운영을 이어갔습니다.</p>
 </section>
 
-<!-- ===================== S10b · 게임플레이 갤러리 ===================== -->
-<section class="slide"><div class="no">18</div>
+<!-- ===================== S10c · 게임플레이 갤러리 ===================== -->
+<section class="slide"><div class="no">19</div>
   <div class="eyebrow">Shipped Titles · Gameplay</div><h2 class="title">실제 게임플레이</h2>
   <div class="gallery">
     <figure><img src="assets/shots/convenisort_ss0.png" alt=""><figcaption>편의점 정리왕</figcaption></figure>
@@ -1332,12 +1371,21 @@ protected override void Configure(IContainerBuilder builder)
 </section>
 
 <!-- ===================== S11 · 플레이어블 ===================== -->
-<section class="slide" id="ch5"><div class="no">19</div>
-  <div class="eyebrow">Playable Ad Pipeline</div><h2 class="title">플레이어블 광고 파이프라인 — 다수 제작</h2>
+<section class="slide" id="ch5"><div class="no">20</div>
+  <div class="eyebrow">Playable Ad Pipeline</div><h2 class="title">플레이어블 광고 제작과 변환 자동화</h2>
   <p class="lead meta" style="margin-bottom:14px">Luna 기반 <strong style="color:var(--body)">Unity → HTML5</strong> 변환 + Python 멀티네트워크 자동 빌드.
-  파이프라인으로 만든 플레이어블 <strong style="color:var(--body)">13종</strong> — 아래 버튼은 모두 <strong style="color:var(--body)">실제 브라우저에서 플레이 가능</strong>.</p>
+  파이프라인으로 만든 플레이어블 <strong style="color:var(--body)">17종</strong> — 아래 버튼은 모두 <strong style="color:var(--body)">실제 브라우저에서 플레이 가능</strong>.</p>
   <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:26px;align-items:start">
     <div class="plib">
+      <div class="pgroup">
+        <div class="pgl">최근 작업 · 2026</div>
+        <div class="pchips">
+          <button class="pchip" data-play="assets/playable/OtterDoku.html" data-title="해달스도쿠 — 본편 기반 논리 퍼즐 플레이어블">해달스도쿠</button>
+          <button class="pchip" data-play="assets/playable/ForestDefense.html" data-title="Forest Defense — 로그라이크 디펜스 플레이어블">Forest Defense</button>
+          <button class="pchip" data-play="assets/playable/SaveTheSprout.html" data-title="Save The Sprout — 컬러 슈터 퍼즐 플레이어블">Save The Sprout</button>
+          <button class="pchip" data-play="assets/playable/Crumble.html" data-title="Crumble: Squad Raid — 방치형 스쿼드 레이드 플레이어블">Crumble</button>
+        </div>
+      </div>
       <div class="pgroup">
         <div class="pgl">로켓단게임즈 · 디펜스</div>
         <div class="pchips">
@@ -1372,11 +1420,11 @@ protected override void Configure(IContainerBuilder builder)
         <p style="margin-top:6px">Python으로 Google · Meta · Mintegral 등 네트워크별 빌드를 자동 변환 — <strong>총 21개 네트워크</strong>.</p>
         <ul class="bul" style="margin-top:8px">
           <li><strong>유료 라이선스($15k/mo) 없이</strong> 자체 빌드 파이프라인 (Luna는 Unity Ad · IronSource 외 유료)</li>
-          <li>C# → JS 트랜스파일 제약 <span class="num">15건+</span> 문서화 · 5MB 제약 대응(압축 · 스트리핑) · 제작용 Framework</li>
+          <li>C# → JS 변환 과정에서 생긴 문제 <span class="num">15건+</span> 기록 · 5MB 제한 대응 · 공통 제작 프레임워크</li>
         </ul>
       </div>
       <div style="display:flex;gap:10px">
-        <div class="card" style="flex:1;text-align:center;padding:13px 10px"><div class="stat" style="font-size:28px">13</div><div class="stat-l">플레이어블</div></div>
+        <div class="card" style="flex:1;text-align:center;padding:13px 10px"><div class="stat" style="font-size:28px">17</div><div class="stat-l">플레이어블</div></div>
         <div class="card" style="flex:1;text-align:center;padding:13px 10px"><div class="stat" style="font-size:28px">21</div><div class="stat-l">변환 네트워크</div></div>
         <div class="card" style="flex:1;text-align:center;padding:13px 10px"><div class="stat" style="font-size:28px">$15k<span style="font-size:14px">/mo</span></div><div class="stat-l">비용 절감</div></div>
       </div>
@@ -1385,48 +1433,48 @@ protected override void Configure(IContainerBuilder builder)
 </section>
 
 <!-- ===================== S13 · AI ① 철학 ===================== -->
-<section class="slide" id="ch6"><div class="no">20</div>
-  <div class="eyebrow">AI Workflow ① — Thesis</div><h2 class="title">설계는 사람, 구현은 AI</h2>
-  <p class="lead meta" style="margin-bottom:16px">AI 도구는 <strong style="color:var(--body)">모두에게 같습니다</strong> — Claude Code·Codex·Gemini를 같은 날 받았죠. 변별은 도구가 아니라 <strong style="color:var(--body)">무엇을 먹이고(규칙·명세) 무엇을 검증·소유하느냐</strong>, 그리고 <strong style="color:var(--body)">AI에 끌려가지 않느냐</strong>에서 납니다. AI는 매끄럽게 틀리고(환각), 정보가 많을수록 사람은 판단을 AI에 넘기기 쉽기에(자동화 편향) — 저는 끌려가지 않도록 규칙을 먼저 만듭니다.</p>
+<section class="slide" id="ch6"><div class="no">21</div>
+  <div class="eyebrow">AI Workflow ①</div><h2 class="title">AI는 구현 보조 도구로 씁니다</h2>
+  <p class="lead meta" style="margin-bottom:16px">Claude Code·Codex·Gemini를 코드 탐색과 반복 구현에 사용합니다. 작업 전에 구조와 범위, 금지 규칙을 직접 정하고 생성된 코드는 빌드와 테스트로 확인합니다. 설계 판단과 최종 책임은 제가 맡습니다.</p>
   <div class="dgm">
-    <div class="eb">Human-in-the-loop Cycle</div>
+    <div class="eb">작업 순서</div>
     <div class="flow">
-      <div class="node"><div class="nt">① 규칙 정의</div><div class="ns">CLAUDE.md · 금지패턴</div></div>
+      <div class="node"><div class="nt">① 기준 작성</div><div class="ns">구조 · 범위 · 금지 패턴</div></div>
       <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
-      <div class="node"><div class="nt">② 스펙 · 버그리포트</div><div class="ns">사람이 직접 작성</div></div>
+      <div class="node"><div class="nt">② 작업 명세</div><div class="ns">요구사항과 완료 조건 작성</div></div>
       <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
-      <div class="node key"><div class="nt">③ AI 구현 위임</div><div class="ns">외부 에이전트 도구로 자율화</div></div>
+      <div class="node key"><div class="nt">③ AI로 구현 보조</div><div class="ns">코드 탐색과 반복 작업</div></div>
       <svg class="harr" width="44" height="12" viewBox="0 0 44 12"><line x1="2" y1="6" x2="33" y2="6"/><path d="M31 2.5 L38 6 L31 9.5"/></svg>
-      <div class="node"><div class="nt">④ 검증 · 코드리뷰</div><div class="ns">테스트 · 엣지 · 라인설명</div></div>
+      <div class="node"><div class="nt">④ 리뷰와 테스트</div><div class="ns">빌드 · 실제 기기 · 예외 확인</div></div>
     </div>
-    <div class="lane"><span class="rc">↺</span> <b>④ 검증을 ① 컨텍스트로 되먹임</b> — 통과할 때까지 반복. &nbsp;·&nbsp; <strong style="color:var(--accent)">설명 못 하는 코드는 출시 안 함.</strong></div>
+    <div class="lane"><span class="rc">↺</span> 리뷰에서 찾은 문제는 규칙과 문서에 추가해 다음 작업에서 다시 확인합니다.</div>
   </div>
-  <div class="eb" style="margin:17px 0 9px">Guardrails — 편향을 구조로 (의지가 아니라 규칙으로)</div>
+  <div class="eb" style="margin:17px 0 9px">사용 원칙</div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
     <div style="border:1px solid var(--line-2);border-radius:9px;padding:10px 13px">
-      <div style="font-size:13px;font-weight:700;color:var(--ink)">판단은 사람이 소유</div>
-      <div style="font-size:11.5px;color:var(--body);line-height:1.45;margin-top:4px">설계·트레이드오프는 내가, AI는 구현 가속만</div>
-      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--accent);margin-top:7px">방어 · 자동화 편향</div>
+      <div style="font-size:13px;font-weight:700;color:var(--ink)">결정은 직접</div>
+      <div style="font-size:11.5px;color:var(--body);line-height:1.45;margin-top:4px">구조와 우선순위는 프로젝트 상황을 보고 정합니다.</div>
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--accent);margin-top:7px">DESIGN</div>
     </div>
     <div style="border:1px solid var(--line-2);border-radius:9px;padding:10px 13px">
-      <div style="font-size:13px;font-weight:700;color:var(--ink)">앵커링 차단</div>
-      <div style="font-size:11.5px;color:var(--body);line-height:1.45;margin-top:4px">첫 답에 갇히지 않게 반대안을 먼저 받고 내가 고른다</div>
-      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--accent);margin-top:7px">방어 · 앵커링</div>
+      <div style="font-size:13px;font-weight:700;color:var(--ink)">다른 방법과 비교</div>
+      <div style="font-size:11.5px;color:var(--body);line-height:1.45;margin-top:4px">첫 답을 바로 쓰지 않고 대안과 비용을 함께 봅니다.</div>
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--accent);margin-top:7px">COMPARE</div>
     </div>
     <div style="border:1px solid var(--line-2);border-radius:9px;padding:10px 13px">
-      <div style="font-size:13px;font-weight:700;color:var(--ink)">신뢰를 위험도에 보정</div>
-      <div style="font-size:11.5px;color:var(--body);line-height:1.45;margin-top:4px">가역은 빠르게 위임, 비가역(세이브·보안·공개 API)은 직접 검증</div>
-      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--accent);margin-top:7px">방어 · 과의존</div>
+      <div style="font-size:13px;font-weight:700;color:var(--ink)">중요한 코드는 더 확인</div>
+      <div style="font-size:11.5px;color:var(--body);line-height:1.45;margin-top:4px">세이브·보안·공개 API는 별도 테스트를 만듭니다.</div>
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--accent);margin-top:7px">TEST</div>
     </div>
     <div style="border:1px solid var(--line-2);border-radius:9px;padding:10px 13px">
-      <div style="font-size:13px;font-weight:700;color:var(--ink)">그럴듯함 ≠ 정답</div>
-      <div style="font-size:11.5px;color:var(--body);line-height:1.45;margin-top:4px">유창한 설명이 아니라 실행·테스트로 확인</div>
-      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--accent);margin-top:7px">방어 · 환각</div>
+      <div style="font-size:13px;font-weight:700;color:var(--ink)">실행해서 확인</div>
+      <div style="font-size:11.5px;color:var(--body);line-height:1.45;margin-top:4px">설명만 믿지 않고 빌드와 테스트 결과를 봅니다.</div>
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--accent);margin-top:7px">VERIFY</div>
     </div>
   </div>
   <div style="margin-top:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-    <button class="codebtn" data-code="cp-claude-global">md 보기 — 전역 CLAUDE.md (편향 가드레일)</button>
-    <span class="footnote" style="margin:0"><strong style="color:var(--accent)">이 4원칙은 말이 아니라 실제 문서에 박혀 있습니다</strong> — 코드 규약 CLAUDE.md와 별개로, AI를 대하는 판단 규칙까지 파일로.</span>
+    <button class="codebtn" data-code="cp-claude-global">md 보기 — 전역 CLAUDE.md</button>
+    <span class="footnote" style="margin:0">이 기준은 실제 작업 문서에 기록해 프로젝트마다 같은 방식으로 사용합니다.</span>
   </div>
 </section>
 
@@ -1469,25 +1517,25 @@ protected override void Configure(IContainerBuilder builder)
 #  AI=무엇이 가능한가, 사용자=무엇이 맞나</code></pre>
       </div>
     </div>
-    <div class="cp-cap"><span class="k">💡</span> 코드 규약(CLAUDE.md)뿐 아니라 <strong>AI를 대하는 내 판단 규칙</strong>까지 파일로 둔다 — 정보 과부하에 끌려가지 않도록 편향 대응을 '의지'가 아니라 '규칙'으로 박은 것. AI에게 내리는 지시문(실제 파일 발췌).</div>
+    <div class="cp-cap"><span class="k">💡</span> 코드 규약뿐 아니라 AI를 사용할 때의 판단 기준도 문서로 관리합니다. 실제 전역 CLAUDE.md에서 발췌했습니다.</div>
   </div>
 </section>
 
 <!-- ===================== S14 · AI ② DEFINE 증거 ===================== -->
-<section class="slide"><div class="no">21</div>
-  <div class="eyebrow">AI Workflow ② — Evidence</div><h2 class="title">내가 AI에 먹이는 규칙</h2>
-  <p class="lead meta" style="margin-bottom:16px">에이전트 루프 도구는 <strong style="color:var(--body)">Ralph(오픈소스)</strong>를 도입해 운용합니다 — 시스템은 외부지만, <strong style="color:var(--body)">아키텍처·컨벤션·금지패턴·작업 명세는 제가 직접 씁니다.</strong> 그 규칙 문서가 AI 출력의 품질을 가르는 진짜 입력입니다. <span style="color:var(--meta)">(아래는 실제 문서)</span></p>
+<section class="slide"><div class="no">22</div>
+  <div class="eyebrow">AI Workflow ②</div><h2 class="title">AI 작업 전에 정하는 규칙</h2>
+  <p class="lead meta" style="margin-bottom:16px">반복 작업에는 오픈소스 도구인 <strong style="color:var(--body)">Ralph</strong>를 사용합니다. 프로젝트 구조와 코딩 규칙, 금지 패턴, 작업 범위는 직접 작성합니다. 아래는 실제 프로젝트에서 사용한 문서입니다.</p>
   <div class="grid2">
     <div class="card accentL"><h3 style="font-size:16px">CLAUDE.md — 프로젝트 규약</h3>
-      <p style="margin:5px 0 12px">아키텍처(MVC+Observable+Command)·네이밍·로깅·<strong>10대 Critical Rules</strong>·금지 패턴을 정의. AI가 우리 컨벤션 안에서만 구현하게.</p>
+      <p style="margin:5px 0 12px">아키텍처(MVC+Observable+Command), 네이밍, 로깅, 주요 규칙과 금지 패턴을 적어 프로젝트 기준을 벗어난 코드가 생기지 않도록 했습니다.</p>
       <button class="codebtn" data-code="cp-claudemd">md 보기 — CLAUDE.md</button>
     </div>
     <div class="card accentL"><h3 style="font-size:16px">PROMPT.md — 에이전트 작업 규칙</h3>
-      <p style="margin:5px 0 12px">한 루프 한 작업·구현 전 코드검색·<strong>명세 밖 기능 금지</strong>·서킷브레이커를 규칙으로 명시. AI가 폭주·과잉엔지니어링 안 하게.</p>
+      <p style="margin:5px 0 12px">한 번에 한 작업, 구현 전 코드 검색, <strong>명세 밖 기능 금지</strong>, 중단 조건을 정해 작업 범위가 불필요하게 커지지 않도록 했습니다.</p>
       <button class="codebtn" data-code="cp-ralphprompt">md 보기 — PROMPT.md</button>
     </div>
   </div>
-  <p class="footnote" style="margin-top:16px"><span style="color:var(--accent);font-weight:600">정직</span> — 루프 실행기(STATUS·EXIT_SIGNAL·서킷브레이커 메커니즘)는 Ralph 도구의 것입니다. 제 기여는 <strong style="color:var(--body)">그 도구에 먹인 규칙·명세를 설계한 것</strong>이고, 그게 위 문서들입니다.</p>
+  <p class="footnote" style="margin-top:16px">Ralph의 실행 기능 자체는 외부 오픈소스입니다. 저는 프로젝트에 맞는 규칙과 작업 명세를 작성해 사용했습니다.</p>
 </section>
 
 <!-- DOC PAGE · CLAUDE.md -->
@@ -1525,7 +1573,7 @@ namespace Projects._99.Scripts.{Category}.{Sub}</code></pre>
 10. 모든 UI 버튼은 EventBtn 상속/사용</code></pre>
       </div>
     </div>
-    <div class="cp-cap"><span class="k">💡</span> 도구(Ralph)는 외부지만 <strong>이 규약은 제가 작성</strong> — AI가 우리 아키텍처·금지패턴 안에서만 구현하게 강제하는 '먹이는 입력'이다. (실제 27KB 중 발췌)</div>
+    <div class="cp-cap"><span class="k">💡</span> Ralph는 외부 도구이며, 이 프로젝트의 아키텍처와 금지 규칙은 직접 작성했습니다. 실제 27KB 문서 중 일부입니다.</div>
   </div>
 </section>
 
@@ -1565,32 +1613,32 @@ namespace Projects._99.Scripts.{Category}.{Sub}</code></pre>
 - 같은 에러 5회                → BLOCKED</code></pre>
       </div>
     </div>
-    <div class="cp-cap"><span class="k">💡</span> "한 루프 한 작업·구현 전 검색·명세 밖 금지"는 <strong>내 작업 판단을 규칙으로 박은 것</strong>. STATUS/서킷브레이커 '메커니즘'은 Ralph의 기능이고, 그 안에 채운 '규칙'이 내 기여다.</div>
+    <div class="cp-cap"><span class="k">💡</span> 한 번에 한 작업, 구현 전 검색, 명세 밖 기능 금지 규칙은 직접 작성했습니다. STATUS와 중단 기능은 Ralph에서 제공합니다.</div>
   </div>
 </section>
 
 <!-- ===================== S15 · AI ③ 사람의 칸 ===================== -->
-<section class="slide"><div class="no">22</div>
-  <div class="eyebrow">AI Workflow ③ — The Human Lane</div><h2 class="title">AI가 못 하는 칸 — 눈 · 검증 · 소유</h2>
+<section class="slide"><div class="no">23</div>
+  <div class="eyebrow">AI Workflow ③</div><h2 class="title">직접 판단하고 확인하는 부분</h2>
   <div class="grid2" style="margin-bottom:14px">
     <div class="card"><h3 style="font-size:16px">👁 연출은 눈으로 판단</h3>
-      <p style="margin-top:5px">코어 로직은 AI가 짜도 — 타격 이펙트 0.15초냐 0.25초냐, 점수 팝업이 파티클보다 먼저냐 나중이냐, 이징이 ease-out이냐 back-out이냐. <strong>명세에도 없고 테스트로도 안 잡혀</strong> 빌드 돌려 눈·손맛으로 정합니다. AI는 제 빌드를 못 봅니다.</p></div>
-    <div class="card"><h3 style="font-size:16px">✓ 검증 · 소유</h3>
-      <p style="margin-top:5px">AI 출력은 그대로 안 믿고, 세이브처럼 깨지면 데이터가 날아가는 곳은 테스트로 정조준. <strong>라인 단위로 설명 못 하는 코드는 출시 안 합니다.</strong></p></div>
+      <p style="margin-top:5px">타격 이펙트의 길이, 점수 팝업과 파티클의 순서, 이징 방식처럼 테스트만으로 판단하기 어려운 부분은 실제 빌드를 보고 직접 조정합니다.</p></div>
+    <div class="card"><h3 style="font-size:16px">✓ 검증과 책임</h3>
+      <p style="margin-top:5px">생성된 코드는 그대로 반영하지 않습니다. 특히 세이브처럼 오류가 데이터 손실로 이어지는 부분은 별도 테스트를 만들고, 직접 설명할 수 있는 코드만 사용합니다.</p></div>
   </div>
-  <p class="footnote" style="margin:0 0 13px"><strong style="color:var(--accent)">끌려가지 않기도 사람의 칸</strong> — 그럴듯한 답일수록 실행·테스트로 확인하고(환각), AI의 첫 답에 갇히지 않게 반대안을 먼저 받습니다(앵커링·자동화 편향).</p>
+  <p class="footnote" style="margin:0 0 13px">AI의 답변도 실행과 테스트로 확인합니다. 구조에 영향을 주는 결정은 한 가지 답만 따르지 않고 다른 방법과 비교합니다.</p>
   <div class="card accentL"><h3 style="font-size:16px">사례 — 타이쿤 플레이어블 4일</h3>
-    <p style="margin:5px 0 12px">단계별 스펙·버그리포트를 직접 작성 → AI에 구현 위임 → 결과 검증·수정. <strong>/export-prompt</strong>로 세션 로그 보유. <span style="color:var(--meta)">· 실제 플레이 가능</span></p>
+    <p style="margin:5px 0 12px">작업을 단계별로 나누고 명세와 버그리포트를 직접 작성했습니다. 반복 구현에는 AI를 사용했고, 매 단계마다 빌드를 확인해 수정했습니다. <span style="color:var(--meta)">· 실제 플레이 가능</span></p>
     <button class="playbtn" data-play="assets/playable/Result_Game.html" data-title="타이쿤 플레이어블 — AI로 4일 제작 데모">플레이어블 실행</button>
   </div>
-  <p class="footnote" style="margin-top:14px"><strong style="color:var(--accent)">AI 평준화는 오히려 유리</strong> — 시니어의 '코드 더 빨리·많이' 우위가 공짜가 됐으니 승부가 <strong>판단·손맛</strong>으로 옮겨갔고, 거긴 캐주얼 23종 출시 경험으로 붙습니다.</p>
+  <p class="footnote" style="margin-top:14px">AI를 사용하더라도 최종 품질은 판단과 검증에서 갈립니다. 캐주얼 게임 23종의 출시와 운영 경험을 그 기준으로 사용합니다.</p>
 </section>
 
 <!-- ===================== S13 · 팀빌딩 ===================== -->
-<section class="slide" id="ch7"><div class="no">23</div>
-  <div class="eyebrow">Team Building &amp; Systemization · ㈜액션핏</div><h2 class="title">0 → 10 팀빌딩 &amp; 시스템화</h2>
+<section class="slide" id="ch7"><div class="no">24</div>
+  <div class="eyebrow">Team Building · ㈜액션핏</div><h2 class="title">0 → 10 개발팀 구성과 업무 방식 정리</h2>
   <div class="grid2" style="margin-top:4px">
-    <div class="card"><h3 style="font-size:16px">팀빌딩 (퇴사 시 개발팀장)</h3>
+    <div class="card"><h3 style="font-size:16px">팀 구성 (퇴사 시 개발팀장)</h3>
       <p style="margin-top:6px">정규직 6 · 계약직 4 <strong>전원 면접 · 온보딩</strong>, 교육생 과제 출제 · 채용 관리. 개발자 신기술 적용 교육 진행.</p></div>
     <div class="card"><h3 style="font-size:16px">프로세스 구축</h3>
       <p style="margin-top:6px">코드리뷰 문화, Git-flow, 작업 견적 체계, 신입 온보딩 문서(파이프라인 · UI · 용어집). 비개발 부서와 언어를 맞추기 위한 용어집 · 지표 · 로그 교육.</p></div>
@@ -1599,26 +1647,27 @@ namespace Projects._99.Scripts.{Category}.{Sub}</code></pre>
   <p>
     <span class="chip">Cloud Save</span><span class="chip">UI (MVVM)</span><span class="chip">Asset Provider</span><span class="chip">Push/PostBox</span><span class="chip">IAP</span><span class="chip">SDK Installer</span><span class="chip">Level Editor</span>
   </p>
-  <p class="footnote" style="margin-top:14px">→ 신규 셋업 단축, 기획자 독립 레벨 제작. 재사용 프레임워크(Boot/DI/Save/UI/Monetize)를 개인 자산으로 지속 고도화.</p>
+  <p class="footnote" style="margin-top:14px">새 프로젝트 준비 시간을 줄이고 기획자가 직접 레벨을 만들 수 있게 했습니다. 공통 프레임워크는 이후에도 개인 프로젝트에서 계속 다듬고 있습니다.</p>
 </section>
 
 <!-- ===================== S14 · 기술 스택 ===================== -->
-<section class="slide" id="ch8"><div class="no">24</div>
+<section class="slide" id="ch8"><div class="no">25</div>
   <div class="eyebrow">Tech Stack</div><h2 class="title">기술 스택</h2>
   <div class="grid2" style="margin-top:6px;gap:18px">
     <div class="card"><h3>Engine · Architecture</h3><p style="margin-top:8px">Unity 6, Cocos Creator, C# / DI(VContainer), MVVM · MVC Pattern<br>Command · Factory · Observer Architecture, Object Pool</p></div>
     <div class="card"><h3>Async · Performance</h3><p style="margin-top:8px">UniTask, Unity Job + Burst, Addressable, Profiler 최적화</p></div>
     <div class="card"><h3>Live · Monetize</h3><p style="margin-top:8px">AppLovin · AdMob · Facebook, MMP, Analytics, IAP</p></div>
-    <div class="card"><h3>Playable · AI Dev</h3><p style="margin-top:8px">Luna, Python 멀티네트워크 빌드 / Claude Code · Codex · Gemini · GPT 에이전트 워크플로</p></div>
+    <div class="card"><h3>Playable · 개발 도구</h3><p style="margin-top:8px">Luna, Python 멀티네트워크 빌드 / Claude Code · Codex · Gemini · GPT 활용</p></div>
   </div>
 </section>
 
 <!-- ===================== S15 · 마무리 ===================== -->
-<section class="slide"><div class="no">25</div>
+<section class="slide"><div class="no">26</div>
   <div class="closing">
     <h2 class="title" style="font-size:40px;max-width:20ch;line-height:1.35">“게임을 출시까지 만들고, 반복을 시스템으로 정리하며, AI를 도구로 통제하는 개발자입니다.”</h2>
     <div class="contact" style="margin-top:40px;font-size:14px">
       M : <a href="mailto:jhoon8903@gmail.com">jhoon8903@gmail.com</a> &nbsp;·&nbsp;
+      P : <a href="tel:+821033423408">010-3342-3408</a> &nbsp;·&nbsp;
       G : <a class="lk" href="https://github.com/jhoon8903">GitHub.com/jhoon8903</a><br>
       V : <a class="lk" href="https://www.youtube.com/@actionfit3626">플레이영상 (YouTube)</a> &nbsp;·&nbsp; P : 010-3342-3408
     </div>
