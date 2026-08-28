@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>WigglePuzzle — WebGL</title>
+    <style>
+      * { box-sizing:border-box; }
+      html, body { margin:0; padding:0; width:100%; height:100%; background:#181c1b; overflow:hidden; font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif; }
+      body { display:grid; place-items:center; background:radial-gradient(circle at 50% 36%,#2b3940 0,#181c1b 57%,#0c0e0e 100%); }
+      .back { position:fixed; z-index:5; left:22px; top:20px; color:#aac4d1; text-decoration:none; font-size:11px; font-weight:700; letter-spacing:.04em; }
+      .back:focus-visible { outline:3px solid #79a9c2; outline-offset:4px; }
+      .device { position:relative; width:min(485px,calc(100vw - 34px),calc(51.75vh + 11px)); padding:12px; border:1px solid #566066; border-radius:45px; background:linear-gradient(145deg,#383d3d,#151817 65%); box-shadow:0 34px 100px rgba(0,0,0,.7),inset 0 0 0 1px rgba(255,255,255,.09); }
+      .device::before { content:""; position:absolute; z-index:4; left:50%; top:18px; width:28%; height:23px; transform:translateX(-50%); border-radius:15px; background:#090b0a; }
+      .device::after { content:""; position:absolute; z-index:4; left:50%; bottom:18px; width:28%; height:4px; transform:translateX(-50%); border-radius:4px; background:rgba(255,255,255,.65); }
+      #unity-container { position:relative; width:100%; aspect-ratio:9 / 16; overflow:hidden; border-radius:34px; background:#000; }
+      #unity-canvas { width:100%; height:100%; background:#231F20; display:block; touch-action:none; }
+      .loading { position:absolute; z-index:3; inset:0; display:grid; place-items:center; padding:28px; background:#121616; color:#eef1f3; text-align:center; }
+      .loading[hidden] { display:none; }
+      .loading span,.loading b { display:block; }
+      .loading span { font-size:12px; font-weight:700; }
+      .loading b { margin-top:9px; color:#aac4d1; font-size:11px; }
+      .loading.is-error b { max-width:240px; color:#c7cfd2; font-weight:500; line-height:1.6; }
+      @media (max-width:600px) { .back{left:12px;top:10px;font-size:9px}.device{width:min(calc(100vw - 18px),calc(54vh + 7px));padding:8px;border-radius:34px}.device::before{top:13px;height:19px}.device::after{bottom:13px}.device #unity-container{border-radius:26px} }
+    </style>
+  </head>
+  <body>
+    <a class="back" href="../../">← 포트폴리오로 돌아가기</a>
+    <div class="device" aria-label="9대16 모바일 디바이스 프레임"><div id="unity-container"><div class="loading" role="status" aria-live="polite"><p><span>WigglePuzzle을 불러오는 중입니다.</span><b>0%</b></p></div><canvas id="unity-canvas" tabindex="-1"></canvas></div></div>
+    <script src="Build/WiggleWebGL.loader.js"></script>
+    <script>
+      const loading = document.querySelector(".loading");
+      const loadingLabel = loading.querySelector("span");
+      const loadingProgress = loading.querySelector("b");
+      createUnityInstance(document.querySelector("#unity-canvas"), {
+        arguments: [],
+        dataUrl: "Build/WiggleWebGL.data.unityweb",
+        frameworkUrl: "Build/WiggleWebGL.framework.js.unityweb",
+        codeUrl: "Build/WiggleWebGL.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Rocketdan Games",
+        productName: "WigglePuzzle",
+        productVersion: "0.0.4",
+      }, (progress) => {
+        loadingProgress.textContent = `${Math.round(progress * 100)}%`;
+      }).then((instance) => {
+        window.unityInstance = instance;
+        loading.hidden = true;
+      }).catch((message) => {
+        loading.classList.add("is-error");
+        loadingLabel.textContent = "실행 파일을 불러오지 못했습니다.";
+        loadingProgress.textContent = "포트폴리오로 돌아간 뒤 다시 시도해 주세요.";
+        console.error(message);
+      });
+    </script>
+  </body>
+</html>
