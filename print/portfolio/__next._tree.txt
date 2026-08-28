@@ -1,5 +1,5 @@
 :HL["/portfolio/_next/static/css/b86b764b626f0b8c.css","style"]
-:HL["/portfolio/_next/static/css/1071c13b49dc4cde.css","style"]
+:HL["/portfolio/_next/static/css/d7e2f551a5eee599.css","style"]
 :HL["/portfolio/assets/case-studies/WigglePuzzle.png","image"]
 :HL["/portfolio/assets/actionfit/convenisort_ss0.png","image"]
 :HL["/portfolio/assets/playables/UnderDark_1.jpg","image"]
@@ -19,4 +19,4 @@
 :HL["/portfolio/assets/playables/wiggledef.jpg","image"]
 :HL["/portfolio/assets/playables/getrich.jpg","image"]
 :HL["/portfolio/assets/playables/3DTycoon.jpg","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"print","param":null,"prefetchHints":0,"slots":{"children":{"name":"portfolio","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"j8veekHKSzPBSp7iDoYq_"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"print","param":null,"prefetchHints":0,"slots":{"children":{"name":"portfolio","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"FlH8xHVAgzpRpcGFgg19u"}
