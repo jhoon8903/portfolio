@@ -1,0 +1,53 @@
+{
+  "project": "Wiggle Puzzle",
+  "observedAt": "2026-09-12T08:19:24.999Z",
+  "scene": "Game",
+  "playState": "Playing, paused",
+  "scope": "Active GameObjects with SpriteRenderer in the active Game scene only; other loaded scenes and DontDestroyOnLoad are excluded.",
+  "counts": {
+    "expectedActiveSpriteGameObjects": 540,
+    "enumeratedUniqueIds": 540,
+    "collectedGameObjects": 540,
+    "collectedSpriteRenderers": 540,
+    "activeInHierarchy": 540,
+    "enabled": 324,
+    "disabled": 216,
+    "isVisible": 322,
+    "enabledAndIsVisible": 322,
+    "unknownIsVisible": 0,
+    "forceRenderingOff": 0,
+    "enabledPropertyMismatch": 0,
+    "failedReads": 0,
+    "missingFromEnumeration": 0
+  },
+  "definition": {
+    "activeSpriteGameObjects": "540 GameObjects with activeInHierarchy = true and a SpriteRenderer component.",
+    "enabled": "324 SpriteRenderers with enabled = true; not a Game-camera visible-object count.",
+    "disabled": "216 SpriteRenderers with enabled = false.",
+    "isVisible": "Unity Renderer.isVisible may include Scene View or other cameras. Not used as the Game-camera visible-object count."
+  },
+  "method": [
+    "Enumerate SpriteRenderer GameObject instance IDs through Unity MCP in two pages; deduplicate IDs.",
+    "Read each exact GameObject through the gamelovers MCP read-only get_gameobject tool. Exclude returned child objects from totals.",
+    "Use the serializer that skips material/materials getters to avoid creating material instances while inspecting."
+  ],
+  "captureContext": {
+    "date": "2026-09-11",
+    "editor": "Unity 6.3 LTS (6000.3.10f1), macOS Metal, URP 2D",
+    "resolution": "1414x2262",
+    "gameViewBatches": 377,
+    "gameViewSetPassCalls": 19,
+    "selectedSRPBatches": 3,
+    "selectedEvents": [
+      20,
+      21,
+      22
+    ],
+    "drawCallsInSelectedEvents": [
+      156,
+      147,
+      35
+    ],
+    "note": "These values are transcribed from the provided screenshots. Object counts were queried separately on 2026-09-12, not from the same captured frame."
+  }
+}
