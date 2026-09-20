@@ -1,0 +1,601 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using Projects.Scripts.Bootstrap;
+using Projects.Scripts.Gameplay.Common.Components;
+using Projects.Scripts.Gameplay.Core.Components;
+using Projects.Scripts.Gameplay.Enemies.Components;
+using Projects.Scripts.Gameplay.Feedback.Components;
+using Projects.Scripts.Gameplay.Feedback.Systems;
+using Projects.Scripts.Gameplay.Score;
+using Projects.Scripts.Gameplay.Session;
+using Projects.Scripts.Gameplay.Shield.Components;
+using Projects.Scripts.Gameplay.Shield.Systems;
+using Projects.Scripts.Gameplay.Telemetry;
+using Projects.Scripts.Gameplay.Telemetry.Systems;
+using Projects.Scripts.Gameplay.Upgrades.Components;
+using Unity.Core;
+using Unity.Entities;
+using Unity.Transforms;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace Projects.Editor.Simulation
+{
+    /// <summary>Editor-only fixed-step driver. It never creates a gameplay world, camera, mesh, or material.</summary>
+    [InitializeOnLoad]
+    internal static class BalanceSimulationRunner
+    {
+        private const string StateKey = "NeonReflector.BalanceSimulation.Job";
+        private const double StartupTimeoutSeconds = 30d;
+        private static BalanceSimulationProfile _profile;
+        private static string _profilePath;
+        private static World _world;
+        private static Entity _session;
+        private static readonly List<SystemState> DisabledSystems = new();
+        private static readonly List<RunResult> Results = new();
+        private static readonly List<MetricSample> Samples = new();
+        private static bool _running, _ownedPlay, _worldDetached, _waitingForRestart;
+        private static int _runIndex, _runStepCount, _totalRuns;
+        private static double _startupStartedAt;
+        private static float _runElapsed, _nextSample, _baselineShieldAngle;
+        private static BotSettings[] _bots;
+        private static FrozenBot[] _frozenBots;
+        private static ShieldBotDriver _driver;
+        private static Camera _camera;
+        private static Vector3 _cameraPosition;
+        private static Quaternion _cameraRotation;
+        private static float _cameraOrthographicSize, _cameraAspect;
+        private static string _status = "대기";
+        private static string _lastExportPath = "";
+        private static string _profileJson, _settingsSha256, _waveConfig;
+        private static string _runtimeError;
+
+        internal static bool IsRunning => _running;
+        internal static string Status => _status;
+        internal static string LastExportPath => _lastExportPath;
+
+        static BalanceSimulationRunner()
+        {
+            EditorApplication.playModeStateChanged += OnPlayModeChanged;
+            EditorApplication.update += Update;
+            Application.logMessageReceived += OnLogMessage;
+            AssemblyReloadEvents.beforeAssemblyReload += BeforeAssemblyReload;
+            RestorePersistedJob();
+        }
+
+        internal static void Start(BalanceSimulationProfile profile)
+        {
+            if (_running) return;
+            if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("시뮬레이터는 Edit Mode에서만 시작할 수 있습니다.");
+            if (profile == null) throw new ArgumentNullException(nameof(profile));
+            if (!profile.TryValidate(out string validationError)) throw new InvalidOperationException("시뮬레이션 프로필 오류: " + validationError);
+            if ((ulong)profile.BaseSeed + (ulong)profile.RunCount - 1ul > uint.MaxValue) throw new InvalidOperationException("기본 시드와 실행 횟수 조합이 uint 시드 범위를 넘습니다.");
+            if (SceneManager.GetActiveScene().path != "Assets/Projects/Scenes/GameScene.unity")
+                throw new InvalidOperationException("활성 씬이 Assets/Projects/Scenes/GameScene.unity 이어야 합니다.");
+            try
+            {
+                _profile = ScriptableObject.CreateInstance<BalanceSimulationProfile>();
+                EditorJsonUtility.FromJsonOverwrite(EditorJsonUtility.ToJson(profile), _profile);
+                _profile.hideFlags = HideFlags.HideAndDontSave;
+                FreezeBots(profile);
+                _profilePath = AssetDatabase.GetAssetPath(profile);
+                _runIndex = 0; _totalRuns = checked((int)profile.TotalRunCount); Results.Clear(); Samples.Clear(); _lastExportPath = ""; _runtimeError = null;
+                _profileJson = EditorJsonUtility.ToJson(profile, true); _settingsSha256 = HashSettings(); _waveConfig = "capturing-after-ready";
+            }
+            catch
+            {
+                DisposeFrozenBots();
+                if (_profile != null) { UnityEngine.Object.DestroyImmediate(_profile); _profile = null; }
+                throw;
+            }
+            _running = true; _ownedPlay = true; _startupStartedAt = EditorApplication.timeSinceStartup;
+            _status = "Play Mode 시작 요청 중";
+            Persist();
+            EditorApplication.isPlaying = true;
+        }
+
+        internal static void Abort(string reason)
+        {
+            if (!_running) return;
+            try
+            {
+                if (_world is { IsCreated: true } && _session != Entity.Null && _world.EntityManager.Exists(_session) && !_waitingForRestart) CaptureRunSafely("aborted", reason);
+                ExportSafely(reason);
+            }
+            finally { Restore(reason, false); }
+        }
+
+        private static void OnPlayModeChanged(PlayModeStateChange change)
+        {
+            if (!_running) return;
+            if (change == PlayModeStateChange.EnteredPlayMode) { _startupStartedAt = EditorApplication.timeSinceStartup; _status = "게임 세션 준비 대기"; }
+            if (change == PlayModeStateChange.ExitingPlayMode && _ownedPlay) Abort("toolbar-stop");
+        }
+
+        private static void Update()
+        {
+            if (!_running || !EditorApplication.isPlaying) return;
+            try
+            {
+                if (!string.IsNullOrEmpty(_runtimeError)) throw new InvalidOperationException("시뮬레이션 중 ECS 오류: " + _runtimeError);
+                if (_world == null) { TryAttach(); return; }
+                if (_waitingForRestart) { TickRestart(); return; }
+                TickWorld();
+            }
+            catch (Exception error)
+            {
+                Debug.LogException(error);
+                if (_world is { IsCreated: true } && _session != Entity.Null && _world.EntityManager.Exists(_session)) CaptureRunSafely("error", error.Message);
+                try { ExportSafely("error"); } finally { Restore("error", false); }
+            }
+        }
+
+        private static void TryAttach()
+        {
+            if (EditorApplication.timeSinceStartup - _startupStartedAt > StartupTimeoutSeconds)
+                throw new TimeoutException("GameSession, SessionRuntime, Core/Shield 및 wave 버퍼가 30초 안에 준비되지 않았습니다.");
+            if (GameEntryPoint.Active == null || !GameEntryPoint.Active.IsReady) return;
+            World candidate = World.DefaultGameObjectInjectionWorld;
+            if (candidate is not { IsCreated: true }) return;
+            EntityManager manager = candidate.EntityManager;
+            using EntityQuery sessions = manager.CreateEntityQuery(ComponentType.ReadOnly<GameSession>(), ComponentType.ReadOnly<SessionRuntime>(), ComponentType.ReadOnly<CombatMetrics>(), ComponentType.ReadOnly<ArenaSpawnState>());
+            if (sessions.CalculateEntityCount() != 1) return;
+            Entity session = sessions.GetSingletonEntity();
+            if (manager.GetComponentData<GameSession>(session).Phase != GamePhase.Ready) return;
+            SessionRuntime runtime = manager.GetComponentData<SessionRuntime>(session);
+            if (runtime.Initialized == 0 || runtime.Core == Entity.Null || runtime.Shield == Entity.Null || !manager.Exists(runtime.Core) || !manager.Exists(runtime.Shield) ||
+                !manager.HasComponent<Health>(runtime.Core) || !manager.HasComponent<ShieldArc>(runtime.Shield)) return;
+            using (EntityQuery waves = manager.CreateEntityQuery(ComponentType.ReadOnly<Projects.Scripts.Gameplay.Waves.Components.WaveDefinition>())) if (waves.CalculateEntityCount() != 1) return;
+            _world = candidate; _session = session;
+            DisableAutomaticSystems();
+            CaptureCameraBaseline();
+            _waveConfig = WaveSnapshot();
+            _baselineShieldAngle = manager.GetComponentData<ShieldArc>(runtime.Shield).CenterAngleDegrees;
+            BeginRun();
+        }
+
+        private static void DisableAutomaticSystems()
+        {
+            Unity.Entities.ScriptBehaviourUpdateOrder.RemoveWorldFromCurrentPlayerLoop(_world);
+            _worldDetached = true;
+            RememberAndDisable(_world.GetExistingSystemManaged<UpdateWorldTimeSystem>());
+            RememberAndDisable(_world.GetExistingSystemManaged<ShieldInputSystem>());
+            RememberAndDisable(_world.GetExistingSystemManaged<GameSessionControlSystem>());
+            RememberAndDisable(_world.GetExistingSystemManaged<SurvivalLocalRecordSystem>());
+            RememberAndDisable(_world.GetExistingSystemManaged<CombatTelemetrySystem>());
+            RememberAndDisable(_world.GetExistingSystemManaged<CombatAudioHapticFeedbackSystem>());
+            RememberAndDisable(_world.GetExistingSystemManaged<PresentationSystemGroup>());
+        }
+
+        private static void RememberAndDisable(ComponentSystemBase system)
+        {
+            if (system == null) return;
+            DisabledSystems.Add(new SystemState(system, system.Enabled));
+            system.Enabled = false;
+        }
+
+        private static void BeginRun()
+        {
+            EntityManager manager = _world.EntityManager;
+            _world.SetTime(new TimeData(0d, _profile.FixedStep));
+            CombatMetrics metrics = manager.GetComponentData<CombatMetrics>(_session);
+            uint seed = _profile.BaseSeed + (uint)(_runIndex / _bots.Length);
+            SetAppearanceSeed(manager, seed, metrics.RunSequence);
+            SetWaveSelectionSeed(manager, seed, metrics.RunSequence);
+            SessionRuntime runtime = manager.GetComponentData<SessionRuntime>(_session);
+            ResetShieldBaseline(manager, runtime.Shield);
+            metrics.RecordingEnabled = 1;
+            manager.SetComponentData(_session, metrics);
+            int botIndex = _runIndex % _bots.Length;
+            _driver = new ShieldBotDriver(_bots[botIndex]);
+            _driver.Reset(seed, _baselineShieldAngle);
+            _runStepCount = 0; _runElapsed = 0f; _nextSample = 0f;
+            Samples.Clear();
+            GameSession game = manager.GetComponentData<GameSession>(_session);
+            if (game.Phase == GamePhase.Ready)
+            {
+                if (!GameEntryPoint.Active.RequestStartOrRetry()) throw new InvalidOperationException("Ready GameSession 시작 요청이 거부되었습니다.");
+            }
+            else if (game.Phase != GamePhase.Playing) throw new InvalidOperationException($"실행을 시작할 수 없는 세션 상태: {game.Phase}");
+            _status = $"실행 {_runIndex + 1}/{_totalRuns}: 봇 {_frozenBots[botIndex].displayName} (ID: {_bots[botIndex].Id}, {_bots[botIndex].Tier}), 시드 {seed}";
+            Persist();
+        }
+
+        private static void TickWorld()
+        {
+            EntityManager manager = _world.EntityManager;
+            for (int step = 0; step < _profile.StepsPerEditorTick; step++)
+            {
+                GameSession game = manager.GetComponentData<GameSession>(_session);
+                if (game.Phase == GamePhase.Failed) { CaptureRun("died", "core-depleted"); QueueNextRun(); return; }
+                if (_runElapsed >= _profile.MaxRunSeconds)
+                {
+                    CaptureRun("time-limit", "time-limit");
+                    game.Phase = GamePhase.Failed;
+                    manager.SetComponentData(_session, game);
+                    QueueNextRun(); return;
+                }
+                _driver.Step(manager, _session, _runElapsed, _profile.FixedStep);
+                _runElapsed = ++_runStepCount * _profile.FixedStep;
+                RestoreCameraBaseline();
+                _world.SetTime(new TimeData(_runElapsed, _profile.FixedStep));
+                _world.Update();
+                CaptureSampleIfDue(manager);
+            }
+            ClearCameraShakeAndRestore();
+        }
+
+
+        private static void QueueNextRun()
+        {
+            if (_runIndex + 1 >= _totalRuns)
+            {
+                try { ExportSafely("completed"); } finally { Restore("completed", false); }
+                return;
+            }
+            EntityManager manager = _world.EntityManager;
+            CombatMetrics metrics = manager.GetComponentData<CombatMetrics>(_session); metrics.RecordingEnabled = 0; manager.SetComponentData(_session, metrics);
+            manager.SetComponentData(_session, new SessionRestartRequest { Pending = 1 });
+            _waitingForRestart = true; _startupStartedAt = EditorApplication.timeSinceStartup; _runIndex++; Persist();
+        }
+
+        private static void TickRestart()
+        {
+            if (EditorApplication.timeSinceStartup - _startupStartedAt > StartupTimeoutSeconds)
+                throw new TimeoutException("세션 재시작이 30초 안에 완료되지 않았습니다.");
+            _world.SetTime(new TimeData(0d, _profile.FixedStep));
+            _world.GetExistingSystemManaged<InitializationSystemGroup>()?.Update();
+            EntityManager manager = _world.EntityManager;
+            if (manager.GetComponentData<GameSession>(_session).Phase != GamePhase.Playing) return;
+            _waitingForRestart = false;
+            BeginRun();
+        }
+
+        private static void ResetShieldBaseline(EntityManager manager, Entity shield)
+        {
+            ShieldArc arc = manager.GetComponentData<ShieldArc>(shield);
+            arc.CenterAngleDegrees = _baselineShieldAngle; arc.PreviousCenterAngleDegrees = _baselineShieldAngle; arc.AngularVelocityDegrees = 0f;
+            manager.SetComponentData(shield, arc);
+            LocalTransform transform = manager.GetComponentData<LocalTransform>(shield);
+            transform.Rotation = Unity.Mathematics.quaternion.RotateZ(_baselineShieldAngle * Mathf.Deg2Rad);
+            manager.SetComponentData(shield, transform);
+        }
+
+        private static void SetAppearanceSeed(EntityManager manager, uint seed, int runSequence)
+        {
+            using EntityQuery query = manager.CreateEntityQuery(ComponentType.ReadWrite<EnemyAppearanceRandomState>());
+            if (query.CalculateEntityCount() != 1) throw new InvalidOperationException("EnemyAppearanceRandomState 싱글턴이 준비되지 않았습니다. 외형 RNG 통합을 확인하세요.");
+            Entity entity = query.GetSingletonEntity();
+            manager.SetComponentData(entity, new EnemyAppearanceRandomState { Seed = seed, State = seed, RunSequence = runSequence });
+        }
+
+        private static void SetWaveSelectionSeed(EntityManager manager, uint seed, int runSequence)
+        {
+            using EntityQuery query = manager.CreateEntityQuery(ComponentType.ReadWrite<Projects.Scripts.Gameplay.Waves.Components.WaveSelectionRandomState>());
+            if (query.CalculateEntityCount() != 1) throw new InvalidOperationException("WaveSelectionRandomState 싱글턴이 준비되지 않았습니다. 웨이브 RNG 통합을 확인하세요.");
+            Entity entity = query.GetSingletonEntity();
+            manager.SetComponentData(entity, new Projects.Scripts.Gameplay.Waves.Components.WaveSelectionRandomState { Seed = seed, State = seed, RunSequence = runSequence });
+        }
+
+        private static void CaptureSampleIfDue(EntityManager manager)
+        {
+            if (_runElapsed + .00001f < _nextSample) return;
+            _nextSample += _profile.SampleInterval;
+            SessionRuntime runtime = manager.GetComponentData<SessionRuntime>(_session);
+            CombatMetrics metrics = manager.GetComponentData<CombatMetrics>(_session);
+            int score = manager.HasComponent<RunScore>(_session) ? manager.GetComponentData<RunScore>(_session).Value : 0;
+            ArenaSpawnState spawn = manager.GetComponentData<ArenaSpawnState>(_session);
+            Projects.Scripts.Gameplay.Waves.Components.WaveDifficultySnapshot difficulty = manager.GetComponentData<Projects.Scripts.Gameplay.Waves.Components.WaveDifficultySnapshot>(_session);
+            int[] ranks = SkillRanks(manager);
+            float coreHp = manager.Exists(runtime.Core) && manager.HasComponent<Health>(runtime.Core) ? manager.GetComponentData<Health>(runtime.Core).Current : 0f;
+            using EntityQuery enemies = manager.CreateEntityQuery(ComponentType.ReadOnly<Enemy>(), ComponentType.ReadOnly<ActiveSimulation>());
+            using EntityQuery projectiles = manager.CreateEntityQuery(ComponentType.ReadOnly<Projects.Scripts.Gameplay.Projectiles.Components.Projectile>(), ComponentType.ReadOnly<ActiveSimulation>());
+            using EntityQuery shards = manager.CreateEntityQuery(ComponentType.ReadOnly<IceShard>(), ComponentType.ReadOnly<ActiveSimulation>());
+            Samples.Add(new MetricSample { elapsed = _runElapsed, score = score, wave = (int)spawn.Generation, playlistIndex = spawn.WaveIndex, difficultyMinimumScore = difficulty.MinimumScore, difficultyEvaluatedScore = difficulty.EvaluatedScore, healthMultiplier = difficulty.HealthMultiplier, movementSpeedMultiplier = difficulty.MovementSpeedMultiplier, patternSpeedMultiplier = difficulty.PatternSpeedMultiplier, spawnCountMultiplier = difficulty.SpawnCountMultiplier, spawnRateMultiplier = difficulty.SpawnRateMultiplier, resolvedSpawnCount = difficulty.ResolvedSpawnCount, resolvedSpawnInterval = difficulty.ResolvedSpawnInterval, resolvedDelayAfter = difficulty.ResolvedDelayAfter, selectionWeight = difficulty.SelectionWeight, totalSelectionWeight = difficulty.TotalSelectionWeight, coreHp = coreHp, activeEnemies = enemies.CalculateEntityCount(), activeProjectiles = projectiles.CalculateEntityCount(), activeShards = shards.CalculateEntityCount(), skillRanks = ranks, totals = metrics, patterns = PatternMetrics(manager) });
+        }
+
+        private static void CaptureCameraBaseline()
+        {
+            _camera = Camera.main;
+            if (_camera == null) throw new InvalidOperationException("GameScene의 Camera.main이 준비되지 않았습니다.");
+            _cameraPosition = _camera.transform.position;
+            _cameraRotation = _camera.transform.rotation;
+            _cameraOrthographicSize = _camera.orthographicSize;
+            _cameraAspect = _camera.aspect;
+        }
+
+        private static void RestoreCameraBaseline()
+        {
+            if (_camera == null) throw new InvalidOperationException("시뮬레이션 중 Camera.main이 유실되었습니다.");
+            _camera.transform.SetPositionAndRotation(_cameraPosition, _cameraRotation);
+            _camera.orthographicSize = _cameraOrthographicSize;
+            _camera.aspect = _cameraAspect;
+        }
+
+        private static void ClearCameraShakeAndRestore()
+        {
+            if (_world is { IsCreated: true } && _session != Entity.Null && _world.EntityManager.Exists(_session) && _world.EntityManager.HasComponent<CameraShakeState>(_session))
+                _world.EntityManager.SetComponentData(_session, default(CameraShakeState));
+            RestoreCameraBaseline();
+        }
+
+        private static void CaptureRunSafely(string completion, string detail)
+        {
+            try { CaptureRun(completion, detail); }
+            catch (Exception captureError) { Debug.LogWarning($"시뮬레이션 마지막 상태를 읽지 못했습니다: {captureError.Message}"); }
+        }
+
+        private static void CaptureRun(string completion, string detail)
+        {
+            if (Results.Count > _runIndex) return;
+            EntityManager manager = _world.EntityManager;
+            SessionRuntime runtime = manager.GetComponentData<SessionRuntime>(_session);
+            CombatMetrics metrics = manager.GetComponentData<CombatMetrics>(_session);
+            int[] ranks = SkillRanks(manager);
+            float hp = manager.Exists(runtime.Core) && manager.HasComponent<Health>(runtime.Core) ? manager.GetComponentData<Health>(runtime.Core).Current : 0f;
+            int wave = manager.HasComponent<ArenaSpawnState>(_session) ? (int)manager.GetComponentData<ArenaSpawnState>(_session).Generation : 0;
+            int botIndex = _runIndex % _bots.Length;
+            uint seed = _profile.BaseSeed + (uint)(_runIndex / _bots.Length);
+            Results.Add(new RunResult { seed = seed, driver = "editor-shield-bot", botId = _bots[botIndex].Id, tier = _bots[botIndex].Tier.ToString(), botSettingsJson = _frozenBots[botIndex].settingsJson, dt = _profile.FixedStep, maxDuration = _profile.MaxRunSeconds, completion = completion, detail = detail, elapsed = _runElapsed, score = manager.GetComponentData<RunScore>(_session).Value, waves = wave, coreHp = hp, reflections = metrics.Reflections, coreHits = metrics.CoreHits, coreDamageTaken = metrics.CoreDamageTaken, healingRequested = metrics.HealingRequested, healingActual = metrics.HealingActual, recoveryHealingCount = metrics.RecoveryHealingCount, coreHealthHealingCount = metrics.CoreHealthHealingCount, skillKills = metrics.IceShardKills + metrics.ExplosionKills + metrics.ChainLightningKills, reflectionDamage = metrics.ReflectionDamage, iceShardDamage = metrics.IceShardDamage, explosionDamage = metrics.ExplosionDamage, chainLightningDamage = metrics.ChainLightningDamage, totals = metrics, skillRanks = ranks, samples = Samples.ToArray(), patterns = PatternMetrics(manager) });
+        }
+
+        private static PatternCombatMetrics[] PatternMetrics(EntityManager manager)
+        {
+            if (!manager.HasBuffer<PatternCombatMetrics>(_session))
+                throw new InvalidOperationException("PatternCombatMetrics buffer is required for balance simulation export.");
+            DynamicBuffer<PatternCombatMetrics> buffer = manager.GetBuffer<PatternCombatMetrics>(_session, true);
+            PatternCombatMetrics[] values = new PatternCombatMetrics[buffer.Length];
+            for (int i = 0; i < values.Length; i++) values[i] = buffer[i];
+            return values;
+        }
+
+        private static int[] SkillRanks(EntityManager manager)
+        {
+            if (!manager.HasBuffer<UpgradeRank>(_session)) return Array.Empty<int>();
+            DynamicBuffer<UpgradeRank> buffer = manager.GetBuffer<UpgradeRank>(_session, true);
+            var ranks = new int[buffer.Length];
+            for (int i = 0; i < ranks.Length; i++) ranks[i] = buffer[i].Value;
+            return ranks;
+        }
+
+        private static void Export(string reason)
+        {
+            if (_profile == null) return;
+            string root = string.IsNullOrWhiteSpace(_profile.ExportFolder) ? Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Work", "BalanceSimulation") : _profile.ExportFolder;
+            if (!Path.IsPathRooted(root)) root = Path.GetFullPath(Path.Combine(Directory.GetParent(Application.dataPath).FullName, root));
+            string directory = Path.Combine(root, DateTime.UtcNow.ToString("yyyyMMdd-HHmmss-fff", CultureInfo.InvariantCulture));
+            Directory.CreateDirectory(directory);
+            var report = new SimulationReport { schemaVersion = 6, generatedUtc = DateTime.UtcNow.ToString("O"), reason = reason, profileJson = _profileJson, viewport = new ViewportSnapshot { position = _cameraPosition, rotation = _cameraRotation, orthographicSize = _cameraOrthographicSize, aspect = _cameraAspect, pixelWidth = _camera == null ? 0 : _camera.pixelWidth, pixelHeight = _camera == null ? 0 : _camera.pixelHeight }, results = Results.ToArray(), summary = BuildSummary() };
+            AtomicWrite(Path.Combine(directory, "runs.json"), JsonUtility.ToJson(report, true));
+            AtomicWrite(Path.Combine(directory, "runs.csv"), BuildCsv());
+            AtomicWrite(Path.Combine(directory, "patterns.csv"), BuildPatternCsv());
+            AtomicWrite(Path.Combine(directory, "provenance.json"), JsonUtility.ToJson(new Provenance { profileAsset = _profilePath, settingsSha256 = _settingsSha256, waveConfig = _waveConfig, frozenBots = _frozenBots }, true));
+            _lastExportPath = directory;
+        }
+
+        private static void ExportSafely(string reason)
+        {
+            try { Export(reason); }
+            catch (Exception error) { Debug.LogError("밸런스 시뮬레이션 결과 저장 실패: " + error.Message); }
+        }
+
+        private static Summary BuildSummary()
+        {
+            int died = 0, timeLimit = 0, aborted = 0, error = 0, unclassified = 0;
+            float observedSeconds = 0f;
+            foreach (RunResult run in Results)
+            {
+                switch (run.completion)
+                {
+                    case "died": died++; observedSeconds += run.elapsed; break;
+                    case "time-limit": timeLimit++; observedSeconds += run.elapsed; break;
+                    case "aborted": aborted++; break;
+                    case "error": error++; break;
+                    default: unclassified++; break;
+                }
+            }
+            int completedRuns = died + timeLimit;
+            var perBot = new List<BotSummary>();
+            foreach (FrozenBot bot in _frozenBots ?? Array.Empty<FrozenBot>())
+                perBot.Add(BuildBotSummary(bot.settings.Id, bot.settings.Tier.ToString()));
+            return new Summary { runs = Results.Count, died = died, timeLimit = timeLimit, aborted = aborted, error = error, unclassified = unclassified, completedRuns = completedRuns, meanObservedSeconds = completedRuns == 0 ? 0f : observedSeconds / completedRuns, timeLimitFraction = completedRuns == 0 ? 0f : (float)timeLimit / completedRuns, perBot = perBot.ToArray() };
+        }
+
+        private static BotSummary BuildBotSummary(string botId, string tier)
+        {
+            int died = 0, timeLimit = 0, aborted = 0, error = 0, unclassified = 0;
+            float observedSeconds = 0f, score = 0f;
+            foreach (RunResult run in Results)
+            {
+                if (run.botId != botId) continue;
+                switch (run.completion)
+                {
+                    case "died": died++; observedSeconds += run.elapsed; score += run.score; break;
+                    case "time-limit": timeLimit++; observedSeconds += run.elapsed; score += run.score; break;
+                    case "aborted": aborted++; break;
+                    case "error": error++; break;
+                    default: unclassified++; break;
+                }
+            }
+            int completedRuns = died + timeLimit;
+            return new BotSummary { botId = botId, tier = tier, runs = died + timeLimit + aborted + error + unclassified, died = died, timeLimit = timeLimit, aborted = aborted, error = error, unclassified = unclassified, completedRuns = completedRuns, meanObservedSeconds = completedRuns == 0 ? 0f : observedSeconds / completedRuns, meanScore = completedRuns == 0 ? 0f : score / completedRuns, timeLimitFraction = completedRuns == 0 ? 0f : (float)timeLimit / completedRuns };
+        }
+
+        private static string BuildCsv()
+        {
+            var text = new StringBuilder("seed,botId,tier,completion,elapsed,score,waves,coreHp,reflections,coreHits,coreDamageTaken,healingRequested,healingActual,recoveryHealingCount,coreHealthHealingCount,skillKills,duplicateRecoveryBlockedCount\n");
+            foreach (RunResult r in Results) text.AppendFormat(CultureInfo.InvariantCulture, "{0},{1},{2},{3},{4:F4},{5},{6},{7:F4},{8},{9},{10:R},{11:R},{12:R},{13},{14},{15},{16}\n", r.seed, Csv(r.botId), Csv(r.tier), Csv(r.completion), r.elapsed, r.score, r.waves, r.coreHp, r.reflections, r.coreHits, r.coreDamageTaken, r.healingRequested, r.healingActual, r.recoveryHealingCount, r.coreHealthHealingCount, r.skillKills, r.totals.DuplicateRecoveryBlockedCount);
+            return text.ToString();
+        }
+
+        private static string BuildPatternCsv()
+        {
+            var text = new StringBuilder("seed,botId,tier,playlistIndex,patternId,patternName,spawned,reflections,coreImpacts,enemiesKilled,exposureSeconds,validSpawnDenominator,reflectionsPerSpawn,coreImpactsPerSpawn,enemiesKilledPerSpawn\n");
+            foreach (RunResult run in Results)
+            {
+                foreach (PatternCombatMetrics pattern in run.patterns ?? Array.Empty<PatternCombatMetrics>())
+                {
+                    bool valid = pattern.Spawned > 0;
+                    text.AppendFormat(CultureInfo.InvariantCulture, "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10:F4},{11}", run.seed, Csv(run.botId), Csv(run.tier), pattern.PlaylistIndex, pattern.PatternId, Csv(PatternCombatMetrics.PatternName(pattern.PatternId)), pattern.Spawned, pattern.Reflections, pattern.CoreImpacts, pattern.EnemiesKilled, pattern.ExposureSeconds, valid ? "true" : "false");
+                    if (valid) text.AppendFormat(CultureInfo.InvariantCulture, ",{0:R},{1:R},{2:R}", (double)pattern.Reflections / pattern.Spawned, (double)pattern.CoreImpacts / pattern.Spawned, (double)pattern.EnemiesKilled / pattern.Spawned);
+                    else text.Append(",,,");
+                    text.Append('\n');
+                }
+            }
+            return text.ToString();
+        }
+
+        private static string Csv(string value) => "\"" + (value ?? "").Replace("\"", "\"\"").Replace("\r", " ").Replace("\n", " ") + "\"";
+
+        private static string HashSettings()
+        {
+            string root = Path.Combine(Application.dataPath, "Projects", "GameAsset", "Settings");
+            if (!Directory.Exists(root)) throw new DirectoryNotFoundException("설정 provenance 폴더를 찾지 못했습니다: " + root);
+            using SHA256 sha = SHA256.Create();
+            var all = new List<string>(Directory.GetFiles(root, "*", SearchOption.AllDirectories)); all.Sort(StringComparer.Ordinal);
+            foreach (string path in all) { byte[] name = Encoding.UTF8.GetBytes(path.Substring(root.Length)); sha.TransformBlock(name, 0, name.Length, null, 0); byte[] bytes = File.ReadAllBytes(path); sha.TransformBlock(bytes, 0, bytes.Length, null, 0); }
+            sha.TransformFinalBlock(Array.Empty<byte>(), 0, 0); return BitConverter.ToString(sha.Hash).Replace("-", "").ToLowerInvariant();
+        }
+
+        private static string WaveSnapshot()
+        {
+            if (_world is not { IsCreated: true }) return "unavailable";
+            using EntityQuery query = _world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<Projects.Scripts.Gameplay.Waves.Components.WaveDefinition>());
+            if (query.CalculateEntityCount() != 1) return "wave-buffer-not-ready";
+            var buffer = _world.EntityManager.GetBuffer<Projects.Scripts.Gameplay.Waves.Components.WaveDefinition>(query.GetSingletonEntity(), true);
+            var text = new StringBuilder(); for (int i = 0; i < buffer.Length; i++) text.Append("playlist=").Append(i).Append(",pattern=").Append(buffer[i].PatternId).Append(",count=").Append(buffer[i].Count).Append(",interval=").Append(buffer[i].Interval.ToString("R", CultureInfo.InvariantCulture)).Append(",delay=").Append(buffer[i].DelayAfter.ToString("R", CultureInfo.InvariantCulture)).Append(",angle=").Append(buffer[i].AngleOffsetDegrees.ToString("R", CultureInfo.InvariantCulture)).Append(';'); return text.ToString();
+        }
+
+        private static void AtomicWrite(string path, string contents)
+        {
+            string temp = path + ".tmp"; File.WriteAllText(temp, contents, new UTF8Encoding(false)); File.Move(temp, path);
+        }
+
+        private static void FreezeBots(BalanceSimulationProfile profile)
+        {
+            int count = profile.BotCount;
+            _frozenBots = new FrozenBot[count];
+            _bots = new BotSettings[count];
+            for (int i = 0; i < count; i++)
+            {
+                BotSettings source = profile.GetBot(i);
+                string settingsJson = EditorJsonUtility.ToJson(source, true);
+                var clone = ScriptableObject.CreateInstance<BotSettings>();
+                _bots[i] = clone;
+                EditorJsonUtility.FromJsonOverwrite(settingsJson, clone);
+                clone.hideFlags = HideFlags.HideAndDontSave;
+                if (!clone.TryValidate(out string error)) throw new InvalidOperationException($"고정한 봇 설정 '{source.name}' 오류: {error}");
+                _frozenBots[i] = new FrozenBot { originalPath = AssetDatabase.GetAssetPath(source), displayName = source.name, settingsJson = settingsJson, settings = clone };
+            }
+        }
+
+        private static void RestoreFrozenBots(FrozenBot[] frozenBots)
+        {
+            if (frozenBots == null || frozenBots.Length == 0) throw new InvalidOperationException("도메인 리로드 뒤 고정한 봇 설정을 복구할 수 없습니다.");
+            _frozenBots = frozenBots;
+            _bots = new BotSettings[frozenBots.Length];
+            for (int i = 0; i < frozenBots.Length; i++)
+            {
+                if (string.IsNullOrEmpty(frozenBots[i].settingsJson)) throw new InvalidOperationException("도메인 리로드 뒤 봇 설정 스냅샷이 비어 있습니다.");
+                var clone = ScriptableObject.CreateInstance<BotSettings>();
+                _bots[i] = clone;
+                EditorJsonUtility.FromJsonOverwrite(frozenBots[i].settingsJson, clone);
+                clone.hideFlags = HideFlags.HideAndDontSave;
+                if (!clone.TryValidate(out string error)) throw new InvalidOperationException($"복구한 봇 설정 오류: {error}");
+                frozenBots[i].settings = clone;
+            }
+        }
+
+        private static void DisposeFrozenBots()
+        {
+            if (_bots != null)
+                foreach (BotSettings bot in _bots) if (bot != null) UnityEngine.Object.DestroyImmediate(bot);
+            _bots = null;
+            _frozenBots = null;
+            _driver = null;
+        }
+
+        private static void Restore(string reason, bool keepState)
+        {
+            if (_world is { IsCreated: true })
+            {
+                EntityManager manager = _world.EntityManager;
+                if (_session != Entity.Null && manager.Exists(_session))
+                {
+                    if (manager.HasComponent<CombatMetrics>(_session)) { CombatMetrics m = manager.GetComponentData<CombatMetrics>(_session); m.RecordingEnabled = 0; manager.SetComponentData(_session, m); }
+                    if (manager.HasComponent<SurvivalRunRecordState>(_session)) manager.SetComponentData(_session, new SurvivalRunRecordState { Recorded = 1 });
+                    if (manager.HasComponent<GameSession>(_session)) { GameSession game = manager.GetComponentData<GameSession>(_session); game.Phase = GamePhase.Paused; manager.SetComponentData(_session, game); }
+                }
+                foreach (SystemState saved in DisabledSystems) if (saved.system != null) saved.system.Enabled = saved.enabled;
+                DisabledSystems.Clear();
+                if (_worldDetached) Unity.Entities.ScriptBehaviourUpdateOrder.AppendWorldToCurrentPlayerLoop(_world);
+            }
+            _worldDetached = false; _world = null; _session = Entity.Null; _waitingForRestart = false; _runtimeError = null;
+            bool exit = _ownedPlay && EditorApplication.isPlaying;
+            _ownedPlay = false; _running = false; _status = reason == "completed" ? "완료" : "중단: " + reason;
+            if (!keepState) SessionState.EraseString(StateKey); else Persist();
+            DisposeFrozenBots();
+            if (_profile != null) { UnityEngine.Object.DestroyImmediate(_profile); _profile = null; }
+            if (exit) EditorApplication.isPlaying = false;
+        }
+
+        private static void Persist()
+        {
+            if (_profile == null) return;
+            SessionState.SetString(StateKey, JsonUtility.ToJson(new PersistedJob { profilePath = _profilePath, profileJson = _profileJson, settingsSha256 = _settingsSha256, waveConfig = _waveConfig, frozenBots = _frozenBots, runIndex = _runIndex, totalRuns = _totalRuns, running = _running, ownedPlay = _ownedPlay }));
+        }
+
+        private static void RestorePersistedJob()
+        {
+            string json = SessionState.GetString(StateKey, ""); if (string.IsNullOrEmpty(json)) return;
+            PersistedJob state = JsonUtility.FromJson<PersistedJob>(json); if (!state.running || string.IsNullOrEmpty(state.profileJson)) return;
+            _profile = ScriptableObject.CreateInstance<BalanceSimulationProfile>(); EditorJsonUtility.FromJsonOverwrite(state.profileJson, _profile); _profile.hideFlags = HideFlags.HideAndDontSave;
+            try
+            {
+                RestoreFrozenBots(state.frozenBots);
+                _profilePath = state.profilePath; _profileJson = state.profileJson; _settingsSha256 = state.settingsSha256; _waveConfig = state.waveConfig;
+                _runIndex = state.runIndex; _totalRuns = state.totalRuns; _running = true; _ownedPlay = state.ownedPlay; _startupStartedAt = EditorApplication.timeSinceStartup; _status = "도메인 리로드 후 복구 대기";
+            }
+            catch (Exception error)
+            {
+                DisposeFrozenBots();
+                UnityEngine.Object.DestroyImmediate(_profile); _profile = null;
+                SessionState.EraseString(StateKey);
+                if (state.ownedPlay && EditorApplication.isPlaying) EditorApplication.isPlaying = false;
+                Debug.LogError("밸런스 시뮬레이션 상태 복구 실패: " + error.Message);
+            }
+        }
+
+        private static void BeforeAssemblyReload()
+        {
+            if (!_running) return;
+            // The edit-to-play domain reload happens before a world exists; retain the job unchanged.
+            if (_world == null) { Persist(); return; }
+            // Mid-batch reload cannot safely retain in-memory samples/results. Export the completed prefix.
+            if (_session != Entity.Null && _world.IsCreated && _world.EntityManager.Exists(_session) && !_waitingForRestart) CaptureRunSafely("aborted", "domain-reload");
+            try { ExportSafely("domain-reload"); } finally { Restore("domain-reload", false); }
+        }
+
+        private static void OnLogMessage(string condition, string stackTrace, LogType type)
+        {
+            if (_running && (type == LogType.Error || type == LogType.Exception || type == LogType.Assert)) _runtimeError ??= condition;
+        }
+
+        private readonly struct SystemState { public readonly ComponentSystemBase system; public readonly bool enabled; public SystemState(ComponentSystemBase system, bool enabled) { this.system = system; this.enabled = enabled; } }
+        [Serializable] private sealed class PersistedJob { public string profilePath, profileJson, settingsSha256, waveConfig; public FrozenBot[] frozenBots; public int runIndex, totalRuns; public bool running, ownedPlay; }
+        [Serializable] private sealed class FrozenBot { public string originalPath, displayName, settingsJson; [NonSerialized] public BotSettings settings; }
+        [Serializable] private sealed class RunResult { public uint seed; public string driver, botId, tier, botSettingsJson, completion, detail; public float dt, maxDuration, elapsed, coreHp; public int score, waves; public long reflections, coreHits, skillKills, recoveryHealingCount, coreHealthHealingCount; public double reflectionDamage, iceShardDamage, explosionDamage, chainLightningDamage, coreDamageTaken, healingRequested, healingActual; public CombatMetrics totals; public int[] skillRanks; public MetricSample[] samples; public PatternCombatMetrics[] patterns; }
+        [Serializable] private sealed class MetricSample { public float elapsed, coreHp, healthMultiplier, movementSpeedMultiplier, patternSpeedMultiplier, spawnCountMultiplier, spawnRateMultiplier, resolvedSpawnInterval, resolvedDelayAfter, selectionWeight, totalSelectionWeight; public int score, wave, playlistIndex, difficultyMinimumScore, difficultyEvaluatedScore, resolvedSpawnCount, activeEnemies, activeProjectiles, activeShards; public int[] skillRanks; public CombatMetrics totals; public PatternCombatMetrics[] patterns; }
+        [Serializable] private sealed class Summary { public int runs, died, timeLimit, aborted, error, unclassified, completedRuns; public float meanObservedSeconds, timeLimitFraction; public BotSummary[] perBot; }
+        [Serializable] private sealed class BotSummary { public string botId, tier; public int runs, died, timeLimit, aborted, error, unclassified, completedRuns; public float meanObservedSeconds, meanScore, timeLimitFraction; }
+        [Serializable] private sealed class SimulationReport { public int schemaVersion; public string generatedUtc, reason, profileJson; public ViewportSnapshot viewport; public RunResult[] results; public Summary summary; }
+        [Serializable] private sealed class ViewportSnapshot { public Vector3 position; public Quaternion rotation; public float orthographicSize, aspect; public int pixelWidth, pixelHeight; }
+        [Serializable] private sealed class Provenance { public string profileAsset, settingsSha256, waveConfig; public FrozenBot[] frozenBots; }
+    }
+}

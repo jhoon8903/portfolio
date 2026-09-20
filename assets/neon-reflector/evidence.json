@@ -1,0 +1,52 @@
+{
+  "computer": {
+    "beforeMedian": 24.46666717529297,
+    "afterMedian": 112.20000457763672,
+    "beforeTimeLimit": 0,
+    "afterTimeLimit": 14,
+    "pairedLonger": 50
+  },
+  "bots": [
+    {
+      "id": "beginner",
+      "label": "초보",
+      "median": 25.100001335144043,
+      "batchRuns": 50
+    },
+    {
+      "id": "intermediate",
+      "label": "중급",
+      "median": 75.00833892822266,
+      "batchRuns": 50
+    },
+    {
+      "id": "advanced",
+      "label": "고급",
+      "median": 52.05833625793457,
+      "batchRuns": 50
+    },
+    {
+      "id": "computer",
+      "label": "컴퓨터",
+      "median": 112.20000457763672,
+      "batchRuns": 50
+    }
+  ],
+  "validation": {
+    "seeds": "1001–1050",
+    "perBot": 50,
+    "maxSeconds": 300,
+    "totalRuns": 200
+  },
+  "captures": [
+    {
+      "src": "/assets/neon-reflector/play-editor.png",
+      "alt": "사용자 제공 실제 플레이와 ECS 에디터 캡처"
+    }
+  ],
+  "sourceBatches": {
+    "before": "20260920-092835-873",
+    "after": "20260920-123830-290"
+  },
+  "note": "300초 시간제한 도달은 사망 시점이 관측되지 않은 우측 검열 결과입니다. 봇은 사람 실력을 검증한 모델이 아닙니다."
+}

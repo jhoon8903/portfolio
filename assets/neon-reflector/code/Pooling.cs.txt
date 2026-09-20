@@ -1,0 +1,237 @@
+using System;
+using System.Collections.Generic;
+using Projects.Scripts.Gameplay.Common.Components;
+using Projects.Scripts.Gameplay.Core.Components;
+using Projects.Scripts.Gameplay.Feedback.Components;
+using Projects.Scripts.Gameplay.Session;
+using Projects.Scripts.Infrastructure.Factory;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+
+namespace Projects.Scripts.Infrastructure.Pool
+{
+    internal struct PoolMember : IComponentData
+    {
+        public Entity Prefab;
+        public Entity Session;
+    }
+
+    internal struct PoolReturnPending : IComponentData { }
+
+    public struct PoolConfig : IComponentData
+    {
+        public float IdleRetentionSeconds;
+    }
+
+    /// <summary>
+    /// Owns free lists per world, session and prefab. Returns become reusable only after ECB playback.
+    /// Disabled excludes the linked prefab hierarchy from simulation and rendering.
+    /// </summary>
+    [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
+    [UpdateBefore(typeof(GameSessionControlSystem))]
+    public sealed partial class Pooling : SystemBase, IPool
+    {
+        private readonly IObjectFactory _factory = new ObjectFactory();
+        private readonly Dictionary<(Entity Session, Entity Prefab), List<IdleEntry>> _available = new();
+        private readonly HashSet<Entity> _returning = new();
+        private readonly List<(Entity Session, Entity Prefab)> _expired = new();
+        private EntityQuery _returnedQuery;
+        private double _poolTime;
+
+        public long CreatedCount { get; private set; }
+
+        public long ReusedCount { get; private set; }
+
+        public long ReturnedCount { get; private set; }
+        public long EvictedCount { get; private set; }
+
+        public int PendingCount => _returning.Count;
+        public int AvailableCount
+        {
+            get
+            {
+                int count = 0;
+                foreach (List<IdleEntry> entities in _available.Values) count += entities.Count;
+                return count;
+            }
+        }
+
+        protected override void OnCreate()
+        {
+            _returnedQuery = GetEntityQuery(new EntityQueryDesc
+            {
+                All = new[] { ComponentType.ReadOnly<PoolMember>(), ComponentType.ReadOnly<PoolReturnPending>(), ComponentType.ReadOnly<Disabled>() },
+                Options = EntityQueryOptions.IncludeDisabledEntities,
+            });
+        }
+
+        protected override void OnUpdate()
+        {
+            _poolTime += World.Time.DeltaTime;
+            using NativeArray<Entity> returned = _returnedQuery.ToEntityArray(Allocator.Temp);
+            foreach (Entity entity in returned)
+            {
+                PoolMember member = EntityManager.GetComponentData<PoolMember>(entity);
+                _returning.Remove(entity);
+                if (!EntityManager.Exists(member.Session) || !EntityManager.Exists(member.Prefab))
+                {
+                    EntityManager.DestroyEntity(entity);
+                    continue;
+                }
+                if (!EntityManager.HasComponent<PoolConfig>(member.Session)) throw new InvalidOperationException("A PoolConfig component is required on every live pool session.");
+                (Entity Session, Entity Prefab) key = (member.Session, member.Prefab);
+                if (!_available.TryGetValue(key, out List<IdleEntry> entities)) _available.Add(key, entities = new List<IdleEntry>());
+                entities.Add(new IdleEntry(entity, _poolTime));
+                EntityManager.RemoveComponent<PoolReturnPending>(entity);
+            }
+
+            _expired.Clear();
+            foreach ((Entity Session, Entity Prefab) key in _available.Keys)
+            {
+                if (!EntityManager.Exists(key.Session) || !EntityManager.Exists(key.Prefab))
+                {
+                    _expired.Add(key);
+                    continue;
+                }
+                if (!EntityManager.HasComponent<PoolConfig>(key.Session)) throw new InvalidOperationException("A PoolConfig component is required on every live pool session.");
+                List<IdleEntry> entries = _available[key];
+                float retention = EntityManager.GetComponentData<PoolConfig>(key.Session).IdleRetentionSeconds;
+                int expiredCount = 0;
+                while (expiredCount < entries.Count && _poolTime - entries[expiredCount].ReturnedAt >= retention)
+                {
+                    Entity entity = entries[expiredCount].Entity;
+                    if (EntityManager.Exists(entity)) { EntityManager.DestroyEntity(entity); EvictedCount++; }
+                    expiredCount++;
+                }
+                if (expiredCount > 0) entries.RemoveRange(0, expiredCount);
+            }
+            foreach ((Entity Session, Entity Prefab) key in _expired)
+            {
+                foreach (IdleEntry entry in _available[key])
+                {
+                    Entity entity = entry.Entity;
+                    if (EntityManager.Exists(entity))
+                    {
+                        EntityManager.DestroyEntity(entity);
+                    }
+                }
+                _available.Remove(key);
+            }
+        }
+
+        public Entity Rent(EntityCommandBuffer commandBuffer, Entity prefab, Entity session, in LocalTransform transform)
+        {
+            if (!EntityManager.Exists(prefab) || !EntityManager.HasComponent<Prefab>(prefab) || !EntityManager.Exists(session)) throw new ArgumentException("A live session and baked prefab are required to rent an entity.");
+
+            Entity entity = Entity.Null;
+            if (_available.TryGetValue((session, prefab), out List<IdleEntry> entities))
+            {
+                while (entities.Count > 0)
+                {
+                    int index = entities.Count - 1;
+                    Entity candidate = entities[index].Entity;
+                    entities.RemoveAt(index);
+                    if (!EntityManager.Exists(candidate)) continue;
+                    entity = candidate;
+                    break;
+                }
+            }
+
+            if (entity == Entity.Null)
+            {
+                entity = _factory.Instantiate(commandBuffer, prefab);
+                commandBuffer.AddComponent(entity, new PoolMember { Prefab = prefab, Session = session });
+                CreatedCount++;
+            }
+            else
+            {
+                _factory.Restore(EntityManager, commandBuffer, entity, prefab);
+#if UNITY_EDITOR
+                if (Gameplay.Enemies.Systems.EnemyCoreImpactSystem.IsContactTracingEnabled && EntityManager.HasComponent<Gameplay.Enemies.Components.Enemy>(prefab))
+                    UnityEngine.Debug.Log($"[PoolReuse] entity={entity} prefab={prefab} spawn={transform.Position}");
+#endif
+                commandBuffer.SetEnabled(entity, true);
+                ReusedCount++;
+            }
+
+            commandBuffer.SetComponentEnabled<ActiveSimulation>(entity, true);
+            commandBuffer.SetComponent(entity, new SessionOwned { Session = session });
+            commandBuffer.SetComponent(entity, transform);
+            // Playback is after TransformSystemGroup: do not display the previous life for one frame.
+            if (EntityManager.HasComponent<LocalToWorld>(prefab))
+            {
+                float4x4 worldTransform = float4x4.TRS(transform.Position, transform.Rotation, new float3(transform.Scale));
+                if (EntityManager.HasComponent<PostTransformMatrix>(prefab))
+                    worldTransform = math.mul(worldTransform, EntityManager.GetComponentData<PostTransformMatrix>(prefab).Value);
+                commandBuffer.SetComponent(entity, new LocalToWorld
+                {
+                    Value = worldTransform
+                });
+            }
+            return entity;
+        }
+
+        public void Return(EntityCommandBuffer commandBuffer, Entity entity)
+        {
+            if (!EntityManager.Exists(entity) || EntityManager.HasComponent<Disabled>(entity) || !_returning.Add(entity)) return;
+            if (!EntityManager.HasComponent<PoolMember>(entity))
+            {
+                _returning.Remove(entity);
+                throw new InvalidOperationException("Only entities rented from this pool can be returned.");
+            }
+            // Owners release their visual children before becoming inactive, so an expired/despawned owner
+            // cannot leave a ribbon segment visible until its next reuse.
+            if (EntityManager.HasBuffer<ContinuousTrailSegmentRef>(entity))
+            {
+                DynamicBuffer<ContinuousTrailSegmentRef> segments = EntityManager.GetBuffer<ContinuousTrailSegmentRef>(entity);
+                for (int i = 0; i < segments.Length; i++)
+                {
+                    Entity segment = segments[i].Value;
+                    if (EntityManager.Exists(segment) &&
+                        EntityManager.HasComponent<ContinuousTrailSegment>(segment) &&
+                        EntityManager.HasComponent<ActiveSimulation>(segment) &&
+                        EntityManager.IsComponentEnabled<ActiveSimulation>(segment))
+                    {
+                        Return(commandBuffer, segment);
+                    }
+                }
+                segments.Clear();
+            }
+            if (EntityManager.HasBuffer<ContinuousTrailPoint>(entity)) EntityManager.GetBuffer<ContinuousTrailPoint>(entity).Clear();
+            // Non-structural: later gameplay systems must stop seeing the entity in this same frame.
+            EntityManager.SetComponentEnabled<ActiveSimulation>(entity, false);
+            commandBuffer.SetEnabled(entity, false);
+            commandBuffer.AddComponent<PoolReturnPending>(entity);
+            ReturnedCount++;
+        }
+
+        public void ForgetSession(Entity session)
+        {
+            _expired.Clear();
+            foreach ((Entity Session, Entity Prefab) key in _available.Keys) if (key.Session == session) _expired.Add(key);
+            for (int i = 0; i < _expired.Count; i++)
+            {
+                (Entity Session, Entity Prefab) key = _expired[i];
+                _available.Remove(key);
+            }
+
+            _returning.RemoveWhere(entity => !EntityManager.Exists(entity) || EntityManager.GetComponentData<PoolMember>(entity).Session == session);
+        }
+
+        protected override void OnDestroy()
+        {
+            _available.Clear();
+            _returning.Clear();
+            _expired.Clear();
+        }
+
+        private readonly struct IdleEntry
+        {
+            public readonly Entity Entity;
+            public readonly double ReturnedAt;
+            public IdleEntry(Entity entity, double returnedAt) { Entity = entity; ReturnedAt = returnedAt; }
+        }
+    }
+}

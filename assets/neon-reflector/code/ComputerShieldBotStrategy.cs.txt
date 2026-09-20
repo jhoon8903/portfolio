@@ -1,0 +1,98 @@
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using UnityEngine;
+
+namespace Projects.Editor.Simulation
+{
+    internal sealed class ComputerShieldBotStrategy : IShieldBotStrategy
+    {
+        public bool TryChooseAngle(in BotQuery query, float currentAngle, out float angle)
+        {
+            using NativeArray<Entity> entities = query.Entities();
+            angle = currentAngle;
+
+            // An enemy is only urgent when the shield can cover its impact angle by its deadline.
+            // Threats that cannot be covered even at the nearest arc edge are skipped this reaction.
+            if (!TryFindEarliestReachable(in query, entities, currentAngle, out Threat urgent)) return false;
+
+            bool found = false;
+            float bestCoverage = 0f;
+            float bestTurn = float.MaxValue;
+            Threat bestPivot = default;
+            float bestAngle = currentAngle;
+
+            // The nearest arc edge is a valid candidate even when the urgent threat's centre cannot
+            // be reached before its deadline.
+            float urgentEdge = NearestCoveringAngle(currentAngle, urgent.PredictedAngle, query.ArcHalfWidth);
+            EvaluateCandidate(in query, entities, currentAngle, urgent, urgentEdge, urgent, ref found, ref bestCoverage, ref bestTurn, ref bestPivot, ref bestAngle);
+
+            for (int i = 0; i < entities.Length; i++)
+            {
+                if (!query.TryGet(entities[i], out Threat pivot) || !pivot.Contact || pivot.Time > query.Settings.PredictionHorizon) continue;
+                EvaluateCandidate(in query, entities, currentAngle, urgent, pivot.PredictedAngle, pivot, ref found, ref bestCoverage, ref bestTurn, ref bestPivot, ref bestAngle);
+            }
+
+            angle = bestAngle;
+            return found;
+        }
+
+        private static bool TryFindEarliestReachable(in BotQuery query, NativeArray<Entity> entities, float currentAngle, out Threat earliest)
+        {
+            bool found = false;
+            earliest = default;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                if (!query.TryGet(entities[i], out Threat candidate) || !candidate.Contact || candidate.Time > query.Settings.PredictionHorizon) continue;
+                if (!CanCover(currentAngle, candidate.PredictedAngle, candidate.Time, query.Speed, query.ArcHalfWidth)) continue;
+                if (!found || candidate.Time < earliest.Time || (candidate.Time == earliest.Time && candidate.Before(earliest)))
+                {
+                    found = true;
+                    earliest = candidate;
+                }
+            }
+            return found;
+        }
+
+        private static void EvaluateCandidate(in BotQuery query, NativeArray<Entity> entities, float currentAngle, in Threat urgent, float candidateAngle, in Threat pivot, ref bool found, ref float bestCoverage, ref float bestTurn, ref Threat bestPivot, ref float bestAngle)
+        {
+            // Every selected centre must arrive before the earliest reachable deadline and cover it.
+            if (!BotQuery.Reach(currentAngle, candidateAngle, urgent.Time, query.Speed)) return;
+            if (math.abs(Mathf.DeltaAngle(candidateAngle, urgent.PredictedAngle)) > query.ArcHalfWidth) return;
+
+            float coverage = 0f;
+            for (int j = 0; j < entities.Length; j++)
+            {
+                if (!query.TryGet(entities[j], out Threat threat) || !threat.Contact || threat.Time > query.Settings.PredictionHorizon) continue;
+                if (math.abs(Mathf.DeltaAngle(candidateAngle, threat.PredictedAngle)) > query.ArcHalfWidth) continue;
+                if (!BotQuery.Reach(currentAngle, candidateAngle, threat.Time, query.Speed)) continue;
+                coverage += 1f + (query.Settings.PredictionHorizon - threat.Time) / math.max(.0001f, query.Settings.PredictionHorizon);
+            }
+            if (coverage <= 0f) return;
+
+            float turn = math.abs(Mathf.DeltaAngle(currentAngle, candidateAngle));
+            bool better = !found || coverage > bestCoverage + .0001f ||
+                (math.abs(coverage - bestCoverage) <= .0001f && (turn < bestTurn - .0001f ||
+                (math.abs(turn - bestTurn) <= .0001f && pivot.Before(bestPivot))));
+            if (!better) return;
+
+            found = true;
+            bestCoverage = coverage;
+            bestTurn = turn;
+            bestPivot = pivot;
+            bestAngle = candidateAngle;
+        }
+
+        private static bool CanCover(float currentAngle, float threatAngle, float deadline, float speed, float arcHalfWidth) =>
+            math.abs(Mathf.DeltaAngle(currentAngle, threatAngle)) <= speed * math.max(0f, deadline) + arcHalfWidth + .001f;
+
+        private static float NearestCoveringAngle(float currentAngle, float threatAngle, float arcHalfWidth)
+        {
+            float delta = Mathf.DeltaAngle(currentAngle, threatAngle);
+            if (math.abs(delta) <= arcHalfWidth) return currentAngle;
+            return Normalize(threatAngle - math.sign(delta) * arcHalfWidth);
+        }
+
+        private static float Normalize(float angle) => Mathf.Repeat(angle + 180f, 360f) - 180f;
+    }
+}

@@ -1,0 +1,95 @@
+using Projects.Scripts.Gameplay.Common.Components;
+using Projects.Scripts.Gameplay.Common.Systems;
+using Projects.Scripts.Gameplay.Core.Components;
+using Projects.Scripts.Gameplay.Enemies.Components;
+using Projects.Scripts.Gameplay.Feedback.Components;
+using Projects.Scripts.Gameplay.Telemetry;
+using Projects.Scripts.Gameplay.Projectiles.Components;
+using Projects.Scripts.Gameplay.Session;
+using Projects.Scripts.Gameplay.Shield.Collision;
+using Projects.Scripts.Gameplay.Shield.Components;
+using Projects.Scripts.Gameplay.Upgrades.Components;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+
+namespace Projects.Scripts.Gameplay.Enemies.Systems
+{
+    [UpdateInGroup(typeof(NeonSimulationSystemGroup))]
+    [UpdateAfter(typeof(EnemyMovementSystem))]
+    [UpdateBefore(typeof(Projects.Scripts.Gameplay.Projectiles.Systems.ProjectileCombatSystem))]
+    public partial struct EnemyReflectionSystem : ISystem
+    {
+        public void OnUpdate(ref SystemState state)
+        {
+            if (!SystemAPI.TryGetSingletonEntity<GameSession>(out Entity session) || !SystemAPI.TryGetSingletonEntity<ShieldArc>(out Entity shield)) return;
+
+            ShieldArc arc = state.EntityManager.GetComponentData<ShieldArc>(shield);
+            LocalTransform shieldTransform = state.EntityManager.GetComponentData<LocalTransform>(shield);
+            float2 center = shieldTransform.Position.xy;
+            float shieldScale = math.abs(shieldTransform.Scale);
+            float innerRadius = math.max(0f, (arc.Radius - arc.Thickness * .5f) * shieldScale);
+            float outerRadius = math.max(innerRadius, (arc.Radius + arc.Thickness * .5f) * shieldScale);
+            DynamicBuffer<UpgradeRank> ranks = state.EntityManager.GetBuffer<UpgradeRank>(session);
+            ReflectionModifiers modifiers = state.EntityManager.GetComponentData<ReflectionModifiers>(session);
+            
+            foreach ((RefRO<EnemyMotion> motion, RefRO<ReflectedEnemySettings> settings, RefRW<ReflectedEnemyMotion> reflected, RefRW<LocalTransform> transform, RefRO<CollisionRadius> radius, Entity entity) in SystemAPI.Query<RefRO<EnemyMotion>, RefRO<ReflectedEnemySettings>, RefRW<ReflectedEnemyMotion>, RefRW<LocalTransform>, RefRO<CollisionRadius>>().WithAll<Enemy, ActiveSimulation>().WithEntityAccess())
+            {
+                float2 start = motion.ValueRO.PreviousPosition;
+                float2 end = transform.ValueRO.Position.xy;
+                float enemyRadius = radius.ValueRO.Value * math.abs(transform.ValueRO.Scale);
+                if (!ShieldCollisionUtility.TryHit(start, end, center, innerRadius, outerRadius, enemyRadius, arc, out float hitTime)) continue;
+                float2 point = math.lerp(start, end, hitTime);
+                PatternCombatMetrics.RecordReflection(state.EntityManager, session, entity);
+#if UNITY_EDITOR
+                if (EnemyCoreImpactSystem.IsContactTracingEnabled)
+                {
+                    float3 renderedPosition = state.EntityManager.HasComponent<LocalToWorld>(entity)
+                        ? state.EntityManager.GetComponentData<LocalToWorld>(entity).Position
+                        : default;
+                    bool projectileEnabled = state.EntityManager.IsComponentEnabled<Projectile>(entity);
+                    UnityEngine.Debug.Log($"[ShieldReflection] frame={UnityEngine.Time.frameCount} dt={SystemAPI.Time.DeltaTime} entity={entity.Index}:{entity.Version} name={state.EntityManager.GetName(entity)} enemyEnabled={state.EntityManager.IsComponentEnabled<Enemy>(entity)} projectileEnabledBefore={projectileEnabled} previousPosition={start} currentPosition={end} renderedPosition={renderedPosition} radius={enemyRadius} hitTime={hitTime} point={point}");
+                }
+#endif
+                ReflectedEnemySettings reflectedSettings = settings.ValueRO;
+                float2 outgoing = math.normalizesafe(point - center, new float2(0f, 1f));
+                float curveScale = math.clamp(arc.AngularVelocityDegrees / 180f, -1f, 1f);
+                float spinDirection = arc.AngularVelocityDegrees < 0f ? -1f : 1f;
+                reflected.ValueRW = new ReflectedEnemyMotion
+                {
+                    SpinDegreesPerSecond = reflectedSettings.SpinDegreesPerSecond * spinDirection,
+                    CurrentCurveDegreesPerSecond = reflectedSettings.CurveDegreesPerSecond * curveScale,
+                    CurveDegreesRemaining = reflectedSettings.MaximumCurveDegrees,
+                };
+                state.EntityManager.SetComponentData(entity, new ProjectileState
+                {
+                    Velocity = outgoing * reflectedSettings.Speed * modifiers.SpeedMultiplier,
+                    Damage = reflectedSettings.Damage * modifiers.DamageMultiplier,
+                    RemainingLifetime = reflectedSettings.Lifetime,
+                });
+
+                byte frozen = Rank(ranks, UpgradeKind.FrozenOrb);
+                state.EntityManager.SetComponentData(entity, new ProjectileSkillState
+                {
+                    ExplosionRank = Rank(ranks, UpgradeKind.Explosion),
+                    ChainLightningRank = Rank(ranks, UpgradeKind.ChainLightning),
+                    FrozenOrbRank = frozen,
+                    CanProc = 1,
+                });
+                state.EntityManager.SetComponentData(entity, new FrozenOrbEmitter
+                {
+                    Rank = frozen,
+                    Active = (byte)(frozen > 0 ? 1 : 0),
+                });
+                transform.ValueRW.Position = new float3(point, transform.ValueRO.Position.z);
+                state.EntityManager.SetComponentEnabled<Enemy>(entity, false);
+                state.EntityManager.SetComponentEnabled<Projectile>(entity, true);
+                CombatFeedbackEvents.Emit(state.EntityManager, session, CombatFeedbackKind.Reflection, new float3(point, transform.ValueRO.Position.z), shield, new float3(outgoing, 0f));
+            }
+        }
+
+        private static byte Rank(DynamicBuffer<UpgradeRank> ranks, UpgradeKind kind) => (int)kind < ranks.Length 
+            ? (byte)math.clamp(ranks[(int)kind].Value, 0, 5) 
+            : (byte)0;
+    }
+}

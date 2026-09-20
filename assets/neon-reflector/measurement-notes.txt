@@ -1,0 +1,29 @@
+Neon Reflector — Portfolio measurement notes
+Updated: 2026-09-20
+
+Source: actual Unity editor balance simulator runs.json exports.
+Before: 20260920-092835-873 (schema 5)
+After:  20260920-123830-290 (schema 5)
+Each batch: 4 bot policies x 50 seeds (1001–1050), max 300 seconds/run.
+Fixed step: approximately 1/60 second. World orthographic size 5.2, aspect 1.
+Editor viewport pixels changed from 970x971 to 862x862.
+Source revision hashes were not recorded; identical full code environments cannot be asserted.
+
+Computer median observed survival: 24.46666717529297 -> 112.20000457763672 seconds.
+Computer time-limit completions: 0/50 -> 14/50.
+All 50 paired Computer seeds had longer observed survival after the change.
+All 150 non-Computer result objects were equal across these two batches.
+After batch: 183 died, 17 time-limit, 0 errors or aborted runs.
+Time-limit results are right-censored. They do not prove infinite survival.
+Bot presets are experimental policies, not validated models of human skill.
+Advanced median (52.1s) remains below intermediate (75.0s).
+
+Frozen Orb comparison is a separate intervention, not the Computer comparison above:
+20260920-082440-052 -> 20260920-092835-873.
+Shard counts at skill Lv1..5: 3/5/7/9/11 -> 3/4/5/6/7.
+Intermediate median observed survival: 85.5s -> 75.0s.
+
+Latest duplicate skill recovery intervention: shared cooldown 15 seconds; recovery 20%.
+Only a bounded functional check exists for this version, not a completed 200-run balance batch.
+No device FPS, CPU, battery or memory-leak benchmark is claimed.
+Screenshots are actual Unity Game View captures; title-screen.png shows the start screen.
