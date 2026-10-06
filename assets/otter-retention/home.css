@@ -1,0 +1,33 @@
+.operations-case-list { display: grid; }
+.operations-case-card {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.operations-case-card .technical-case-image {
+  aspect-ratio: auto;
+  min-height: 390px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 28px 22px 60px;
+  background: #204847;
+}
+.operations-case-card .technical-case-image img {
+  width: 44%;
+  height: auto;
+  max-height: 410px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+.operations-case-card .technical-case-copy { padding: 32px; }
+.operations-case-card .technical-case-copy h3 { font-size: 30px; }
+@media (max-width: 800px) {
+  .operations-case-card { grid-template-columns: 1fr; }
+  .operations-case-card .technical-case-image { min-height: 0; padding: 24px 18px 60px; }
+  .operations-case-card .technical-case-image img { max-height: 380px; }
+  .operations-case-card .technical-case-copy { padding: 24px; }
+}
+
+.operations-section { scroll-margin-top: 90px; }

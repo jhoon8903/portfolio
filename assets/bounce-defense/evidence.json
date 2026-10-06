@@ -1,0 +1,86 @@
+{
+  "project": "Bounce Defense",
+  "reviewedAt": "2026-10-06",
+  "sourceRevision": "f6bd21ea5160a77aeec663c8fa1bac203390f0d6",
+  "scope": "원작 Stage 1 재구현 / Unity 6000.3.10f1 / URP / Android IL2CPP ARM64",
+  "tests": {
+    "staticMethodCount": 26,
+    "files": {
+      "CardDrawServiceTests.cs": 10,
+      "PlayerLoadoutTests.cs": 9,
+      "LevelModelTests.cs": 7
+    },
+    "historicalResult": "26/26 통과",
+    "historicalDate": "2026-07-07",
+    "rerunForPortfolio": false,
+    "coverage": "카드 드로우·로드아웃·레벨 순수 로직"
+  },
+  "rendering": {
+    "sourceCommit": "3a518db",
+    "date": "2026-07-07",
+    "metric": "Frame Debugger 이벤트",
+    "before": 96,
+    "after": 13,
+    "worldCanvases": {
+      "before": 27,
+      "after": 2
+    },
+    "canvasSubBatches": {
+      "beforeApprox": 52,
+      "after": 2
+    },
+    "source": "개발 당시 커밋 본문에 기록된 실플레이 관찰",
+    "rawCaptureAvailable": false,
+    "remeasuredForPortfolio": false
+  },
+  "allocation": {
+    "sourceCommit": "ade016e",
+    "date": "2026-07-07",
+    "metric": "GC Allocated In Frame",
+    "beforeBytes": 10604,
+    "afterBytes": 5956,
+    "allocationCounts": {
+      "before": 112,
+      "after": 81
+    },
+    "environment": "Unity Editor 실플레이 Profiler, runInBackground + Step",
+    "source": "개발 당시 커밋 기록",
+    "aggregateStatistic": false,
+    "remeasuredForPortfolio": false
+  },
+  "assetCleanup": {
+    "sourceCommits": [
+      "90811fa",
+      "48063b9"
+    ],
+    "removedProjectAssetMBApprox": 577,
+    "apkSizeReductionMeasured": false
+  },
+  "buildValidation": {
+    "platform": "Android IL2CPP ARM64",
+    "environment": "Android Studio arm64-v8a 에뮬레이터",
+    "scope": "설치·실행·DI 크래시 확인",
+    "physicalDevicePerformanceMeasured": false
+  },
+  "codeSnapshots": {
+    "KinematicRaycastMotor.cs": "Game.Runtime/Motor/KinematicRaycastMotor.cs",
+    "MotorGeometry.cs": "Game.Runtime/Motor/MotorGeometry.cs",
+    "TrajectoryPreview.cs": "Game.Runtime/Motor/TrajectoryPreview.cs",
+    "DamageResolver.cs": "Game.Combat/DamageResolver.cs",
+    "SkillRuntime.cs": "Game.Runtime/Skills/SkillRuntime.cs",
+    "SkillDefinition.cs": "Game.Skills/SkillDefinition.cs",
+    "CardDrawService.cs": "Game.Roguelike/CardDrawService.cs",
+    "PlayerLoadout.cs": "Game.Roguelike/PlayerLoadout.cs",
+    "CardDrawServiceTests.cs": "Game.Tests/CardDrawServiceTests.cs",
+    "PlayerLoadoutTests.cs": "Game.Tests/PlayerLoadoutTests.cs",
+    "LevelModelTests.cs": "Game.Tests/LevelModelTests.cs",
+    "EnemyView.cs": "Game.Runtime/Enemy/EnemyView.cs"
+  },
+  "followUpProject": {
+    "project": "Bounce_Fit",
+    "capturedAt": "2026-10-06",
+    "baselineFile": "bounce-fit-baseline.json",
+    "status": "최적화 전 진단, 후측정 미완료",
+    "historicalComparisonCompatible": false
+  }
+}

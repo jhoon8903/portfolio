@@ -1,0 +1,468 @@
+{
+  "recorded_on": "2026-10-03",
+  "run_config": {
+    "budgets": [
+      4,
+      6,
+      8,
+      10
+    ],
+    "max_drop_actions": 20000,
+    "max_restarts_per_stage": 20,
+    "policies": [
+      "auto-merge+spread",
+      "auto-merge+focus",
+      "auto-merge+focus-rebuild",
+      "headcount-preserving"
+    ],
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "stage_limit": 1000,
+    "workers": 4
+  },
+  "total_runs": 320,
+  "total_drops": 786812,
+  "summary": [
+    {
+      "bottlenecks": {
+        "13": 20
+      },
+      "budget": 4,
+      "censored_reasons": {
+        "restart_cap": 20
+      },
+      "cleared_stage_count": 240,
+      "completed_runs": 0,
+      "drops_per_cleared_stage": {
+        "mean": 4.75,
+        "p50": 4.0,
+        "p90": 8.0,
+        "p95": 12.0
+      },
+      "first_attempt_clear_fraction": 0.8333333333333334,
+      "policy": "auto-merge+focus",
+      "reached": {
+        "max": 13,
+        "mean": 13,
+        "min": 13
+      },
+      "restart_count": 460,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {
+        "65": 20
+      },
+      "budget": 6,
+      "censored_reasons": {
+        "restart_cap": 20
+      },
+      "cleared_stage_count": 1280,
+      "completed_runs": 0,
+      "drops_per_cleared_stage": {
+        "mean": 5.5,
+        "p50": 5.0,
+        "p90": 6.0,
+        "p95": 6.0
+      },
+      "first_attempt_clear_fraction": 0.984375,
+      "policy": "auto-merge+focus",
+      "reached": {
+        "max": 65,
+        "mean": 65,
+        "min": 65
+      },
+      "restart_count": 460,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {
+        "292": 20
+      },
+      "budget": 8,
+      "censored_reasons": {
+        "restart_cap": 20
+      },
+      "cleared_stage_count": 5820,
+      "completed_runs": 0,
+      "drops_per_cleared_stage": {
+        "mean": 6.814432989690721,
+        "p50": 7.0,
+        "p90": 8.0,
+        "p95": 8.0
+      },
+      "first_attempt_clear_fraction": 0.9862542955326461,
+      "policy": "auto-merge+focus",
+      "reached": {
+        "max": 292,
+        "mean": 292,
+        "min": 292
+      },
+      "restart_count": 540,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {},
+      "budget": 10,
+      "censored_reasons": {
+        "stage_limit": 20
+      },
+      "cleared_stage_count": 20000,
+      "completed_runs": 20,
+      "drops_per_cleared_stage": {
+        "mean": 7.47,
+        "p50": 8.0,
+        "p90": 9.0,
+        "p95": 9.0
+      },
+      "first_attempt_clear_fraction": 1.0,
+      "policy": "auto-merge+focus",
+      "reached": {
+        "max": 1000,
+        "mean": 1000,
+        "min": 1000
+      },
+      "restart_count": 0,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {
+        "898": 2
+      },
+      "budget": 4,
+      "censored_reasons": {
+        "restart_cap": 2,
+        "stage_limit": 18
+      },
+      "cleared_stage_count": 19794,
+      "completed_runs": 18,
+      "drops_per_cleared_stage": {
+        "mean": 3.817116297868041,
+        "p50": 3.0,
+        "p90": 4.0,
+        "p95": 4.0
+      },
+      "first_attempt_clear_fraction": 0.9644841871274124,
+      "policy": "auto-merge+focus-rebuild",
+      "reached": {
+        "max": 1000,
+        "mean": 989.8,
+        "min": 898
+      },
+      "restart_count": 1847,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {},
+      "budget": 6,
+      "censored_reasons": {
+        "stage_limit": 20
+      },
+      "cleared_stage_count": 20000,
+      "completed_runs": 20,
+      "drops_per_cleared_stage": {
+        "mean": 3.495,
+        "p50": 3.0,
+        "p90": 4.0,
+        "p95": 4.0
+      },
+      "first_attempt_clear_fraction": 1.0,
+      "policy": "auto-merge+focus-rebuild",
+      "reached": {
+        "max": 1000,
+        "mean": 1000,
+        "min": 1000
+      },
+      "restart_count": 0,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {},
+      "budget": 8,
+      "censored_reasons": {
+        "stage_limit": 20
+      },
+      "cleared_stage_count": 20000,
+      "completed_runs": 20,
+      "drops_per_cleared_stage": {
+        "mean": 3.495,
+        "p50": 3.0,
+        "p90": 4.0,
+        "p95": 4.0
+      },
+      "first_attempt_clear_fraction": 1.0,
+      "policy": "auto-merge+focus-rebuild",
+      "reached": {
+        "max": 1000,
+        "mean": 1000,
+        "min": 1000
+      },
+      "restart_count": 0,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {},
+      "budget": 10,
+      "censored_reasons": {
+        "stage_limit": 20
+      },
+      "cleared_stage_count": 20000,
+      "completed_runs": 20,
+      "drops_per_cleared_stage": {
+        "mean": 3.495,
+        "p50": 3.0,
+        "p90": 4.0,
+        "p95": 4.0
+      },
+      "first_attempt_clear_fraction": 1.0,
+      "policy": "auto-merge+focus-rebuild",
+      "reached": {
+        "max": 1000,
+        "mean": 1000,
+        "min": 1000
+      },
+      "restart_count": 0,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {
+        "132": 4,
+        "135": 4,
+        "146": 1,
+        "173": 2,
+        "176": 1,
+        "181": 2,
+        "200": 1,
+        "245": 1,
+        "341": 1,
+        "371": 1,
+        "409": 1,
+        "513": 1
+      },
+      "budget": 4,
+      "censored_reasons": {
+        "restart_cap": 20
+      },
+      "cleared_stage_count": 4157,
+      "completed_runs": 0,
+      "drops_per_cleared_stage": {
+        "mean": 4.714698099591051,
+        "p50": 4.0,
+        "p90": 4.0,
+        "p95": 8.0
+      },
+      "first_attempt_clear_fraction": 0.9131585277844599,
+      "policy": "auto-merge+spread",
+      "reached": {
+        "max": 513,
+        "mean": 208.85,
+        "min": 132
+      },
+      "restart_count": 1500,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {},
+      "budget": 6,
+      "censored_reasons": {
+        "stage_limit": 20
+      },
+      "cleared_stage_count": 20000,
+      "completed_runs": 20,
+      "drops_per_cleared_stage": {
+        "mean": 4.37335,
+        "p50": 4.0,
+        "p90": 5.0,
+        "p95": 6.0
+      },
+      "first_attempt_clear_fraction": 0.99945,
+      "policy": "auto-merge+spread",
+      "reached": {
+        "max": 1000,
+        "mean": 1000,
+        "min": 1000
+      },
+      "restart_count": 11,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {},
+      "budget": 8,
+      "censored_reasons": {
+        "stage_limit": 20
+      },
+      "cleared_stage_count": 20000,
+      "completed_runs": 20,
+      "drops_per_cleared_stage": {
+        "mean": 4.37755,
+        "p50": 4.0,
+        "p90": 5.0,
+        "p95": 6.0
+      },
+      "first_attempt_clear_fraction": 1.0,
+      "policy": "auto-merge+spread",
+      "reached": {
+        "max": 1000,
+        "mean": 1000,
+        "min": 1000
+      },
+      "restart_count": 0,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {},
+      "budget": 10,
+      "censored_reasons": {
+        "stage_limit": 20
+      },
+      "cleared_stage_count": 20000,
+      "completed_runs": 20,
+      "drops_per_cleared_stage": {
+        "mean": 4.37755,
+        "p50": 4.0,
+        "p90": 5.0,
+        "p95": 6.0
+      },
+      "first_attempt_clear_fraction": 1.0,
+      "policy": "auto-merge+spread",
+      "reached": {
+        "max": 1000,
+        "mean": 1000,
+        "min": 1000
+      },
+      "restart_count": 0,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {
+        "1": 20
+      },
+      "budget": 4,
+      "censored_reasons": {
+        "restart_cap": 20
+      },
+      "cleared_stage_count": 0,
+      "completed_runs": 0,
+      "drops_per_cleared_stage": {
+        "mean": null,
+        "p50": null,
+        "p90": null,
+        "p95": null
+      },
+      "first_attempt_clear_fraction": null,
+      "policy": "headcount-preserving",
+      "reached": {
+        "max": 1,
+        "mean": 1,
+        "min": 1
+      },
+      "restart_count": 400,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {
+        "3": 20
+      },
+      "budget": 6,
+      "censored_reasons": {
+        "restart_cap": 20
+      },
+      "cleared_stage_count": 40,
+      "completed_runs": 0,
+      "drops_per_cleared_stage": {
+        "mean": 5.5,
+        "p50": 5.5,
+        "p90": 6.0,
+        "p95": 6.0
+      },
+      "first_attempt_clear_fraction": 1.0,
+      "policy": "headcount-preserving",
+      "reached": {
+        "max": 3,
+        "mean": 3,
+        "min": 3
+      },
+      "restart_count": 400,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {
+        "4": 20
+      },
+      "budget": 8,
+      "censored_reasons": {
+        "restart_cap": 20
+      },
+      "cleared_stage_count": 60,
+      "completed_runs": 0,
+      "drops_per_cleared_stage": {
+        "mean": 6.333333333333333,
+        "p50": 6.0,
+        "p90": 8.0,
+        "p95": 8.0
+      },
+      "first_attempt_clear_fraction": 1.0,
+      "policy": "headcount-preserving",
+      "reached": {
+        "max": 4,
+        "mean": 4,
+        "min": 4
+      },
+      "restart_count": 400,
+      "run_count": 20
+    },
+    {
+      "bottlenecks": {
+        "4": 20
+      },
+      "budget": 10,
+      "censored_reasons": {
+        "restart_cap": 20
+      },
+      "cleared_stage_count": 60,
+      "completed_runs": 0,
+      "drops_per_cleared_stage": {
+        "mean": 6.333333333333333,
+        "p50": 6.0,
+        "p90": 8.0,
+        "p95": 8.0
+      },
+      "first_attempt_clear_fraction": 1.0,
+      "policy": "headcount-preserving",
+      "reached": {
+        "max": 4,
+        "mean": 4,
+        "min": 4
+      },
+      "restart_count": 400,
+      "run_count": 20
+    }
+  ],
+  "ecs_comparison": {
+    "cases": 212,
+    "drops": 586,
+    "passed": 586,
+    "failed": 0,
+    "max_step_difference": 0
+  }
+}

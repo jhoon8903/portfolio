@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="CircleCast 기반 반사·관통 처리, 데이터 기반 스킬 조합, 카드 선택 규칙 검증과 렌더링 최적화 과정을 정리한 Unity 기술 사례.">
+<title>Bounce Defense · 핀볼 전투와 스킬 조합 | 이정훈</title>
+<link rel="canonical" href="https://jhoon8903.github.io/portfolio/bounce-defense/">
+<style>.skip{position:absolute;left:16px;top:-100px;background:#17211e;color:white;padding:10px;z-index:20}.skip:focus{top:10px}body{max-width:1060px;margin:40px auto;padding:0 24px 80px;background:#f3f0e9;color:#17211e;font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo",sans-serif}a{color:#236452}h1{font-size:clamp(32px,5vw,56px);line-height:1.08;letter-spacing:-.04em}h2{font-size:24px;margin:56px 0 18px;border-bottom:1px solid;padding-bottom:9px}h2 small{display:block;color:#236452;font:700 12px monospace;letter-spacing:.1em;margin-bottom:7px}.top{display:flex;justify-content:space-between;border-top:3px solid;padding-top:20px}.lede{font-size:20px}.meta{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 45px}.meta span{border:1px solid;padding:4px 9px;font-size:13px}.thesis{border-left:4px solid #ff6b4a;padding:7px 16px;font-size:18px;margin:35px 0}.toc,.grid,.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.toc{margin-bottom:50px}.toc a{border-top:1px solid #cfd5cd;padding-top:9px;text-decoration:none;color:#17211e;font-size:13px}.toc b{display:block;color:#236452;font-family:monospace}.grid{grid-template-columns:repeat(3,1fr);margin:18px 0}.card,.stat{border:1px solid #cfd5cd;padding:15px}.card p,.stat small,.refs{color:#64706a;font-size:14px}.flow{border:1px solid #cfd5cd;padding:15px;display:flex;gap:7px;flex-wrap:wrap;margin:18px 0}.flow span{border:1px solid #236452;padding:7px 10px;font-size:13px;background:#f8f8f4}.flow i{color:#ff6b4a}.code{background:#e9ece6;border-left:3px solid #236452;padding:14px;overflow:auto;font:13px/1.55 monospace;margin:16px 0}.note{border-left:3px solid #236452;padding:5px 15px;color:#3e4a44}.stats{grid-template-columns:repeat(3,1fr);margin:18px 0}.stat strong{display:block;color:#236452;font-size:29px;line-height:1.1}table{border-collapse:collapse;width:100%;font-size:14px;margin:18px 0}th,td{border:1px solid #cfd5cd;padding:10px;text-align:left;vertical-align:top}th{background:#e9ece6}a:focus-visible,summary:focus-visible,.table-scroll:focus-visible{outline:3px solid #ff6b4a;outline-offset:4px}.code-label{font-size:13px;color:#64706a;margin-bottom:0}.gc-stat{font-size:24px!important}.table-scroll{overflow-x:auto}.table-scroll td:last-child{overflow-wrap:anywhere;max-width:330px}summary{cursor:pointer;font-weight:650}details p{font-size:14px}footer{border-top:1px solid;padding-top:15px;display:flex;justify-content:space-between}@media(max-width:650px){body{margin:22px auto;padding:0 17px 60px}.top{display:block}.top a{display:inline-block;margin-top:10px}.toc{grid-template-columns:repeat(2,1fr)}.grid,.stats{grid-template-columns:1fr}.lede{font-size:18px}table{display:block;overflow:auto;white-space:nowrap}footer{display:block}footer a{display:block;margin-top:8px}}.capture{margin:24px 0}.capture img,.capture video{display:block;width:100%;height:auto;background:#111}.capture figcaption{font-size:14px;line-height:1.7;color:#52645a;margin-top:10px}.follow-up{border-top:3px solid #236452;margin-top:50px}.follow-up h2{margin-top:30px}.toc{grid-template-columns:repeat(5,1fr)}@media(max-width:650px){.toc{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header>
+<div class="top">
+<div style="font:700 12px monospace;color:#236452">TECHNICAL CASE / 2026.07</div>
+<a href="/portfolio/#case">← 모든 케이스</a>
+</div>
+<h1>Bounce Defense<br>핀볼 전투와 스킬 조합</h1>
+<p class="lede">원작 ‘통통 디펜스: 핀볼 마스터’ Stage 1 재구현 · 개인 구현 · AI 보조 개발</p>
+<div class="meta">
+<span>Unity 6000.3.10f1</span>
+<span>URP</span>
+<span>Android IL2CPP ARM64</span>
+<span>12웨이브 · 액티브 5종 / 패시브 5종</span>
+</div>
+</header>
+<main id="main">
+<p class="thesis">핀볼 이동·충돌과 전투 규칙을 분리해, 공의 반사와 스킬 조합이 같은 전투 루프 안에서 작동하도록 구현했습니다.</p>
+<nav class="toc">
+<a href="#collision">
+<b>01</b>충돌 이동</a>
+<a href="#skills">
+<b>02</b>스킬 파이프라인</a>
+<a href="#cards">
+<b>03</b>카드 후보 규칙</a>
+<a href="#evidence">
+<b>04</b>측정 기록</a>
+<a href="#bounce-fit-baseline"><b>05</b>Bounce Fit 현재 진단</a>
+</nav>
+<section id="collision">
+<h2>
+<small>01 / BALL COLLISION</small>충돌 후 남은 이동 거리를 반복 처리합니다.</h2>
+<p>한 프레임의 이동 중 여러 표면에 닿거나, 관통 중 같은 적을 반복 타격하는 상황을 처리해야 했습니다. <code>KinematicRaycastMotor</code>에서 공 반경을 포함한 CircleCast 결과 중 가장 가까운 접촉을 선택하고, 충돌 이후 남은 거리를 다시 계산했습니다.</p>
+<div class="flow">
+<span>남은 거리 계산</span>
+<i>→</i>
+<span>원형 스윕 캐스트</span>
+<i>→</i>
+<span>가장 가까운 접촉</span>
+<i>→</i>
+<span>반사 또는 관통</span>
+<i>→</i>
+<span>남은 거리 재계산</span>
+</div>
+<div class="grid">
+<div class="card">
+<h3>연속 충돌 처리</h3>
+<p>속도 × 시간으로 이동 거리를 구하고, 접촉점까지 이동한 거리를 빼 다음 충돌을 계산합니다.</p>
+</div>
+<div class="card">
+<h3>반사</h3>
+<p>접촉 법선으로 방향을 반사하고 속력을 유지합니다. 접촉면에서 0.01만큼 떨어뜨려 즉시 재접촉하는 상황을 줄였습니다.</p>
+</div>
+<div class="card">
+<h3>히트 중복 방지</h3>
+<p>현재 스텝의 피격 목록과 비행 중 통과한 콜라이더를 관리해, 관통 중 겹쳐 있는 적을 프레임마다 다시 타격하는 문제를 막았습니다.</p>
+</div>
+</div>
+<p class="code-label">반사 분기의 실제 코드 일부</p>
+<pre class="code">
+<code>float travel = Mathf.Clamp(wallDist, 0f, remaining);
+_position += dir * travel;
+remaining -= travel;
+_velocity = Vector2.Reflect(_velocity, wallNormal).normalized * _speed;
+_position += wallNormal * SkinWidth;</code>
+</pre>
+<p class="refs">코드 확인: <a href="/portfolio/assets/bounce-defense/code/KinematicRaycastMotor.cs.txt">KinematicRaycastMotor.cs</a> · <a href="/portfolio/assets/bounce-defense/code/MotorGeometry.cs.txt">MotorGeometry.cs</a> · <a href="/portfolio/assets/bounce-defense/code/TrajectoryPreview.cs.txt">TrajectoryPreview.cs</a>
+</p>
+<details class="note">
+<summary>궤적 예측의 범위와 반복 제한</summary>
+<p>실제 이동과 미리보기는 벽 경계 계산을 공유하는 별도 시뮬레이션입니다. 미리보기는 장애물을 반사하며 관통 볼의 경로까지 완전히 일치시키지는 않았습니다. 실제 모터는 스텝당 최대 8회 반복하고 16개 캐스트 결과 버퍼를 사용합니다.</p>
+</details>
+</section>
+<section id="skills">
+<h2>
+<small>02 / SKILL PIPELINE</small>스킬 수치와 동작을 분리해 조합합니다.</h2>
+<p>스킬마다 이동 로직과 데미지 계산을 복제하면 조합이 늘수록 수정 범위가 커집니다. 레벨별 수치는 <code>SkillDefinition</code> 데이터에 두고, 효과는 볼 모듈과 데미지 보정으로 분리했습니다. <code>SkillRuntime</code>은 로드아웃 변경을 구독해 볼 구성과 효과를 갱신합니다.</p>
+<div class="flow">
+<span>SkillDefinition</span>
+<i>→</i>
+<span>PlayerLoadout</span>
+<i>→</i>
+<span>SkillRuntime</span>
+<i>→</i>
+<span>볼 모듈 / 패시브 보정</span>
+<i>→</i>
+<span>DamageResolver</span>
+</div>
+<p class="code-label">로드아웃 변경 시 갱신 지점</p>
+<pre class="code">
+<code>private void Rebuild()
+{
+    RebuildRoster();
+    RebuildModifiers();
+    RebuildPassiveControllers();
+}</code>
+</pre>
+<p>직접 타격은 기본 데미지 → 가산 보정 → 치명타 → 반올림 순서로 계산합니다. 화상·폭발 등 2차 피해는 <code>HitContext</code>의 플래그로 치명타와 전역 보정의 적용 여부를 구분합니다.</p>
+<div class="flow" aria-label="직접 타격의 데미지 계산 순서">
+<span>기본 데미지</span>
+<i aria-hidden="true">→</i>
+<span>가산 보정</span>
+<i aria-hidden="true">→</i>
+<span>치명타 × 1.5</span>
+<i aria-hidden="true">→</i>
+<span>반올림 · 피해 적용</span>
+</div>
+<p class="refs">
+<a href="/portfolio/assets/bounce-defense/code/SkillRuntime.cs.txt">SkillRuntime.cs</a> · <a href="/portfolio/assets/bounce-defense/code/DamageResolver.cs.txt">DamageResolver.cs</a>
+</p>
+<div class="note">구현 범위: 12웨이브, 액티브 5종·패시브 5종, 각 Lv1~3. 액티브 보유 한도 4개, 패시브 2개. 화상·냉동·행 공격·관통·분열 효과를 같은 전투 루프에 연결했습니다.</div>
+</section>
+<section id="cards">
+<h2>
+<small>03 / CARD CANDIDATES</small>카드 후보의 경계 조건을 테스트합니다.</h2>
+<p>새 스킬 획득과 업그레이드가 섞이는 선택지에서, 보유 한도와 최대 레벨을 지켜야 합니다. <code>CardDrawService</code>가 후보를 먼저 필터링한 뒤 주입된 <code>IRandom</code>으로 섞도록 구성해, 같은 시드로 결과를 재현하고 규칙을 테스트했습니다.</p>
+<div class="table-scroll" role="region" aria-label="구현 규칙과 근거" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>규칙</th>
+<th>동작</th>
+<th>테스트 메서드</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>보유 스킬</td>
+<td>다음 레벨 업그레이드로 노출</td>
+<td>OwnedSkill_OffersUpgradeNotNew</td>
+</tr>
+<tr>
+<td>최대 레벨</td>
+<td>최대 레벨에 도달한 스킬은 후보에서 제외</td>
+<td>MaxedSkill_Excluded</td>
+</tr>
+<tr>
+<td>보유 한도</td>
+<td>액티브 4 / 패시브 2 도달 시 해당 카테고리의 미보유 스킬 제외</td>
+<td>ActiveCapReached_NoNewActive_UpgradesAndPassivesOnly<br>PassiveCapReached_NoNewPassive_UpgradesOnly</td>
+</tr>
+<tr>
+<td>중복 방지</td>
+<td>한 선택 묶음에서 같은 스킬 정의를 한 번만 반환</td>
+<td>NoDuplicateSkillPerDraw</td>
+</tr>
+<tr>
+<td>시드 재현</td>
+<td>동일한 데이터·보유 상태·시드에서 결과 재현</td>
+<td>SameSeed_IsDeterministic</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="stats">
+<div class="stat">
+<strong>26/26</strong>
+<small>2026.07.07 EditMode 통과 기록<br>카드 10 · 로드아웃 9 · 레벨 7</small>
+</div>
+<div class="stat">
+<strong>4 / 2</strong>
+<small>액티브 / 패시브 상한</small>
+</div>
+<div class="stat">
+<strong>IRandom</strong>
+<small>시드 기반 선택지 재현</small>
+</div>
+</div>
+<p class="refs">테스트 코드: <a href="/portfolio/assets/bounce-defense/code/CardDrawServiceTests.cs.txt">CardDrawServiceTests.cs</a>. 26개 메서드는 코드로 확인했으며, 통과 수치는 개발 당시 기록입니다. 이번 페이지 작성에서 Unity 테스트를 재실행하지 않았습니다.</p>
+</section>
+<section id="evidence">
+<h2>
+<small>04 / PERFORMANCE NOTES</small>HP 표시와 반복 생성 비용을 줄였습니다.</h2>
+<p>적마다 월드 캔버스로 표시하던 HP 바를 SpriteRenderer로 전환하고, 캐스트 배열 재사용·풀링·캐싱으로 반복 생성 비용을 줄였습니다. 아래는 개발 당시 커밋에 남긴 비교 기록입니다. 이번 확인에서는 원본 캡처를 확보하지 못해, 현재 빌드의 성능 측정과 구분합니다.</p>
+<div class="stats">
+<div class="stat">
+<strong>96 → 13</strong>
+<small>Frame Debugger 이벤트<br>월드 캔버스 27 → 2</small>
+</div>
+<div class="stat">
+<strong>약 52 → 2</strong>
+<small>Canvas 서브배치<br>당시 관찰치</small>
+</div>
+<div class="stat">
+<strong class="gc-stat">10,604 → 5,956 B</strong>
+<small>Editor 프레임 GC 할당량<br>할당 횟수 112 → 81회</small>
+</div>
+</div>
+<div class="table-scroll" role="region" aria-label="구현 규칙과 근거" tabindex="0">
+<table>
+<tr>
+<th>변경</th>
+<th>당시 관찰</th>
+<th>해석 범위</th>
+</tr>
+<tr>
+<td>적 HP 월드 캔버스 → SpriteRenderer</td>
+<td>이벤트 96 → 13<br>월드 캔버스 27 → 2<br>서브배치 약 52 → 2</td>
+<td>표시 방식 변경 전후의 개발 당시 기록. 프레임타임은 별도 측정이 필요합니다.</td>
+</tr>
+<tr>
+<td>생성 경로의 풀링·캐싱</td>
+<td>Editor 프레임 10,604 → 5,956 B<br>할당 횟수 112 → 81회</td>
+<td>당시 Profiler 프레임 비교. 반복 평균이나 실기기 성능 수치로 사용하지 않습니다.</td>
+</tr>
+<tr>
+<td>SRP Batcher 경로</td>
+<td>EnemyView renderer.material 캐시, UnityPerMaterial 사용</td>
+<td>URP 셰이더와 머티리얼 경로를 정리해 렌더 상태 변경 비용을 줄이는 방향으로 적용했습니다.</td>
+</tr>
+</table>
+</div>
+<div class="note">렌더링 기록: 커밋 3a518db · 할당 기록: ade016e. 미사용 프로젝트 에셋 약 577MB도 정리했습니다. 이 용량은 최종 APK 감소량을 의미하지 않습니다.</div>
+<p>SRP Batcher는 드로우콜 사이의 렌더 상태 변경을 줄이는 방식입니다. HP 표시 방식 변경으로 줄어든 이벤트 수와 SRP 적용을 구분해 설명했습니다.</p>
+<p class="refs">근거: <a href="/portfolio/assets/bounce-defense/measurement-notes.txt">measurement-notes.txt</a> · <a href="/portfolio/assets/bounce-defense/evidence.json">evidence.json</a> · <a href="https://docs.unity3d.com/6000.3/Documentation/Manual/SRPBatcher.html">Unity SRP Batcher 공식 문서</a>
+</p>
+</section>
+<section id="bounce-fit-baseline" class="follow-up">
+<h2><small>05 / FOLLOW-UP · BOUNCE FIT · 2026.10.06</small>새 프로젝트의 렌더링 상태를 최적화 전 기준으로 남깁니다.</h2>
+<p>아래 자료는 후속 프로젝트 <strong>Bounce Fit</strong>의 Unity Editor 화면입니다. 카드 선택과 전투를 구현한 현재 상태를 기록하고, 일반 Draw와 SRP Batcher 경로가 교차하는 구간을 최적화 검토 대상으로 잡았습니다.</p>
+<p class="note">기존 Bounce-Defense의 7월 측정 기록과 다른 프로젝트의 자료입니다. 현재는 최적화 전 상태만 확보했으며, 두 자료를 전후 개선 수치로 연결하지 않습니다.</p>
+<figure class="capture">
+<video controls playsinline preload="metadata" poster="/portfolio/assets/bounce-defense/bounce-fit-gameplay-poster.png" aria-label="Bounce Fit 카드 선택과 전투의 Editor 녹화">
+<source src="/portfolio/assets/bounce-defense/bounce-fit-gameplay.mp4" type="video/mp4">
+<a href="/portfolio/assets/bounce-defense/bounce-fit-gameplay.mp4">전투 영상 열기</a>
+</video>
+<figcaption><strong>카드 선택 → 전투 효과</strong> · 사용자 제공 Editor 녹화 중 18~62초 구간(44초). 게임 동작을 설명하는 자료이며 FPS 측정값으로 사용하지 않습니다.</figcaption>
+</figure>
+<figure class="capture">
+<a href="/portfolio/assets/bounce-defense/bounce-fit-render-before.png" aria-label="Frame Debugger 원본 캡처 크게 보기"><img src="/portfolio/assets/bounce-defense/bounce-fit-render-before.png" width="2224" height="1998" loading="lazy" alt="Bounce Fit Frame Debugger. 카메라 이벤트159, 투명 패스133. RenderLoop.Draw와 RenderLoop.DrawSRPBatcher가 반복 교차하며 Event29 Draw Dynamic이 선택되어 있다."></a>
+<figcaption><strong>최적화 전 렌더링 캡처</strong> · 2026.10.06 제공. 선택된 Event #29의 중간 렌더 출력입니다. 이미지를 누르면 원본을 확인할 수 있습니다.</figcaption>
+</figure>
+<div class="stats"><div class="stat"><strong>159</strong><small>캡처에 표시된 카메라 렌더 이벤트</small></div><div class="stat"><strong>133</strong><small>DrawTransparentObjects 이벤트</small></div><div class="stat"><strong>Draw ↔ SRP</strong><small>일반·SRP 경로의 반복 교차 관찰</small></div></div>
+<div class="grid"><article class="card"><h3>관찰한 현상</h3><p>투명 패스 안에서 일반 Draw와 SRP Batcher 경로가 반복 교차합니다. 전체 이벤트 수와 해당 패스의 구성을 기준 자료로 보존했습니다.</p></article><article class="card"><h3>확인할 원인</h3><p>인접한 Draw의 렌더러·머티리얼·셰이더와 SRP 이벤트의 Batch cause를 확인해, 배칭 가능한 대상의 분리인지 필수적인 경로 혼재인지 구분합니다.</p></article><article class="card"><h3>개선 판단 기준</h3><p>동일한 전투·정렬·이펙트·해상도 조건으로 다시 캡처하고, Profiler의 렌더링 CPU 시간도 비교해 효과를 판단합니다.</p></article></div>
+<p class="refs">159는 이 캡처의 이벤트 수입니다. 선택 이벤트의 Draw Calls 5를 전체 드로우콜로 계산하지 않습니다. <a href="/portfolio/assets/bounce-defense/bounce-fit-baseline.json">캡처 관찰값 JSON</a> · <a href="https://docs.unity3d.com/6000.3/Documentation/Manual/frame-debugger-window-event-information.html">Unity Frame Debugger 항목 설명</a></p>
+</section>
+<section>
+<h2>
+<small>VALIDATION</small>코드·빌드·플레이로 확인한 범위</h2>
+<div class="grid">
+<div class="card">
+<h3>개발 당시 검증</h3>
+<p>컴파일 오류 0건, EditMode 26/26, 직접 플레이 확인. IL2CPP/ARM64 APK는 Android 에뮬레이터에서 설치·실행을 확인했습니다.</p>
+</div>
+<div class="card">
+<h3>개발자와 AI의 역할</h3>
+<p>명세·수치·설계 방향과 직접 플레이 검증은 개발자가 담당했습니다. Claude Code는 코드 생성·리팩터·감사·테스트를 보조했습니다.</p>
+</div>
+<div class="card">
+<h3>추가 검증 대상</h3>
+<p>동일 전투 조건의 Frame Debugger·Profiler 캡처, 실제 Android 기기의 프레임타임과 메모리 측정이 필요합니다.</p>
+</div>
+</div>
+</section>
+</main>
+<footer>
+<span>Bounce Defense · 이정훈</span>
+<a href="/portfolio/#case">포트폴리오 홈으로 돌아가기 →</a>
+</footer>
+</body>
+</html>
+

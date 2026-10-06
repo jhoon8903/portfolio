@@ -1,0 +1,66 @@
+"""Validate current cumulative combat against isolated Unity ECS oracle exports."""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+
+from current_economy import load_current, simulate_drop
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
+    parser.add_argument("--oracle-dir", type=Path, default=Path("Library/BalanceValidation/g04-oracle"))
+    parser.add_argument("--output", type=Path, default=Path("Library/BalanceValidation/g04-model-validation.json"))
+    args = parser.parse_args()
+    root = args.root.resolve()
+    oracle_dir = root / args.oracle_dir
+    snapshot = load_current(root)
+    expected_stages = {1, 4, 16, 32, 43, 100, 500, 1000}
+    files = [oracle_dir / f"stage-{stage:04d}.json" for stage in sorted(expected_stages)]
+    failures = []
+    cases = drops = max_step_difference = 0
+    oracle_hashes = {}
+    for path in files:
+        report = json.loads(path.read_text())
+        if report["schema_version"] != 1 or report["stage"] not in expected_stages or not report["cases"]:
+            raise ValueError("Incomplete or unsupported oracle: " + str(path))
+        oracle_hashes[str(path.relative_to(root))] = hashlib.sha256(path.read_bytes()).hexdigest()
+        for case in report["cases"]:
+            cases += 1
+            for expected in case["drops"]:
+                drops += 1
+                actual = simulate_drop(snapshot, case["stage"], case["cats"],
+                    dt=report["dt"], max_steps=report["max_steps"], initial_health=expected["initial_health"])
+                pairs = {"phase": "phase", "gold": "normal_gold", "gold_tickets": "gold_tickets",
+                         "item_tickets": "item_tickets", "brick_health": "brick_health"}
+                differences = {key: {"ecs": expected[key], "model": actual[value]}
+                               for key, value in pairs.items() if expected[key] != actual[value]}
+                if sorted(expected["surviving_slots"]) != sorted(actual["surviving_slots"]):
+                    differences["surviving_slots"] = {"ecs": expected["surviving_slots"], "model": actual["surviving_slots"]}
+                step_difference = abs(expected["steps"] - actual["steps"])
+                max_step_difference = max(max_step_difference, step_difference)
+                if step_difference > 1:
+                    differences["steps"] = {"ecs": expected["steps"], "model": actual["steps"]}
+                if differences:
+                    failures.append({"stage": case["stage"], "cats": case["cats"],
+                                     "drop": expected["drop"], "differences": differences})
+    output = root / args.output
+    result = {"schema_version": 1, "cases": cases, "drops": drops, "passed": drops-len(failures),
+              "failed": len(failures), "step_tolerance": 1, "max_step_difference": max_step_difference,
+              "comparison": "Exact phase, rewards, full cumulative health and survivor slots; frame tolerance 1",
+              "source_hashes": snapshot["source_hashes"], "oracle_hashes": oracle_hashes,
+              "failures": failures}
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
+    print(json.dumps({k: result[k] for k in ("cases", "drops", "passed", "failed", "max_step_difference")}))
+    if failures:
+        print("See complete mismatches in " + str(output))
+        print(json.dumps([{k: f[k] for k in ("stage", "drop")} | {"fields": list(f["differences"])} for f in failures[:5]]))
+    raise SystemExit(bool(failures))
+
+
+if __name__ == "__main__":
+    main()

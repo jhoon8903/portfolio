@@ -1,0 +1,28 @@
+{
+  "capturedAt": "2026-10-06T20:06:12+09:00",
+  "project": "Bounce_Fit",
+  "status": "user_designated_pre_optimization",
+  "cameraRenderEvents": 159,
+  "transparentPassEvents": 133,
+  "opaquePassEvents": 8,
+  "bloomEvents": 16,
+  "selectedEvent": 29,
+  "selectedEventType": "Draw Dynamic",
+  "selectedEventDrawCalls": 5,
+  "observedPattern": "RenderLoop.Draw와 RenderLoop.DrawSRPBatcher가 반복해서 교차",
+  "interpretation": "SRP 경로와 일반 경로의 교차를 관찰. 원인·CPU 비용·전체 드로우콜 수는 확정하지 않음.",
+  "historicalComparison": "7월의96→13 기록과 동일 조건의 전후 비교로 연결하지 않음",
+  "sourceImage": "bounce-fit-render-before.png",
+  "sourceVideo": "Screen Recording 2026-10-06 at 8.00.21 PM.mov",
+  "confirmedByUser": true,
+  "sourceImageSha256": "64bc186af9920d587cc33e6f4771e2ae190d81c1604c1db11c8b0a8927770f21",
+  "gameplayClip": {
+    "sourceStartSeconds": 18,
+    "sourceEndSeconds": 62,
+    "durationSeconds": 44,
+    "purpose": "카드 선택과 전투 효과를 같은 흐름으로 보여주는 Editor 영상",
+    "webFile": "bounce-fit-gameplay.mp4",
+    "webBytes": 48630080,
+    "webEncoding": "H.264 MP4, 웹 재생용 변환"
+  }
+}

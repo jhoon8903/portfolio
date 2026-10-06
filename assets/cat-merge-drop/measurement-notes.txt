@@ -1,0 +1,11 @@
+Cat Merge Drop - measurement notes
+Recorded: 2026-10-03. Page prepared: 2026-10-06.
+Budgets4/6/8/10 x4policies x20summon seeds=320runs,786812Drops. New in-memory players,stages1-1000,max20retries per attempt,max20000Drops per run,combat dt0.05/max960frames. One shared input snapshot; only budget overrides vary. Summon economy,map,Lv24 cap unchanged. Original report retains input hashes.
+Policies do not inspect brick layouts and deploy every formed cat. After the final failed Drop, they retry without optional reward opening.
+Separate model check: isolated Unity ECS exports,212formations/586Drops. Phase,rewards,full brickHP,survivor slots match; frame tolerance1,observed difference0. Sampled combat verification,not all320progression runs executed in Unity.
+At budget10 three merging policies each20/20 completed1000stages without restart. Headcount policy0/20,stoppedstage4. Budget9 not measured,no minimum-budget claim. Stopping means observation cap,not global impossibility. Bots are not human win-rate/fun measurements. Some policies produce identical outcomes across seeds.
+No gameplay experiment was rerun while preparing this page. Public code copies current source rather than frozen historical tested revisions.
+Sources in CatMergeDrop_Smash:
+Docs/DropBudgetBalance_20261003.md
+Library/BalanceValidation/drop-budget-sweep-20261003.json
+Library/BalanceValidation/drop-budget-final-validation.json

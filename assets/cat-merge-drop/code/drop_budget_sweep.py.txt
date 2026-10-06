@@ -1,0 +1,139 @@
+#!/usr/bin/env python3
+"""Compare fixed Drop budgets against the current authored stage catalog.
+
+The report stores one compact record per simulated stage; detailed combat rebuild
+arrays are deliberately discarded so a full 48-run sweep remains reviewable.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import multiprocessing
+import statistics
+from collections import Counter, defaultdict
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from pathlib import Path
+from typing import Any
+
+from current_economy import DEFAULT_SEEDS, load_current, simulate_seed
+
+
+POLICIES = ("auto-merge+spread", "auto-merge+focus", "auto-merge+focus-rebuild", "headcount-preserving")
+DEFAULT_BUDGETS = (4, 6, 8, 10)
+_SNAPSHOT = None
+
+
+def _initialize(snapshot: dict[str, Any]) -> None:
+    global _SNAPSHOT
+    _SNAPSHOT = snapshot
+
+
+def _compact(run: dict[str, Any]) -> dict[str, Any]:
+    run = dict(run)
+    run["stages"] = [{key: stage[key] for key in ("stage", "drop_budget", "drops", "restarts", "cleared")
+                      if key in stage} for stage in run["stages"]]
+    return run
+
+
+def _run(seed: int, policy: str, budget: int, stage_limit: int,
+         max_restarts: int, max_actions: int) -> dict[str, Any]:
+    return _compact(simulate_seed(_SNAPSHOT, seed, policy, stage_limit,
+                                  max_restarts, max_actions, budget_override=budget))
+
+
+def _percentile(values: list[int], quantile: float) -> float | None:
+    if not values:
+        return None
+    ordered = sorted(values)
+    index = (len(ordered) - 1) * quantile
+    lower, upper = int(index), min(int(index) + 1, len(ordered) - 1)
+    return ordered[lower] + (ordered[upper] - ordered[lower]) * (index - lower)
+
+
+def summarize(runs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    groups: dict[tuple[str, int], list[dict[str, Any]]] = defaultdict(list)
+    for run in runs:
+        groups[run["policy"], run["budget_override"]].append(run)
+    summary = []
+    for (policy, budget), group in sorted(groups.items()):
+        cleared = [stage for run in group for stage in run["stages"] if stage.get("cleared")]
+        drops = [stage["drops"] for stage in cleared]
+        censors = Counter(run["censor_reason"] for run in group if run["censor_reason"])
+        bottlenecks = Counter(run["stage_reached"] for run in group if run["censor_reason"] not in (None, "stage_limit"))
+        summary.append({
+            "policy": policy, "budget": budget,
+            "completed_runs": sum(run["censor_reason"] in (None, "stage_limit") for run in group),
+            "run_count": len(group),
+            "reached": {"mean": statistics.mean(run["stage_reached"] for run in group),
+                        "min": min(run["stage_reached"] for run in group),
+                        "max": max(run["stage_reached"] for run in group)},
+            "cleared_stage_count": len(cleared),
+            "drops_per_cleared_stage": {"mean": statistics.mean(drops) if drops else None,
+                                        "p50": _percentile(drops, .50), "p90": _percentile(drops, .90),
+                                        "p95": _percentile(drops, .95)},
+            "first_attempt_clear_fraction": (sum(stage["restarts"] == 0 for stage in cleared) / len(cleared)
+                                             if cleared else None),
+            "restart_count": sum(run["metrics"].get("restarts", 0) for run in group),
+            "censored_reasons": dict(sorted(censors.items())),
+            "bottlenecks": dict(sorted(bottlenecks.items())),
+        })
+    return summary
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", default=".")
+    parser.add_argument("--budget", type=int, action="append")
+    parser.add_argument("--seed", type=int, action="append")
+    parser.add_argument("--policy", choices=POLICIES, action="append")
+    parser.add_argument("--stage-limit", type=int, default=1000)
+    parser.add_argument("--max-restarts", type=int, default=20)
+    parser.add_argument("--max-actions", type=int, default=20000)
+    parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument("--output", default="Library/BalanceValidation/drop-budget-sweep.json")
+    args = parser.parse_args()
+    budgets = tuple(args.budget or DEFAULT_BUDGETS)
+    seeds = tuple(args.seed or DEFAULT_SEEDS)
+    policies = tuple(args.policy or POLICIES)
+    if (args.stage_limit < 1 or args.max_restarts < 0 or args.max_actions < 1 or args.workers < 1
+            or any(budget < 1 or budget > 100 for budget in budgets)):
+        parser.error("invalid cap, worker count, or budget")
+    root = Path(args.root).resolve()
+    snapshot = load_current(root)
+    snapshot["source_hashes"]["Tools/BalanceValidation/drop_budget_sweep.py"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    jobs = [(seed, policy, budget, args.stage_limit, args.max_restarts, args.max_actions)
+            for policy in policies for budget in budgets for seed in seeds]
+    runs: list[dict[str, Any]] = []
+    if args.workers == 1:
+        _initialize(snapshot)
+        iterator = map(lambda job: _run(*job), jobs)
+        for run in iterator:
+            runs.append(run); print(json.dumps({"progress": len(runs), "total": len(jobs), "seed": run["seed"], "policy": run["policy"], "budget": run["budget_override"], "stage_reached": run["stage_reached"], "censor_reason": run["censor_reason"]}, sort_keys=True), flush=True)
+    else:
+        with ProcessPoolExecutor(max_workers=args.workers, mp_context=multiprocessing.get_context("spawn"),
+                                 initializer=_initialize, initargs=(snapshot,)) as pool:
+            futures = [pool.submit(_run, *job) for job in jobs]
+            for future in as_completed(futures):
+                run = future.result(); runs.append(run)
+                print(json.dumps({"progress": len(runs), "total": len(jobs), "seed": run["seed"], "policy": run["policy"], "budget": run["budget_override"], "stage_reached": run["stage_reached"], "censor_reason": run["censor_reason"]}, sort_keys=True), flush=True)
+    runs.sort(key=lambda run: (run["policy"], run["budget_override"], run["seed"]))
+    report = {"model": "drop-budget-sweep", "read_only": True,
+              "assumptions": ["Budgets are controlled simulator overrides; authored per-stage overrides are bypassed.",
+                              "One immutable input snapshot is shared by all runs.",
+                              "At zero Drops the policy retries without optional failed-board reward openings (the UI permits them).",
+                              "Policies are blind to brick layout; censored stages are excluded from cleared-stage statistics.",
+                              "A stage-limit censor counts as a completed configured run."],
+              "run_config": {"budgets": list(budgets), "seeds": list(seeds), "policies": list(policies),
+                             "stage_limit": args.stage_limit, "max_restarts_per_stage": args.max_restarts,
+                             "max_drop_actions": args.max_actions, "workers": args.workers},
+              "inputs": {"source_hashes": snapshot["source_hashes"], "economy": snapshot["economy"],
+                         "last_defined_stage": max(snapshot["stages"])},
+              "summary": summarize(runs), "runs": runs}
+    output = (root / args.output).resolve(); output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    print(json.dumps({"output": str(output), "runs": len(runs), "summary_groups": len(report["summary"])}, sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
