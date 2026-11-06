@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Static content migrated from the published GitHub Pages export because it has no application-source equivalent.",
+  "copiedFrom": "../site (2026-11-06)",
+  "entries": [
+    {
+      "source": "bounce-defense/index.html",
+      "destination": "bounce-defense/index.html",
+      "sha256": "10fd93345652ee083b0144264f53978efbf49bcde7220224ff59bd4c056533bf"
+    },
+    {
+      "source": "otter-retention/index.html",
+      "destination": "otter-retention/index.html",
+      "sha256": "69380d9a8c0536232d2771b9e764b765568e913014abdccaf3a9b830f3cda354"
+    },
+    {
+      "source": "assets/bounce-defense/**",
+      "destination": "assets/bounce-defense/**"
+    },
+    {
+      "source": "assets/otter-retention/**",
+      "destination": "assets/otter-retention/**"
+    },
+    {
+      "source": "assets/playable/WigglePuzzleWeb/index.html",
+      "destination": "assets/playable/WigglePuzzleWeb/index.html"
+    },
+    {
+      "source": "resume.pdf",
+      "destination": "resume.pdf"
+    },
+    {
+      "source": "portfolio.pdf",
+      "destination": "portfolio.pdf"
+    },
+    {
+      "source": "webgl/wigglepuzzle/**",
+      "destination": "webgl/wigglepuzzle/**",
+      "validation": "Excluded from ordinary link validation because Unity WebGL loads its own generated game assets."
+    }
+  ],
+  "intentionallyNotMigrated": [
+    "_next/** (stale generated Next output)",
+    "__next* and index.txt evidence dumps (stale SSR/RSC output)",
+    ".git/**",
+    ".idea/**",
+    ".DS_Store"
+  ]
+}

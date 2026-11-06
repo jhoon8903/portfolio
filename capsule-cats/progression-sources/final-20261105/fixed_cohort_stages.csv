@@ -1,0 +1,9 @@
+stage,entrant_journeys,journey_clears,within_journey_attempt_records,retry_attempt_records,first_attempt_clear_journeys,retry_clear_journeys,cleared_after_additional_growth,completed_zero_reward_losses,budget_censored_final_attempts,total_upgrade_cost,within_stage_preclear_upgrade_cost
+1,50,50,112,62,4,46,46,0,0,1022.0,433.0
+2,50,50,191,141,0,50,50,0,0,5676.0,3882.0
+3,50,50,311,261,1,49,49,8,0,7465.0,5664.0
+4,50,50,599,549,0,50,50,5,0,13741.0,11937.0
+5,50,50,323,273,3,47,47,1,0,8401.0,6602.0
+6,50,50,444,394,4,46,46,1,0,11388.0,9570.0
+7,50,50,467,417,3,47,47,10,0,11136.0,9327.0
+8,50,46,707,657,3,43,43,23,4,14911.0,13269.0

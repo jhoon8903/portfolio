@@ -1,0 +1,25 @@
+{
+  "decision_id": "BAL-C-ADOPT-2026-11-05",
+  "recorded_at_utc": "2026-11-05T02:53:09.233621+00:00",
+  "source": "User decision in current conversation",
+  "user_decision": "C를 유지하고, BM으로 참치캔등을 제공하면 알아서 줄어들 것 같은데",
+  "accepted_scope": "Stage1-8 local unmonetized balance baseline C; not whole-game release approval",
+  "input_digest": "03ff43c05cefc28c6a24abae07d2c7c9f6c9f7cb76ecd45b5854535abb32e9e5",
+  "gameplay_inputs_changed": [],
+  "additional_combat_runs": 0,
+  "prior_validation": {
+    "independent_earned_journeys": 50,
+    "attempt_records": 3154,
+    "stage8_clears": 46,
+    "budget_censored": 4
+  },
+  "supersedes": "pending_user_pacing_decision in earlier final50-artifact-audit.json; historical audit retained",
+  "monetization_direction": "Additional tuna supply as optional progression acceleration; keep free rewards, common unit stats and upgrade rules fixed",
+  "monetization_effect_status": "hypothesis_not_simulated",
+  "bm_implementation_status": "not_implemented_or_deployed",
+  "release_limitations": [
+    "No human retention or purchase behavior proof",
+    "No guarantee of individual clear or time saved",
+    "Server changes remain undeployed"
+  ]
+}

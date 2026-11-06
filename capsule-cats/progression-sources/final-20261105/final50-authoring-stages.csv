@@ -1,0 +1,9 @@
+stage,source,sha256,towerMaximumHealth,enemyHealthMultiplier,enemyMoveSpeedMultiplier,enemyMeleeDamageMultiplier,authored_wave_entries,authored_spawn_groups,authored_total_enemy_count
+1,Assets/Projects/Assets/Configuration/Stages/Stage01.asset,25601012b455540ea146f5ac3a7ae11d9a4ec2060a37f331ba83c30561d59f11,600,1,1,1,10,14,238
+2,Assets/Projects/Assets/Configuration/Stages/Stage02.asset,c8c8d4ddf466862460b79b0debf7ce6b2a78ffdc8cf0b4d9a4a89f96845b207c,600,1.1,1.01,1.04,10,14,234
+3,Assets/Projects/Assets/Configuration/Stages/Stage03.asset,deafcde1838f2fbf8f25d1ab672d674ad341a80621be45fb51ee203b3e0d2316,600,9.2,1.02,1.08,20,24,464
+4,Assets/Projects/Assets/Configuration/Stages/Stage04.asset,2067ff8af68e4ed72f37820a3aeb2a2c26b570c34b594832f983c764ddaa8d04,600,12,1.03,1.12,20,24,477
+5,Assets/Projects/Assets/Configuration/Stages/Stage05.asset,e594cafedb51012450b8b423ae02b4c71ece1e5e7ee5fe2f783f8656343d3e34,600,14,1.04,1.16,20,24,493
+6,Assets/Projects/Assets/Configuration/Stages/Stage06.asset,d14535fdcd01c28d19c14eabe798ab6ed8a47f6af6af9fa3162f56ca44cb9402,600,16,1.05,1.2,20,24,506
+7,Assets/Projects/Assets/Configuration/Stages/Stage07.asset,724abd269019d766cda3ecee1a404149017e3c9a77bc588cc61b767ece17bef4,600,18,1.06,1.24,20,24,521
+8,Assets/Projects/Assets/Configuration/Stages/Stage08.asset,14e6784ef06a4c731228a95bba103f15fa9e2f421092a53aaad522a5747ba5d8,600,22,1.07,1.28,20,24,536

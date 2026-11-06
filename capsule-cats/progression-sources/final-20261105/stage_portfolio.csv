@@ -1,0 +1,9 @@
+stage,first_attempt_clear,retry_clear_with_additional_growth,retry_clear_without_additional_growth,entered_nonclear,never_entered,total_upgrade_cost,within_stage_preclear_upgrade_cost
+1,4,46,0,0,0,1022.0,433.0
+2,0,50,0,0,0,5676.0,3882.0
+3,1,49,0,0,0,7465.0,5664.0
+4,0,50,0,0,0,13741.0,11937.0
+5,3,47,0,0,0,8401.0,6602.0
+6,4,46,0,0,0,11388.0,9570.0
+7,3,47,0,0,0,11136.0,9327.0
+8,3,43,0,4,0,14911.0,13269.0

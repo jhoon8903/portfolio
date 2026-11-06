@@ -2,5 +2,9 @@
 2:I[9630,[],""]
 3:I[1380,[],""]
 :HL["/portfolio/_next/static/css/b86b764b626f0b8c.css","style"]
-:HL["/portfolio/_next/static/css/b6fb1246c815e5b7.css","style"]
-0:{"rsc":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/portfolio/_next/static/css/b86b764b626f0b8c.css","precedence":"next"}],["$","link","1",{"rel":"stylesheet","href":"/portfolio/_next/static/css/b6fb1246c815e5b7.css","precedence":"next"}]],["$","html",null,{"lang":"ko","children":["$","body",null,{"children":["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"TNhGOtqMYHjj0RXfWIZ1C"}
+:HL["/portfolio/_next/static/css/984f21404d6eec59.css","style"]
+:HL["/portfolio/assets/bounce-defense/home.css","style"]
+:HL["/portfolio/assets/otter-retention/home.css","style"]
+:HL["/portfolio/assets/portfolio-editorial/project-ambient.css","style"]
+:HL["/portfolio/assets/portfolio-editorial/refinement.css","style"]
+0:{"rsc":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/portfolio/_next/static/css/b86b764b626f0b8c.css","precedence":"next"}],["$","link","1",{"rel":"stylesheet","href":"/portfolio/_next/static/css/984f21404d6eec59.css","precedence":"next"}]],["$","html",null,{"lang":"ko","children":[["$","head",null,{"children":[["$","link",null,{"rel":"stylesheet","href":"/portfolio/assets/bounce-defense/home.css"}],["$","link",null,{"rel":"stylesheet","href":"/portfolio/assets/otter-retention/home.css"}],["$","link",null,{"rel":"stylesheet","href":"/portfolio/assets/portfolio-editorial/project-ambient.css"}],["$","link",null,{"rel":"stylesheet","href":"/portfolio/assets/portfolio-editorial/refinement.css"}]]}],["$","body",null,{"children":[["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}],["$","script",null,{"defer":true,"src":"/portfolio/assets/portfolio-editorial/ambient-player.js"}],["$","script",null,{"defer":true,"src":"/portfolio/assets/portfolio-editorial/evidence-dialog.js"}]]}]]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"JxhsDmSW60G5C5BknCMrc"}

@@ -1,0 +1,14 @@
+.project-ambient-host { position:relative; isolation:isolate; overflow:hidden; background:#101010; color:#f4f4f4; }
+.project-ambient-host :is(h1,h2,h3,strong,b) { color:#f4f4f4; }
+.project-ambient-host :is(p,small,.meta) { color:#c4c4c4; }
+.project-ambient-host :is(a,em,.nr-eyebrow) { color:#d8ad5e; }
+body > header.project-ambient-host { padding:30px 30px 65px; }
+body > header.project-ambient-host .meta span { border-color:#777; }
+.project-ambient-host > :not(.project-ambient) { position:relative; z-index:1; }
+.project-ambient { position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; background:#101010; }
+.project-ambient video { width:100%; height:100%; object-fit:cover; opacity:.65; filter:grayscale(1) contrast(1.06) brightness(.9); transform:scale(1.025); }
+.project-ambient-shade { position:absolute; inset:0; background:linear-gradient(90deg,#080808d9 0%,#080808b3 44%,#08080880 100%),linear-gradient(180deg,#08080880 0%,transparent 44%,#080808d9 100%); }
+.project-ambient-toggle { position:absolute!important; right:18px; bottom:18px; z-index:2!important; padding:6px 8px; border:1px solid currentColor; background:#101010b3; color:inherit; font:11px/1.2 ui-monospace,monospace; cursor:pointer; }
+.project-ambient-host > .project-ambient-caption { position:absolute; left:30px; bottom:22px; color:#b0b0b0; font:9px/1.5 ui-monospace,monospace; max-width:65%; }
+@media(max-width:600px){.project-ambient-host > .project-ambient-caption{left:18px;max-width:58%;font-size:8px}body > header.project-ambient-host{padding-inline:20px}.project-ambient-host .nr-hero-copy{padding-bottom:25px}}
+@media(max-width:600px){.project-ambient-host{padding-top:68px!important}.project-ambient-toggle{top:18px;bottom:auto}.project-ambient-host > .project-ambient-caption{top:20px;bottom:auto}}

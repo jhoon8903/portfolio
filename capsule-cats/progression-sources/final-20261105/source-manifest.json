@@ -1,0 +1,66 @@
+{
+  "snapshot_date": "2026-11-06",
+  "experiment_closed": "2026-11-05",
+  "files": [
+    {
+      "file": "FINAL_REPORT.md",
+      "source": "/Volumes/Dock_SSD/Projects/Lottery-Cat-Defense/docs/Simulation/runs/2026-11-04-C-independent-validation/FINAL_REPORT.md",
+      "sha256": "3858f0fc113236668a92623845179ab636aa65f2db1727a214a600c9701a9f36"
+    },
+    {
+      "file": "final50-summary.json",
+      "source": "/Volumes/Dock_SSD/Projects/Lottery-Cat-Defense/docs/Simulation/runs/2026-11-04-C-independent-validation/final50-summary.json",
+      "sha256": "3decd9611e34c58492151285fe95fe28affcdc643eec58d824bda9d839de97ed"
+    },
+    {
+      "file": "stage_portfolio.csv",
+      "source": "/Volumes/Dock_SSD/Projects/Lottery-Cat-Defense/docs/Simulation/runs/2026-11-04-C-independent-validation/final50-charts/stage_portfolio.csv",
+      "sha256": "50df20be904d276adef86b7052cb70a93a51cdb22131a605776efff9c6636347"
+    },
+    {
+      "file": "final50-authoring-stages.csv",
+      "source": "/Volumes/Dock_SSD/Projects/Lottery-Cat-Defense/docs/Simulation/runs/2026-11-04-C-independent-validation/final50-authoring-stages.csv",
+      "sha256": "dbd9e8784f79ffa8d5cc9c34730368c92e55e37bae5ec03b1063200ff738872b"
+    },
+    {
+      "file": "C-adoption-decision.json",
+      "source": "/Volumes/Dock_SSD/Projects/Lottery-Cat-Defense/docs/Simulation/runs/2026-11-04-C-independent-validation/C-adoption-decision.json",
+      "sha256": "746b0e1c297fd89f50801df4a63eb3b4376f114059cf59c7f3367a06443b63c1"
+    },
+    {
+      "file": "SCREEN_REPORT.md",
+      "source": "/Volumes/Dock_SSD/Projects/Lottery-Cat-Defense/docs/Simulation/runs/2026-11-04-C-independent-validation/SCREEN_REPORT.md",
+      "sha256": "a6575a6704a426d42522d440686dbf93db3296cdbd235ef519d08862bd70144b"
+    },
+    {
+      "file": "screen_control_cases.csv",
+      "source": "/Volumes/Dock_SSD/Projects/Lottery-Cat-Defense/docs/Simulation/runs/2026-11-04-C-independent-validation/controls-analysis/screen_control_cases.csv",
+      "sha256": "62b92cf17537adac347f18e776ef6f4a6650d0951abd628efd68ab6ef0cb8d34"
+    },
+    {
+      "file": "fixed_cohort_stages.csv",
+      "source": "/Volumes/Dock_SSD/Projects/Lottery-Cat-Defense/docs/Simulation/runs/2026-11-04-C-independent-validation/earned-final50-analysis/fixed_cohort_stages.csv",
+      "sha256": "0c1fe0ac45177dc72cd02f4677c7032c9191280472f8c089c93aff813b326773"
+    },
+    {
+      "file": "fixed_cohort_journeys.csv",
+      "source": "/Volumes/Dock_SSD/Projects/Lottery-Cat-Defense/docs/Simulation/runs/2026-11-04-C-independent-validation/earned-final50-analysis/fixed_cohort_journeys.csv",
+      "sha256": "87a12c3efc1305e0b5f811f0ed7eebcbb0bd121c4b3f7da6f523740e50316d83"
+    },
+    {
+      "file": "campaign-before.md",
+      "source": "/Volumes/Dock_SSD/Projects/Lottery-Cat-Defense/docs/Simulation/runs/2026-11-03-continuous-campaign-validation/REPORT.md",
+      "sha256": "93b0f368b3d659444ec71dda91b53b8ece602f29f7d8ccda3848a73ad93ce9e5"
+    },
+    {
+      "file": "campaign-before-stages.csv",
+      "source": "/Volumes/Dock_SSD/Projects/Lottery-Cat-Defense/docs/Simulation/runs/2026-11-03-continuous-campaign-validation/tables/stage_summary.csv",
+      "sha256": "23cfad108216854f067b1a8ad75d41b75dd8946c89ac87bcc0ff9c69bde725e2"
+    },
+    {
+      "file": "BEFORE_AFTER.md",
+      "source": "/Volumes/Dock_SSD/Projects/Lottery-Cat-Defense/docs/Simulation/BEFORE_AFTER.md",
+      "sha256": "91106ca8b19f30b3ebdb71b453ecdb9d75f9b9b473484b73a629329bff3c2562"
+    }
+  ]
+}

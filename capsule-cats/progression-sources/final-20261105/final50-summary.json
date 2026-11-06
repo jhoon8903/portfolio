@@ -1,0 +1,88 @@
+{
+  "scope": "Fixed-policy bot seed cohort; not a human retention or accepted pacing claim",
+  "independent_seeds": 50,
+  "earned_journeys": 50,
+  "frozen_policy_journeys": 8,
+  "all_policy_journeys": 58,
+  "earned_attempt_records": 3154,
+  "all_policy_attempt_records": 3771,
+  "stage8_clears": 46,
+  "budget_censored": 4,
+  "wilson95_seed_model_only": [
+    0.8116175308165717,
+    0.968450485911407
+  ],
+  "observed_combat_minutes": {
+    "min": 146.6350076476112,
+    "median": 245.3289016837875,
+    "max": 299.99973786842696
+  },
+  "clear_only_minutes_median_selection_biased": 239.33167914878578,
+  "completed_losses": 2754,
+  "zero_reward_completed_losses": 48,
+  "completed_loss_tuna": 61068.0,
+  "stage_effort": [
+    {
+      "stage": 1,
+      "median_attempt_records": 2.0,
+      "max_attempt_records": 3,
+      "median_observed_minutes": 4.118611325913419,
+      "max_observed_minutes": 6.138055875680099
+    },
+    {
+      "stage": 2,
+      "median_attempt_records": 4.0,
+      "max_attempt_records": 6,
+      "median_observed_minutes": 8.583472669885182,
+      "max_observed_minutes": 13.257778469224771
+    },
+    {
+      "stage": 3,
+      "median_attempt_records": 6.0,
+      "max_attempt_records": 14,
+      "median_observed_minutes": 22.85694563652699,
+      "max_observed_minutes": 48.32278029800703
+    },
+    {
+      "stage": 4,
+      "median_attempt_records": 12.0,
+      "max_attempt_records": 21,
+      "median_observed_minutes": 46.08722462585817,
+      "max_observed_minutes": 85.38222667525211
+    },
+    {
+      "stage": 5,
+      "median_attempt_records": 5.0,
+      "max_attempt_records": 16,
+      "median_observed_minutes": 20.034167711529882,
+      "max_observed_minutes": 66.44528124316906
+    },
+    {
+      "stage": 6,
+      "median_attempt_records": 7.5,
+      "max_attempt_records": 30,
+      "median_observed_minutes": 31.438751639658584,
+      "max_observed_minutes": 131.5275068596937
+    },
+    {
+      "stage": 7,
+      "median_attempt_records": 8.0,
+      "max_attempt_records": 27,
+      "median_observed_minutes": 36.21000188849867,
+      "max_observed_minutes": 109.76000572443009
+    },
+    {
+      "stage": 8,
+      "median_attempt_records": 11.5,
+      "max_attempt_records": 39,
+      "median_observed_minutes": 44.34514120166811,
+      "max_observed_minutes": 149.47000779546798
+    }
+  ],
+  "censored_seeds": [
+    1100801,
+    1100812,
+    1100818,
+    1100828
+  ]
+}
