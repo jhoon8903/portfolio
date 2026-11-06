@@ -1,0 +1,189 @@
+/* Screen hierarchy: separate reading surfaces, controls, and navigation. */
+@media screen {
+  :root { --ui-gold:#d8ad5e; --ui-panel:#191919; --ui-raised:#242424; --ui-edge:#555; --ui-copy:#d0d0d0; }
+
+  /* A stable reading surface sits over the moving background. */
+  body .portfolio-editorial.page-ambient-surface :is(.content-section,.contact-section),
+  body.capsule-detail > main > .section {
+    background:rgb(14 14 14 / .94);
+    border:1px solid #424242;
+    border-top:2px solid #747474;
+    padding:48px;
+    margin-block:48px;
+    scroll-margin-top:88px;
+  }
+  body .portfolio-editorial.page-ambient-surface :is(.content-section,.contact-section) { width:min(calc(100% - 48px),1536px); }
+  body .portfolio-editorial .section-heading { grid-template-columns:1fr; gap:12px; margin-bottom:36px; }
+  body .portfolio-editorial .section-heading > * { grid-column:1; grid-row:auto; margin:0; }
+  body .portfolio-editorial .section-heading h2 { font-size:clamp(28px,3vw,42px); max-width:28ch; }
+  body .portfolio-editorial .section-heading .section-lead { color:#c6c6c6; max-width:68ch; font-size:16px; }
+  body .portfolio-editorial .section-index,
+  body.capsule-detail .section > :is(.section-heading,.impact-heading) .eyebrow {
+    display:block; color:var(--ui-gold); font-size:12px; font-weight:700; letter-spacing:.06em; margin-bottom:10px;
+  }
+  body .portfolio-editorial .proof-band { background:rgb(19 19 19 / .96); border-block-color:#5c5c5c; }
+  body .portfolio-editorial .proof-item { padding-block:28px; }
+  body .portfolio-editorial :is(.capability-card>p,.system-column p,.system-principles p,.timeline p,.playable-card-copy>span,.technical-case-copy>p) { color:var(--ui-copy); }
+  body .portfolio-editorial :is(.technical-case-copy>p:first-child,.hero-feature-caption div>span,.playable-card-copy>p,.hero-work-head) { color:#b9b9b9; }
+  body .portfolio-editorial .technical-case-card,
+  body .portfolio-editorial .operations-case-card,
+  body .portfolio-editorial .playable-card { background:#191919; border:1px solid #555; }
+  body .portfolio-editorial .technical-case-copy { background:#191919; }
+  body .portfolio-editorial .technical-case-numbers { background:#222; border:0; padding:20px; margin:20px 0; gap:24px; }
+  body .portfolio-editorial .technical-case-numbers span { color:#ccc; }
+  body .portfolio-editorial .technical-case-numbers b { color:#fff; }
+  body .portfolio-editorial .cat-card-evidence { background:#111; }
+  body .portfolio-editorial .playable-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
+  body .portfolio-editorial .playable-card-copy { padding:24px; }
+  body .portfolio-editorial .playable-card-copy>span { margin-bottom:24px; }
+  body .portfolio-editorial .playable-card h3 { font-size:24px; line-height:1.3; margin:10px 0 16px; }
+  body .portfolio-editorial .variant-links { gap:10px; margin-top:auto; padding-top:20px; border-top:1px solid #454545; }
+  body .portfolio-editorial .hero-feature { border:1px solid #666; background:#171717; }
+  body .portfolio-editorial .hero-feature-caption { align-items:center; padding:20px; }
+  body .portfolio-editorial .hero-feature-caption .hero-feature-arrow { display:inline-flex; align-items:center; gap:16px; padding:12px 16px; background:var(--ui-gold); color:#101010; white-space:nowrap; font-size:14px; font-weight:750; }
+  body .portfolio-editorial .hero-feature-arrow i { font-style:normal; }
+  body .portfolio-editorial .hero-filmstrip { gap:12px; background:none; }
+  body .portfolio-editorial .hero-filmstrip a { border:1px solid #666; background:#242424; }
+  body .portfolio-editorial .hero-filmstrip a > span { padding:12px; color:#f4f4f4; font-size:13px; }
+  body .portfolio-editorial :is(.hero-feature,.hero-filmstrip a,.technical-case-image,.capsule-case-link):hover { outline:2px solid var(--ui-gold); outline-offset:-2px; }
+  body .portfolio-editorial .title-roster > summary { background:#222; border:1px solid #666; padding:18px 20px; }
+  body .portfolio-editorial .title-roster[open] > summary { margin-bottom:24px; }
+
+  /* Primary actions: an opaque gold button with a verb in its label. */
+  body .portfolio-editorial :is(.hero-links a:first-child,.technical-case-copy>a,.capsule-case-cta,.variant-links button,.button-primary,.webgl-run-link),
+  body.capsule-detail :is(.button.solid,.recorded-film .film-caption button),
+  body .nr .nr-actions a:first-child,
+  body .wiggle-detail .webgl-run-link {
+    display:inline-flex; align-items:center; justify-content:space-between; gap:18px;
+    min-height:48px; padding:13px 20px; border:1px solid var(--ui-gold); border-radius:3px;
+    background:var(--ui-gold); color:#101010; font-family:inherit;
+    font-size:15px; font-weight:750; line-height:1.4; text-decoration:none; letter-spacing:0; cursor:pointer;
+  }
+  body .portfolio-editorial .playable-card .variant-links button { justify-content:center; flex:1 0 auto; gap:10px; }
+  body .portfolio-editorial .playable-card .variant-links button i { display:inline; margin:0; flex:none; width:auto; font-style:normal; color:#101010; background:none; }
+  body .portfolio-editorial :is(.hero-links a:first-child,.technical-case-copy>a,.capsule-case-cta,.variant-links button,.button-primary,.webgl-run-link):hover,
+  body.capsule-detail :is(.button.solid,.recorded-film .film-caption button):hover,
+  body .nr .nr-actions a:first-child:hover,
+  body .wiggle-detail .webgl-run-link:hover { background:#f1ca81; border-color:#f1ca81; color:#101010; }
+
+  /* Secondary actions are solid controls, distinct from captions and prose. */
+  body .portfolio-editorial :is(.hero-links a:not(:first-child),.product-card a,.download-links a,.ai-case-card a,.playable-modal-panel>header button),
+  body.capsule-detail :is(.button.outline,.text-link,.dialog-close,#copyEvidence),
+  body .nr :is(.nr-actions a:not(:first-child),.evidence-link,.nr-three a,.nr-footer-links a,.nr-code-file a),
+  body .cat-case :is(.cat-links a,.cat-implementation article>a),
+  body .legacy-case :is(.asset-links a,footer>a),
+  body .portfolio-evidence-dialog :is(button,footer a) {
+    display:inline-flex; align-items:center; justify-content:space-between; gap:16px;
+    min-height:46px; padding:12px 18px; border:1px solid #777; border-radius:3px;
+    background:#252525; color:#f4f4f4; font-family:inherit; font-size:14px; font-weight:650; line-height:1.5;
+    text-decoration:none; letter-spacing:0; cursor:pointer;
+  }
+  body.capsule-detail .text-link { width:fit-content; margin-top:12px; }
+  body .portfolio-editorial .download-links { gap:12px; }
+  body .portfolio-editorial .product-card a:hover,
+  body.capsule-detail :is(.button.outline,.text-link):hover,
+  body .nr :is(.evidence-link,.nr-three a,.nr-footer-links a):hover,
+  body .cat-case .cat-links a:hover { color:#fff; background:#383838; border-color:#eee; }
+  body :is(a,button,summary):focus-visible { outline:3px solid var(--ui-gold); outline-offset:4px; }
+
+  /* Capsule: keep data, selection controls, and evidence actions in separate groups. */
+  body.capsule-detail .section { padding:40px; }
+  body.capsule-detail .section-heading { align-items:start; gap:32px; margin-bottom:36px; }
+  body.capsule-detail :is(.section-heading>p,.impact-heading p,.hero-description,.asset-correction p,.footnote) { color:#c6c6c6; }
+  body.capsule-detail .case-index { gap:16px; padding:24px 0; border-block:1px solid #666; }
+  body.capsule-detail .case-index a { background:#1c1c1c; border:1px solid #626262; padding:24px; }
+  body.capsule-detail .case-index a:hover { background:#292929; color:#fff; border-color:var(--ui-gold); }
+  body.capsule-detail .battle-total { padding:24px; background:#26221a; border-left:4px solid var(--ui-gold); }
+  body.capsule-detail .balance-process { background:#1d1d1d; border:1px solid #555; padding:24px; }
+  body.capsule-detail .progression-result { border:1px solid #626262; background:#1b1b1b; }
+  body.capsule-detail .progression-headline { background:#242424; }
+  body.capsule-detail .progression-stage-result { background:#282828; border-left-color:#626262; }
+  body.capsule-detail .progression-curve text { font-size:12px; }
+  body.capsule-detail .progression-curve .curve-value { font-size:15px; font-weight:700; }
+  body.capsule-detail .progression-curve :is(.axis-title,.before-label) { font-size:11px; }
+  body.capsule-detail .progression-stage-picker { gap:8px; padding-top:20px; border-top:1px solid #555; }
+  body.capsule-detail :is(.tabs,.skill-tabs) { gap:8px; padding:8px; border:1px solid #666; background:#101010; }
+  body.capsule-detail :is(.skill-tabs button,.tabs button,.progression-stage-picker button,.attempt-select button) {
+    min-height:46px; padding:12px 16px; background:#2b2b2b; color:#f4f4f4; border:1px solid #777;
+    border-radius:3px; font-size:14px; line-height:1.4; font-weight:650;
+  }
+  body.capsule-detail .skill-tabs button { min-height:104px; }
+  body.capsule-detail .skill-tabs button :is(span,small) { color:#c4c4c4; }
+  body.capsule-detail :is(.skill-tabs button,.tabs button,.progression-stage-picker button,.attempt-select button):hover { background:#424242; color:#fff; border-color:#ddd; }
+  body.capsule-detail :is(.skill-tabs button,.tabs button)[aria-selected="true"],
+  body.capsule-detail :is(.progression-stage-picker button,.attempt-select button)[aria-pressed="true"] { background:var(--ui-gold); color:#101010; border-color:var(--ui-gold); box-shadow:none; }
+  body.capsule-detail .skill-tabs button[aria-selected="true"] :is(span,small,b) { color:#101010; }
+  body.capsule-detail .skill-body { margin-top:12px; border:1px solid #555; background:#1b1b1b; }
+  body.capsule-detail .skill-construction { background:#252525; border-left:1px solid #555; }
+  body.capsule-detail :is(.skill-name,.asset-spec>span,.film-duration,.asset-correction figcaption) { color:#bdbdbd; }
+  body.capsule-detail .server-visual { gap:24px; border:0; }
+  body.capsule-detail .server-path { background:#1b1b1b; padding:28px; border:1px solid #555; }
+  body.capsule-detail .server-path li { border-bottom:1px solid #414141; }
+  body.capsule-detail .server-path .server-boundary { background:#2d291f; border:1px solid #9b7d46; }
+  body.capsule-detail .server-result { background:#222; border:1px solid #626262; padding:28px; }
+  body.capsule-detail .save-guards { gap:24px; padding-top:32px; margin-top:32px; border-top:1px solid #555; }
+  body.capsule-detail .recorded-film { background:#1d1d1d; border:1px solid #666; padding:24px; }
+  body.capsule-detail .film-caption { align-items:center; padding-top:20px; border-top:1px solid #555; }
+  body.capsule-detail .film-caption p { color:#d0d0d0; }
+  body.capsule-detail footer { background:#101010; padding:28px; gap:24px; border-top:1px solid #555; }
+
+  /* Other detail pages keep their light/dark reading themes with clear section boundaries. */
+  body .nr.page-ambient-surface .nr-section,
+  body .cat-case .cat-section,
+  body.legacy-case main > section { border-top:2px solid #888; margin-block:36px; }
+  body .nr.page-ambient-surface .nr-section { background:rgb(244 244 244 / .97); }
+  body .nr.page-ambient-surface :is(.nr-dark,.nr-code-section) { background:#151515; border-color:#666; }
+  body .nr :is(.nr-three article,.nr-code-card),
+  body .cat-case :is(.cat-metric,.cat-result-card),
+  body.legacy-case .contract-grid article { border-color:#777; }
+  body .nr :is(.nr-tags span),body.legacy-case :is(.meta span,.chips span) { border:0; border-radius:0; background:none; padding:4px 0; }
+  body .nr .nr-tags { gap:10px 20px; }
+  body .nr .nr-tags span { color:#ccc; }
+  body .nr .nr-footer-links { gap:12px; }
+  body .nr .nr-code-file a { min-height:40px; padding:8px 12px; font-size:12px; overflow-wrap:anywhere; }
+
+  /* Navigation stays secondary; the background switch never competes with content actions. */
+  body .portfolio-editorial .site-header { background:#101010; border-bottom-color:#666; }
+  body .portfolio-editorial .site-header nav a { color:#ddd; }
+  body .portfolio-editorial .site-header .nav-cta { padding:10px 14px; border:1px solid #777; background:#252525; }
+  :is(body.page-ambient-surface,body .page-ambient-surface) .page-ambient-controls { background:#171717; border-color:#666; font-size:10px; }
+  :is(body.page-ambient-surface,body .page-ambient-surface) .page-ambient-toggle { background:#333; border-color:#888; min-height:42px; font-size:12px; padding:10px 14px; }
+}
+@media screen and (max-width:900px) {
+  body .portfolio-editorial .playable-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  body .portfolio-editorial.page-ambient-surface :is(.content-section,.contact-section) { padding:32px; width:calc(100% - 32px); margin-block:32px; }
+  body.capsule-detail > main > .section { padding:28px; margin-block:32px; }
+  body.capsule-detail .server-path,body.capsule-detail .server-result { padding:22px; }
+  body.capsule-detail .skill-tabs button { padding:12px; }
+}
+@media screen and (max-width:620px) {
+  body .portfolio-editorial .playable-grid { grid-template-columns:1fr; }
+  body .portfolio-editorial.page-ambient-surface :is(.content-section,.contact-section) { width:calc(100% - 24px); padding:24px 18px; margin-block:28px; }
+  body .portfolio-editorial .section-heading h2 { font-size:28px; line-height:1.35; }
+  body .portfolio-editorial .technical-case-copy { padding:22px; }
+  body .portfolio-editorial .technical-case-numbers { padding:16px; gap:20px; }
+  body .portfolio-editorial .hero-feature-caption { display:flex; flex-wrap:wrap; padding:16px; gap:16px; }
+  body .portfolio-editorial .hero-feature-caption .hero-feature-arrow { margin-left:auto; }
+  body .portfolio-editorial .hero-filmstrip { gap:8px; }
+  body .portfolio-editorial .hero-filmstrip a > span { font-size:12px; padding:10px 8px; }
+  body .portfolio-editorial .hero-links { width:100%; }
+  body .portfolio-editorial .hero-links a { flex:1; justify-content:center; }
+  body.capsule-detail > main > .section { padding:24px 16px; margin-inline:-4px; }
+  body.capsule-detail :is(.section-heading,.impact-heading) { gap:24px; }
+  body.capsule-detail .battle-total { padding:20px; }
+  body.capsule-detail .balance-process { padding:18px; }
+  body.capsule-detail .server-path,body.capsule-detail .server-result { padding:20px 16px; }
+  body.capsule-detail .skill-tabs { gap:6px; padding:6px; }
+  body.capsule-detail .skill-tabs button { min-height:92px; padding:10px; font-size:13px; }
+  body.capsule-detail .progression-stage-picker { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  body.capsule-detail .progression-stage-picker button { padding:10px 6px; }
+  body.capsule-detail .tabs { gap:6px; padding:6px; }
+  body.capsule-detail .tabs button { flex:1; padding:12px 10px; font-size:13px; }
+  body.capsule-detail .recorded-film { padding:18px; }
+  body.capsule-detail .film-caption { flex-wrap:wrap; }
+  body.capsule-detail .film-caption button { width:100%; }
+  body.capsule-detail .save-guards { gap:20px; }
+  body.capsule-detail .button { max-width:100%; white-space:normal; }
+  body .nr .nr-actions { gap:12px; }
+  body .nr .nr-actions a { flex:1; justify-content:center; }
+}

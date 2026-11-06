@@ -5,4 +5,5 @@
 :HL["/portfolio/assets/otter-retention/home.css","style"]
 :HL["/portfolio/assets/portfolio-editorial/project-ambient.css?v=20261106-page-bg2","style"]
 :HL["/portfolio/assets/portfolio-editorial/refinement.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"resume","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"TasmWLgVVt7kHjjatqOEs"}
+:HL["/portfolio/assets/portfolio-editorial/clarity.css?v=20261106-1","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"resume","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"Pt3oyTlEiMBYPTfkbYFNn"}

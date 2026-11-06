@@ -5,9 +5,10 @@
 :HL["/portfolio/assets/otter-retention/home.css","style"]
 :HL["/portfolio/assets/portfolio-editorial/project-ambient.css?v=20261106-page-bg2","style"]
 :HL["/portfolio/assets/portfolio-editorial/refinement.css","style"]
+:HL["/portfolio/assets/portfolio-editorial/clarity.css?v=20261106-1","style"]
 :HL["/portfolio/assets/capsule-cats/thumbnail.png","image"]
 :HL["/portfolio/assets/capsule-cats/battle.png","image"]
 :HL["/portfolio/assets/case-studies/WigglePuzzle.png","image"]
 :HL["/portfolio/assets/neon-reflector/play-editor.png","image"]
 :HL["/portfolio/assets/actionfit/convenisort_ss0.png","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"TasmWLgVVt7kHjjatqOEs"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"Pt3oyTlEiMBYPTfkbYFNn"}

@@ -97,8 +97,8 @@ dialog{background:#151515;border:1px solid #666;color:var(--text);width:min(1000
 @media(max-width:1050px){.progression-chart-title{align-items:start;flex-direction:column;gap:8px}.progression-chart-main{padding:24px 18px}.progression-stage-result{padding:24px 20px}.progression-headline{padding:24px}.progression-headline strong{font-size:21px}.progression-chart-layout{grid-template-columns:minmax(0,1.8fr) minmax(210px,1fr)}}
 @media(max-width:760px){.balance-impact .battle-total{display:grid;grid-template-columns:auto 1fr;gap:5px 20px;align-items:end;text-align:left}.balance-impact .battle-total>span:first-child{grid-column:1/-1;max-width:none;font-size:11px}.balance-impact .battle-total>span:last-child{font-size:10px;max-width:140px;padding-bottom:8px}.balance-impact .battle-total strong{font-size:67px}.balance-impact .battle-total small{font-size:17px;margin-left:7px}.progression-headline{padding:20px;grid-template-columns:1fr;gap:12px}.progression-headline>span{display:none}.progression-headline>div>span{font-size:10px;margin-bottom:3px}.progression-headline strong{font-size:21px}.progression-chart-layout{grid-template-columns:1fr}.progression-chart-main{padding:22px 14px}.progression-chart-title{gap:12px;padding-inline:6px;margin-bottom:17px}.progression-chart-title h3{font-size:15px}.progression-stage-picker{gap:4px;margin-left:0}.progression-stage-picker button{font-size:10px;min-height:42px}.progression-stage-result{border-left:0;border-top:1px solid var(--line);padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}.progression-stage-result>.eyebrow{grid-column:1/-1}.growth-count{font-size:66px;margin:0}.growth-count small{font-size:20px}.progression-stage-result h3{font-size:20px;margin:0;align-self:center}.growth-distribution,.growth-breakdown,.progression-stage-result>p{grid-column:1/-1}.growth-distribution{margin-top:8px}.growth-breakdown{margin:0}.progression-stage-result>p{margin:3px 0 0}.progression-chart-note{padding:16px 20px;font-size:10px}.progression-curve .curve-value{font-size:23px}}
 </style>
-</head>
-<body class="page-ambient-surface">
+<link rel="stylesheet" href="../assets/portfolio-editorial/clarity.css?v=20261106-1"></head>
+<body class="page-ambient-surface capsule-detail">
   <div class="page-ambient capsule-page-ambient" aria-hidden="true"><img src="../assets/capsule-cats/battle.png" alt=""><video id="capsuleAmbient" muted playsinline preload="none" hidden></video><div class="page-ambient-shade"></div></div>
   <div class="page-ambient-controls"><button type="button" class="page-ambient-toggle" id="capsuleMotion" hidden>배경 영상 정지</button></div>
   <a class="skip" href="#balance">핵심 사례로 이동</a>
@@ -267,17 +267,24 @@ window.PORTFOLIO_MEDIA = {
   const progression = window.PORTFOLIO_PROGRESSION;
   if (progression) {
     const stages = progression.stages.filter(stage => stage.stage >= 3);
-    const x = index => 60 + index * 145;
-    const y = attempts => 220 - attempts / 14 * 180;
-    const points = stages.map((stage, index) => `${x(index)},${y(stage.median_attempts)}`).join(' ');
-    $('#progressionChart').innerHTML = `<svg viewBox="0 0 840 255" class="progression-curve" role="img" aria-label="후반 도전 횟수 중앙값. 조정 전 모두 1회. 최종 C안: Stage3 6회, Stage4 12회, Stage5 5회, Stage6 7.5회, Stage7 8회, Stage8 11.5회.">
-      ${[0,4,8,12].map(value => `<line class="curve-grid" x1="48" y1="${y(value)}" x2="810" y2="${y(value)}"/><text x="30" y="${y(value)+5}" text-anchor="end">${value}</text>`).join('')}
-      <text x="48" y="21" class="axis-title">도전 횟수 · 중앙값</text>
-      <line class="curve-before" x1="60" x2="785" y1="${y(1)}" y2="${y(1)}"/>
-      <polyline class="curve-after" points="${points}"/>
-      ${stages.map((stage,index) => `<g data-stage-dot="${stage.stage}"><circle class="curve-dot" cx="${x(index)}" cy="${y(stage.median_attempts)}" r="6"/><text class="curve-value" x="${x(index)}" y="${y(stage.median_attempts)-17}" text-anchor="middle">${stage.median_attempts}</text><circle class="curve-before-dot" cx="${x(index)}" cy="${y(1)}" r="4"/></g>`).join('')}
-      <text class="before-label" x="785" y="243" text-anchor="end">조정 전: 모두 1회</text>
-    </svg>`;
+    const chart = $('#progressionChart');
+    const renderCurve = () => {
+      const width = Math.max(260, chart.clientWidth);
+      const selected = Number($('.progression-stage-picker [aria-pressed="true"]')?.dataset.balanceStage || 8);
+      const x = index => 40 + index * (width - 66) / (stages.length - 1);
+      const y = attempts => 205 - attempts / 14 * 155;
+      const points = stages.map((stage, index) => `${x(index)},${y(stage.median_attempts)}`).join(' ');
+      chart.innerHTML = `<svg viewBox="0 0 ${width} 245" class="progression-curve" role="img" aria-label="후반 도전 횟수 중앙값. 조정 전 모두 1회. 최종 C안: Stage3 6회, Stage4 12회, Stage5 5회, Stage6 7.5회, Stage7 8회, Stage8 11.5회.">
+        ${[0,4,8,12].map(value => `<line class="curve-grid" x1="36" y1="${y(value)}" x2="${width-16}" y2="${y(value)}"/><text x="25" y="${y(value)+4}" text-anchor="end">${value}</text>`).join('')}
+        <text x="36" y="20" class="axis-title">도전 횟수 · 중앙값</text>
+        <line class="curve-before" x1="40" x2="${width-26}" y1="${y(1)}" y2="${y(1)}"/>
+        <polyline class="curve-after" points="${points}"/>
+        ${stages.map((stage,index) => `<g data-stage-dot="${stage.stage}" class="${stage.stage===selected?'active':''}"><circle class="curve-dot" cx="${x(index)}" cy="${y(stage.median_attempts)}" r="4"/><text class="curve-value" x="${x(index)}" y="${y(stage.median_attempts)-14}" text-anchor="middle">${stage.median_attempts}</text><circle class="curve-before-dot" cx="${x(index)}" cy="${y(1)}" r="3"/></g>`).join('')}
+        <text class="before-label" x="${width-16}" y="235" text-anchor="end">조정 전: 모두 1회</text>
+      </svg>`;
+    };
+    renderCurve();
+    new ResizeObserver(renderCurve).observe(chart);
     $('.progression-stage-picker').innerHTML = stages.map(stage => `<button type="button" data-balance-stage="${stage.stage}" aria-pressed="false" aria-controls="progressionResult">Stage ${stage.stage}</button>`).join('');
     const selectStage = id => {
       const stage = stages.find(item => item.stage === id);
