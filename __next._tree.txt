@@ -1,13 +1,13 @@
 :HL["/portfolio/_next/static/css/b86b764b626f0b8c.css","style"]
 :HL["/portfolio/_next/static/css/984f21404d6eec59.css","style"]
-:HL["/portfolio/_next/static/css/ab3ddde0f8f35db8.css","style"]
+:HL["/portfolio/_next/static/css/45e10df26732eb2e.css","style"]
 :HL["/portfolio/assets/bounce-defense/home.css","style"]
 :HL["/portfolio/assets/otter-retention/home.css","style"]
-:HL["/portfolio/assets/portfolio-editorial/project-ambient.css","style"]
+:HL["/portfolio/assets/portfolio-editorial/project-ambient.css?v=20261106-page-bg2","style"]
 :HL["/portfolio/assets/portfolio-editorial/refinement.css","style"]
 :HL["/portfolio/assets/capsule-cats/thumbnail.png","image"]
 :HL["/portfolio/assets/capsule-cats/battle.png","image"]
 :HL["/portfolio/assets/case-studies/WigglePuzzle.png","image"]
 :HL["/portfolio/assets/neon-reflector/play-editor.png","image"]
 :HL["/portfolio/assets/actionfit/convenisort_ss0.png","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"JxhsDmSW60G5C5BknCMrc"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"TasmWLgVVt7kHjjatqOEs"}

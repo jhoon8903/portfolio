@@ -6,6 +6,8 @@
   <title>고양이 캡슐 디펜스 · 이정훈 포트폴리오</title>
   <meta name="description" content="1인 개발 게임의 AI Skill 제작, 밸런스 비교 실험, 서버 저장 최적화 사례.">
   <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="../assets/portfolio-editorial/project-ambient.css?v=20261106-page-bg2">
+  <link rel="stylesheet" href="../assets/portfolio-editorial/refinement.css">
   <style>:root{color-scheme:dark;--bg:#101010;--panel:#191919;--text:#f4f4f4;--muted:#aaa;--dim:#737373;--line:#343434;--gold:#d8ad5e;--sans:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
 *{box-sizing:border-box}html{scroll-padding-top:90px}body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}button,a,input,select{-webkit-tap-highlight-color:transparent}button,select{font:inherit}button,a{touch-action:manipulation}button{cursor:pointer;color:inherit}button{border:0;background:none}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,select:focus-visible,pre:focus-visible{outline:2px solid var(--gold);outline-offset:5px}button:hover,a:hover{color:var(--gold)}img,video{display:block;max-width:100%}h1,h2,h3,p,figure{margin:0}h1,h2,h3{word-break:keep-all;text-wrap:balance}h1,h2{letter-spacing:-.035em;font-weight:650;line-height:1.14}p{word-break:keep-all}em{font-style:normal;color:var(--gold)}button[hidden],video[hidden]{display:none}main{max-width:1440px;margin:auto;padding:0 56px}.eyebrow,.index-label{display:block;font:11px/1.6 var(--mono);letter-spacing:.1em;color:var(--gold)}.small,.footnote{font-size:12px;color:var(--muted)}.footnote{margin-top:22px;max-width:900px}.skip{position:fixed;top:-70px;left:20px;z-index:100;background:var(--gold);color:var(--bg);padding:10px}.skip:focus{top:12px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .site-header{height:74px;display:flex;align-items:center;gap:36px;border-bottom:1px solid var(--line);padding:0 40px;position:sticky;top:0;background:rgba(16,16,16,.96);z-index:20}.site-header .back{font-size:13px;font-weight:600}.header-project{font:11px var(--mono);color:var(--muted);letter-spacing:.12em}.site-header nav{display:flex;gap:28px;margin-left:auto;font-size:12px}.site-header nav a{padding:15px 0}.site-header nav a:hover{border-bottom:1px solid var(--gold)}
@@ -34,7 +36,6 @@ dialog{background:#151515;border:1px solid #666;color:var(--text);width:min(1000
 @media(max-width:760px){.balance-impact .battle-total strong{font-size:73px}.balance-impact .battle-total small{font-size:19px}.balance-impact .battle-total>span{max-width:142px;font-size:10px}.balance-process{grid-template-columns:1fr;margin-bottom:22px}.balance-process li,.balance-process li:first-child{padding:17px 0;display:grid;grid-template-columns:90px 1fr;gap:2px 12px;border-right:0;border-bottom:1px solid var(--line)}.balance-process li>span{grid-row:1/3;align-self:center;font-size:10px}.balance-process h3{font-size:17px;margin:0}.balance-process p{font-size:10px;margin:0}.balance-process li:not(:last-child):after{display:none}.progression-comparison{grid-template-columns:1fr}.progression-comparison article{padding:23px 20px;border-right:0;border-bottom:1px solid var(--line)}.progression-comparison h3{font-size:23px;margin:10px 0 19px}.progression-comparison p{font-size:11px;margin-top:15px}.stage-strip>span{padding:7px 0}.stage-strip b{font-size:10px}.growth-loop{gap:12px;height:46px}.growth-loop>span{font-size:14px;padding-inline:15px}.impact-footer small{font-size:10px}.impact-footer br.mobile-break{display:block}}
 
 /* Full recordings and their first-screen links. */
-.hero-ambient img,.hero-ambient video{position:absolute;inset:0}
 .recorded-screens{gap:14px;background:#080808;padding:16px}
 .recorded-screens a{display:block;position:relative;width:calc(50% - 7px);min-width:0}
 .recorded-screens img{width:100%;height:410px}
@@ -97,14 +98,15 @@ dialog{background:#151515;border:1px solid #666;color:var(--text);width:min(1000
 @media(max-width:760px){.balance-impact .battle-total{display:grid;grid-template-columns:auto 1fr;gap:5px 20px;align-items:end;text-align:left}.balance-impact .battle-total>span:first-child{grid-column:1/-1;max-width:none;font-size:11px}.balance-impact .battle-total>span:last-child{font-size:10px;max-width:140px;padding-bottom:8px}.balance-impact .battle-total strong{font-size:67px}.balance-impact .battle-total small{font-size:17px;margin-left:7px}.progression-headline{padding:20px;grid-template-columns:1fr;gap:12px}.progression-headline>span{display:none}.progression-headline>div>span{font-size:10px;margin-bottom:3px}.progression-headline strong{font-size:21px}.progression-chart-layout{grid-template-columns:1fr}.progression-chart-main{padding:22px 14px}.progression-chart-title{gap:12px;padding-inline:6px;margin-bottom:17px}.progression-chart-title h3{font-size:15px}.progression-stage-picker{gap:4px;margin-left:0}.progression-stage-picker button{font-size:10px;min-height:42px}.progression-stage-result{border-left:0;border-top:1px solid var(--line);padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}.progression-stage-result>.eyebrow{grid-column:1/-1}.growth-count{font-size:66px;margin:0}.growth-count small{font-size:20px}.progression-stage-result h3{font-size:20px;margin:0;align-self:center}.growth-distribution,.growth-breakdown,.progression-stage-result>p{grid-column:1/-1}.growth-distribution{margin-top:8px}.growth-breakdown{margin:0}.progression-stage-result>p{margin:3px 0 0}.progression-chart-note{padding:16px 20px;font-size:10px}.progression-curve .curve-value{font-size:23px}}
 </style>
 </head>
-<body>
+<body class="page-ambient-surface">
+  <div class="page-ambient capsule-page-ambient" aria-hidden="true"><img src="../assets/capsule-cats/battle.png" alt=""><video id="capsuleAmbient" muted playsinline preload="none" hidden></video><div class="page-ambient-shade"></div></div>
+  <div class="page-ambient-controls"><button type="button" class="page-ambient-toggle" id="capsuleMotion" hidden>배경 영상 정지</button></div>
   <a class="skip" href="#balance">핵심 사례로 이동</a>
   <header class="site-header"><a class="back" href="../#case">← 포트폴리오</a><span class="header-project">CAPSULE CATS</span><nav aria-label="상세 페이지 목차"><a href="#balance">밸런스</a><a href="#skills">AI 스킬</a><a href="#server">서버</a><a href="#media">플레이 영상</a></nav></header>
   <main>
     <section class="hero" id="top">
-      <div class="hero-ambient" aria-hidden="true"><img src="../assets/capsule-cats/battle.png" alt=""><video id="capsuleAmbient" muted playsinline preload="none" hidden></video></div>
       <div class="hero-copy"><p class="eyebrow">TECHNICAL CASE / UNITY · 1인 개발 · 개발 중</p><h1>고양이 캡슐<br>디펜스<span>.</span></h1><p class="hero-deck">게임을 직접 개발하며<br>반복 작업을 자동화했습니다.</p><p class="hero-description">기획부터 에셋 제작·전투 검증까지, 반복 작업을 자동화하는 AI 스킬 5개를 직접 만들었습니다.</p><div class="hero-actions"><a class="button solid" href="#balance">핵심 사례 보기 <span>↘</span></a><a class="text-link" href="#media">플레이 영상 <span>↗</span></a></div></div>
-      <figure class="hero-stage"><div class="screens recorded-screens"><a href="#combatFilm" data-play-film="combatFilm"><img src="../assets/capsule-cats/combat-poster.jpg" alt="고양이들이 적을 막는 전투 화면"><span>▷ 전투 영상</span></a><a href="#upgradeFilm" data-play-film="upgradeFilm"><img src="../assets/capsule-cats/upgrade-poster.jpg" alt="유닛을 선택해 능력치를 높이는 강화 화면"><span>▷ 강화 영상</span></a></div><figcaption><span>직접 녹화한 전투·유닛 강화 화면</span><span>2026.11.06</span></figcaption><button type="button" class="ambient-toggle" id="capsuleMotion" hidden>배경 영상 정지</button></figure>
+      <figure class="hero-stage"><div class="screens recorded-screens"><a href="#combatFilm" data-play-film="combatFilm"><img src="../assets/capsule-cats/combat-poster.jpg" alt="고양이들이 적을 막는 전투 화면"><span>▷ 전투 영상</span></a><a href="#upgradeFilm" data-play-film="upgradeFilm"><img src="../assets/capsule-cats/upgrade-poster.jpg" alt="유닛을 선택해 능력치를 높이는 강화 화면"><span>▷ 강화 영상</span></a></div><figcaption><span>직접 녹화한 전투·유닛 강화 화면</span><span>2026.11.06</span></figcaption></figure>
     </section>
     <nav class="case-index" aria-label="핵심 결과 바로가기">
       <a href="#balance"><span class="index-label">01 / 밸런스 조정</span><strong>1 <span>→</span> 8<small>스테이지</small></strong><span class="index-description">성장 속도에 맞춘 난이도 조정 <i>↗</i></span></a>
@@ -340,13 +342,13 @@ window.PORTFOLIO_MEDIA = {
   });
   const ambient = $('#capsuleAmbient'), toggle = $('#capsuleMotion'), motion = matchMedia('(prefers-reduced-motion: reduce)');
   if (clips.length) {
-    let pausedByUser = false, visible = true, manual = false, clipIndex = 0, failedClips = 0;
+    let pausedByUser = false, manual = false, clipIndex = 0, failedClips = 0;
     ambient.hidden = false;
     ambient.muted = true;
     toggle.hidden = false;
     const loadClip = () => { ambient.src = clips[clipIndex].src; ambient.poster = clips[clipIndex].poster; ambient.load(); };
     syncAmbient = () => {
-      const play = !pausedByUser && visible && !document.hidden && !films.some(film => !film.paused) && (!motion.matches || manual) && (!navigator.connection?.saveData || manual);
+      const play = !pausedByUser && !document.hidden && !films.some(film => !film.paused) && (!motion.matches || manual) && (!navigator.connection?.saveData || manual);
       if (play) ambient.play().then(() => { toggle.textContent = '배경 영상 정지'; }).catch(() => { toggle.textContent = '배경 영상 재생'; });
       else { ambient.pause(); toggle.textContent = '배경 영상 재생'; }
     };
@@ -359,7 +361,6 @@ window.PORTFOLIO_MEDIA = {
     });
     document.addEventListener('visibilitychange', syncAmbient);
     motion.addEventListener('change', () => { manual = false; syncAmbient(); });
-    new IntersectionObserver(entries => { visible = entries[0].isIntersecting; syncAmbient(); }, { threshold: .05 }).observe($('.hero'));
     loadClip(); syncAmbient();
   }
 })();

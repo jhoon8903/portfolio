@@ -3,8 +3,8 @@
 :HL["/portfolio/_next/static/css/2d1c76d7bfc0c7b5.css","style"]
 :HL["/portfolio/assets/bounce-defense/home.css","style"]
 :HL["/portfolio/assets/otter-retention/home.css","style"]
-:HL["/portfolio/assets/portfolio-editorial/project-ambient.css","style"]
+:HL["/portfolio/assets/portfolio-editorial/project-ambient.css?v=20261106-page-bg2","style"]
 :HL["/portfolio/assets/portfolio-editorial/refinement.css","style"]
 :HL["/portfolio/assets/neon-reflector/play-editor.png","image"]
 :HL["/portfolio/assets/neon-reflector/simulator-editor.png","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"neon-reflector","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"JxhsDmSW60G5C5BknCMrc"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"neon-reflector","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"TasmWLgVVt7kHjjatqOEs"}

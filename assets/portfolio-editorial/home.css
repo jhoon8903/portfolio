@@ -262,18 +262,4 @@ body:has(.portfolio-editorial){background:#101010}
 .portfolio-editorial .hero-feature:hover .hero-feature-arrow{transform:translate(3px,-3px)}
 .portfolio-editorial .hero-feature-arrow{transition:transform .2s ease}
 
-/* Ambient gameplay is deliberately separate from the featured Capsule Cats stills. */
-.portfolio-editorial .editorial-hero { position:relative; isolation:isolate; overflow:hidden; background:#101010; scroll-margin-top:62px; }
-.portfolio-editorial .hero-ambient { position:absolute; inset:0; z-index:0; overflow:hidden; background:#101010; }
-.portfolio-editorial .hero-ambient-video { width:100%; height:100%; object-fit:cover; opacity:.55; filter:grayscale(1) contrast(1.06) brightness(.8); transform:scale(1.025); }
-.portfolio-editorial .hero-ambient-shade { position:absolute; inset:0; background:linear-gradient(90deg,#101010d9 0%,#101010b3 37%,#10101080 100%),linear-gradient(180deg,#10101080 0%,transparent 45%,#101010b3 100%); }
-.portfolio-editorial .hero-ambient-meta { position:absolute; right:clamp(18px,3.3vw,56px); bottom:18px; z-index:2; display:flex; align-items:center; gap:12px; color:var(--accent); font:10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.06em; pointer-events:auto; }
-.portfolio-editorial .hero-ambient-toggle { padding:6px 8px; border:1px solid color-mix(in srgb,var(--accent) 70%,transparent); color:var(--text); background:#101010a8; font:inherit; cursor:pointer; }
-.portfolio-editorial .hero-ambient-toggle:hover { border-color:var(--accent); background:#101010d9; }
-.portfolio-editorial .hero-ambient-toggle:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
-.portfolio-editorial .editorial-hero > :not(.hero-ambient) { position:relative; z-index:1; }
-.portfolio-editorial .editorial-hero > .hero-ambient-meta { position:absolute; z-index:2; }
-@media (max-width:900px) { .portfolio-editorial .hero-ambient-video { opacity:.26; } .portfolio-editorial .hero-ambient-meta { bottom:14px; } }
-@media (max-width:620px) { .portfolio-editorial .hero-ambient-meta { right:12px; left:12px; justify-content:space-between; gap:8px; font-size:9px; } }
-@media (max-width:900px) { .portfolio-editorial .editorial-hero { padding-bottom:40px; } }
-@media (max-width:620px) { .portfolio-editorial .editorial-hero { padding-top:72px; padding-bottom:0; } .portfolio-editorial .hero-ambient-meta { top:16px; bottom:auto; } }
+.portfolio-editorial .editorial-hero { position:relative; scroll-margin-top:62px; }
