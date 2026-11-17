@@ -1,0 +1,307 @@
+{
+  "action": "hit",
+  "loop": false,
+  "size": 64,
+  "directions": [
+    "S",
+    "SW",
+    "W",
+    "NW",
+    "N",
+    "NE",
+    "E",
+    "SE"
+  ],
+  "grid": {
+    "columns": 3,
+    "rows": 8,
+    "order": "row=direction,column=frame"
+  },
+  "frames": [
+    {
+      "name": "impact",
+      "duration_ms": 80
+    },
+    {
+      "name": "recoil",
+      "duration_ms": 100
+    },
+    {
+      "name": "settle",
+      "duration_ms": 120
+    }
+  ],
+  "rects": {
+    "S": [
+      {
+        "name": "impact",
+        "duration_ms": 80,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "recoil",
+        "duration_ms": 100,
+        "rect": {
+          "x": 64,
+          "y": 0,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "settle",
+        "duration_ms": 120,
+        "rect": {
+          "x": 128,
+          "y": 0,
+          "width": 64,
+          "height": 64
+        }
+      }
+    ],
+    "SW": [
+      {
+        "name": "impact",
+        "duration_ms": 80,
+        "rect": {
+          "x": 0,
+          "y": 64,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "recoil",
+        "duration_ms": 100,
+        "rect": {
+          "x": 64,
+          "y": 64,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "settle",
+        "duration_ms": 120,
+        "rect": {
+          "x": 128,
+          "y": 64,
+          "width": 64,
+          "height": 64
+        }
+      }
+    ],
+    "W": [
+      {
+        "name": "impact",
+        "duration_ms": 80,
+        "rect": {
+          "x": 0,
+          "y": 128,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "recoil",
+        "duration_ms": 100,
+        "rect": {
+          "x": 64,
+          "y": 128,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "settle",
+        "duration_ms": 120,
+        "rect": {
+          "x": 128,
+          "y": 128,
+          "width": 64,
+          "height": 64
+        }
+      }
+    ],
+    "NW": [
+      {
+        "name": "impact",
+        "duration_ms": 80,
+        "rect": {
+          "x": 0,
+          "y": 192,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "recoil",
+        "duration_ms": 100,
+        "rect": {
+          "x": 64,
+          "y": 192,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "settle",
+        "duration_ms": 120,
+        "rect": {
+          "x": 128,
+          "y": 192,
+          "width": 64,
+          "height": 64
+        }
+      }
+    ],
+    "N": [
+      {
+        "name": "impact",
+        "duration_ms": 80,
+        "rect": {
+          "x": 0,
+          "y": 256,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "recoil",
+        "duration_ms": 100,
+        "rect": {
+          "x": 64,
+          "y": 256,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "settle",
+        "duration_ms": 120,
+        "rect": {
+          "x": 128,
+          "y": 256,
+          "width": 64,
+          "height": 64
+        }
+      }
+    ],
+    "NE": [
+      {
+        "name": "impact",
+        "duration_ms": 80,
+        "rect": {
+          "x": 0,
+          "y": 320,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "recoil",
+        "duration_ms": 100,
+        "rect": {
+          "x": 64,
+          "y": 320,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "settle",
+        "duration_ms": 120,
+        "rect": {
+          "x": 128,
+          "y": 320,
+          "width": 64,
+          "height": 64
+        }
+      }
+    ],
+    "E": [
+      {
+        "name": "impact",
+        "duration_ms": 80,
+        "rect": {
+          "x": 0,
+          "y": 384,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "recoil",
+        "duration_ms": 100,
+        "rect": {
+          "x": 64,
+          "y": 384,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "settle",
+        "duration_ms": 120,
+        "rect": {
+          "x": 128,
+          "y": 384,
+          "width": 64,
+          "height": 64
+        }
+      }
+    ],
+    "SE": [
+      {
+        "name": "impact",
+        "duration_ms": 80,
+        "rect": {
+          "x": 0,
+          "y": 448,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "recoil",
+        "duration_ms": 100,
+        "rect": {
+          "x": 64,
+          "y": 448,
+          "width": 64,
+          "height": 64
+        }
+      },
+      {
+        "name": "settle",
+        "duration_ms": 120,
+        "rect": {
+          "x": 128,
+          "y": 448,
+          "width": 64,
+          "height": 64
+        }
+      }
+    ]
+  },
+  "preview": {
+    "direction_order": [
+      "S",
+      "SW",
+      "W",
+      "NW",
+      "N",
+      "NE",
+      "E",
+      "SE"
+    ],
+    "layout": "one horizontal row per timestep",
+    "opaque_background": "#000000",
+    "loop": false
+  }
+}

@@ -1,0 +1,3 @@
+record_type,scope,actual_combat_runs,first_attempt_wins,first_attempt_rate,wilson_95_interval,median_combat_seconds,limit
+measured_ecs,Stage1 no-upgrade first attempt,32,28,87.5%,71.9%–95.0%,121.07,"Bot-policy baseline; UI timing and human input omitted"
+connectivity_check,final_adapter_smoke,2,2,100%,,,"Small connection check; excluded from the 32-run baseline"
