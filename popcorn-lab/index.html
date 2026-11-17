@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" href="data:,">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Popcorn Lab</title>
+  <style>
+    :root { background: #17212b; color: #22394a; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; min-height: 100%; margin: 0; overscroll-behavior: none; background: #17212b; }
+    body { display: grid; place-items: center; min-height: 100dvh; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+    #unity-container { position: relative; width: min(100vw, calc(100dvh * 0.5625)); height: min(100dvh, calc(100vw * 1.7777778)); max-width: 100%; max-height: 100%; background: #f7f0de; box-shadow: 0 0 40px rgb(0 0 0 / .32); overflow: hidden; }
+    #unity-canvas { display: block; width: 100%; height: 100%; background: #f7f0de; outline: none; touch-action: none; }
+    #unity-loading { position: absolute; inset: 0; display: grid; place-content: center; gap: 18px; padding: 42px; text-align: center; background: #f7f0de; }
+    #loading-title { font-size: clamp(18px, 4vw, 24px); font-weight: 800; letter-spacing: .02em; color: #22394a; }
+    #loading-subtitle { font-size: clamp(14px, 3.2vw, 17px); color: #237f87; }
+    #loading-track { width: min(280px, 72vw); height: 10px; border-radius: 999px; overflow: hidden; background: #e5ad34; }
+    #loading-fill { width: 0%; height: 100%; background: #f27343; transition: width .15s linear; }
+    #unity-warning { position: absolute; z-index: 3; top: 12px; left: 12px; right: 12px; display: none; border-radius: 10px; color: #fff; font-size: 14px; line-height: 1.45; }
+    #unity-warning > div { padding: 12px 14px; margin-bottom: 6px; border-radius: 10px; }
+    @media (orientation: landscape) { #unity-container { width: min(calc(100vw - 20px), calc((100dvh - 20px) * 0.5625)); height: min(calc(100dvh - 20px), calc((100vw - 20px) * 1.7777778)); } }
+  </style>
+</head>
+<body>
+  <main id="unity-container">
+    <canvas id="unity-canvas" width=720 height=1280 tabindex="-1"></canvas>
+    <section id="unity-loading" aria-live="polite">
+      <div id="loading-title">팝콘 머신 준비 중…</div>
+      <div id="loading-subtitle">실험 장비를 예열하고 있어요</div>
+      <div id="loading-track"><div id="loading-fill"></div></div>
+    </section>
+    <div id="unity-warning" role="alert"></div>
+  </main>
+  <script>
+    const canvas = document.querySelector("#unity-canvas");
+    const loading = document.querySelector("#unity-loading");
+    const progressFill = document.querySelector("#loading-fill");
+    const loadingTitle = document.querySelector("#loading-title");
+    const loadingSubtitle = document.querySelector("#loading-subtitle");
+
+    function unityShowBanner(message, type) {
+      const banner = document.querySelector("#unity-warning");
+      const notice = document.createElement("div");
+      notice.textContent = message;
+      notice.style.background = type === "error" ? "#a3342a" : "#b87410";
+      banner.appendChild(notice);
+      banner.style.display = "block";
+      if (type !== "error") {
+        window.setTimeout(() => {
+          notice.remove();
+          banner.style.display = banner.children.length ? "block" : "none";
+        }, 5000);
+      }
+    }
+
+    // Relative URLs keep this build portable under GitHub Pages subdirectories.
+    const buildUrl = "./Build";
+    const config = {
+      arguments: [],
+      dataUrl: buildUrl + "/ed39d5b4669152b4c20fa427fd22e07f.data.unityweb",
+      frameworkUrl: buildUrl + "/b5ac7119df89cdf69a472eee220e91d5.framework.js.unityweb",
+      codeUrl: buildUrl + "/8c460b428624e8fc58ba021afe19538b.wasm.unityweb",
+      streamingAssetsUrl: "./StreamingAssets",
+      companyName: "Prototype Studio",
+      productName: "Popcorn Lab",
+      productVersion: "0.1.0",
+      showBanner: unityShowBanner
+    };
+
+    function showStartupFailure(message) {
+      loadingTitle.textContent = "팝콘 머신을 시작할 수 없어요";
+      loadingSubtitle.textContent = message;
+      unityShowBanner(message, "error");
+    }
+
+    const script = document.createElement("script");
+    script.src = buildUrl + "/137fbf31258e23691a210f2e8df8f395.loader.js";
+    script.onload = () => {
+      createUnityInstance(canvas, config, progress => {
+        progressFill.style.width = (progress * 100).toFixed(1) + "%";
+      }).then(() => {
+        loading.remove();
+      }).catch(error => {
+        console.error(error);
+        showStartupFailure("게임 파일을 불러오지 못했습니다. 새로고침한 뒤 다시 시도해 주세요.");
+      });
+    };
+    script.onerror = () => showStartupFailure("로더를 불러오지 못했습니다. 새로고침한 뒤 다시 시도해 주세요.");
+    document.body.appendChild(script);
+  </script>
+</body>
+</html>
