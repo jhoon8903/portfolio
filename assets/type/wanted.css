@@ -1,0 +1,11 @@
+@font-face {
+  font-family: "Wanted Sans";
+  font-style: normal;
+  font-weight: 400 1000;
+  font-display: swap;
+  src: url("./wanted-sans-variable.woff2") format("woff2");
+}
+
+:root {
+  --type: "Wanted Sans", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
